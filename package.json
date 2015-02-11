@@ -1,11 +1,13 @@
 {
-  "name": "CloudBalance",
+  "name": "SeriousPi",
   "version": "0.0.1",
   "description": "",
-  "main": "app.js",
   "repository": "",
   "license": "Proprietary",
   "private": true,
+  "scripts": { 
+    "postinstall": "npm install reactify" 
+  },
   "browserify": {
     "transform": [
       "reactify"
