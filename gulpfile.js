@@ -5,12 +5,10 @@
 var gulp = require('gulp');
 var browserify = require('browserify');
 var concat = require('gulp-concat');
-var jshint = require('gulp-jshint');
 var shell = require('gulp-shell');
 var sass = require('gulp-sass') ;
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
-var notify = require('gulp-notify') ;
 var bower = require('gulp-bower');
 var react = require('gulp-react');
 var reactify = require('reactify');
@@ -28,11 +26,6 @@ var paths = {
   sass: ['public/scss/style.scss']
 };
 
-gulp.task('lint', function() {
-  return gulp.src('./lib/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-});
 
 gulp.task('sass', function(done) {
   return gulp.src(paths.sass)
@@ -45,18 +38,16 @@ gulp.task('sass', function(done) {
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('./dist/css/'));
 });
-
-
+gulp.task('copy', function () {
+  return gulp.src(paths.html)
+    .pipe(gulp.dest('dist/'));
+})
 
 gulp.task('clean', function () {
   return gulp.src(['dist/js', 'dist/index.html'], {read: false})
     .pipe(clean());
 });
 
-gulp.task('copy', function () {
-  return gulp.src(paths.html)
-    .pipe(gulp.dest('dist/'));
-})
 
 gulp.task('compile', function(){
   var b = browserify();

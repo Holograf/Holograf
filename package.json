@@ -5,8 +5,8 @@
   "repository": "",
   "license": "Proprietary",
   "private": true,
-  "scripts": { 
-    "postinstall": "npm install reactify" 
+  "scripts": {
+    "postinstall": "npm install reactify"
   },
   "browserify": {
     "transform": [
@@ -20,6 +20,8 @@
     "codemirror": "^4.12.0",
     "ejs": ">= 0.0.0",
     "es6-promise": "^2.0.1",
+    "escodegen": "^1.6.1",
+    "esprima": "^2.0.0",
     "express": "^4.0.0",
     "express-partials": "^0.2.0",
     "express-static": "^1.0.3",
