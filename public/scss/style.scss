@@ -1,0 +1,20 @@
+$input-height: 500px;
+$input-margin: 20px;
+
+@import "../../dist/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "codeMirror";
+@import "./codeMirror/theme/solarized";
+
+
+
+body {
+  font-family: "Open Sans","lucida grande","Segoe UI",arial,verdana,"lucida sans unicode",tahoma,sans-serif;
+  font-size: 13px;
+}
+
+.dataInput {
+  margin-top: $input-margin;
+  min-height: $input-height - 35px;
+  font-family: monospace;
+  font-size: 16px;
+}
