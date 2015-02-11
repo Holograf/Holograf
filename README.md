@@ -1,6 +1,6 @@
-# fPlot
+# Suspicious Pi
 
-fPlot is a quick and simple data visualization tool, allowing users to quickly create, modify, and export graphs of data or the results of their code.
+Suspicious Pi is a tool for visualizing programs.
 
 ## Contributing
 
