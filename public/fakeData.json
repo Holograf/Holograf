@@ -1,0 +1,49 @@
+{
+  "ProgramState": [
+    { "id": 1,
+      "val": 0
+    },
+    { "id": 3,
+      "val": 1
+    },
+    { "id": 1,
+      "val": 1
+    },
+    { "id": 3,
+      "val": 2
+    },
+    { "id": 1,
+      "val": 2
+    },
+    { "id": 3,
+      "val": 3
+    },
+    { "id": 1,
+      "val": 3
+    }
+  ],
+
+  "Components": [
+    { "id": 1,
+      "type": "number",
+      "name": "y",
+      "scope": 0,
+      "container": 0,
+      "createdAt": 0
+    },
+    { "id": 2,
+      "type": "loop",
+      "name": "for",
+      "scope": 0,
+      "container": 0,
+      "createdAt": 1
+    },
+    { "id": 3,
+      "type": "number",
+      "name": "i",
+      "scope": 0,
+      "container": 2,
+      "createdAt": 2
+    }
+  ]
+}
