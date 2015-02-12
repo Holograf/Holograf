@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>THREE</title>
+
+  <style type='text/css'>
+    body{
+      padding:0;
+      margin:0;
+    }
+    #controls{
+      position:fixed;
+      top:0px;
+      background:#fff;
+      opacity:0.7;
+      width:100%;
+      z-index:3;
+    }
+    #controls button{
+      cursor:pointer;
+    }
+    #three-modal{
+      display:none;
+      position:fixed;
+      top:50%;
+      left:0px;
+      height:50%;
+      z-index:4;
+      color:#fff;
+      background:transparent;
+      font-family:courier;
+      font-size:2em;
+      padding:20px;
+    }
+  </style>
+
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r69/three.min.js"></script>
+  <!-- <script src="lib/three.js"></script> -->
+  <script src="lib/three-projector.js"></script>
+  <script src="lib/three-orbital-controls.js"></script>
+  <script src="lib/three-canvas-renderer.js"></script>
+  <script src="lib/three-geometry-utils.js"></script>
+  <!-- <script src="lib/csg.js"></script> -->
+  <!-- <script src="lib/threecsg.js"></script> -->
+  <script src="lib/threebsp.js"></script>
+  <script src="lib/tween.js"></script>
+  <script src="lib/jquery.js"></script>
+  <script src="lib/davis.js"></script>
+  <script src="lib/underscore.js"></script>
+
+</head>
+  <body>
+    <div id='three-scene'></div>
+    <div id='controls'>
+      <button id='pause'>Pause</button>
+      <button id='expand'>Expand</button>
+    </div>
+    <div id='three-modal'>Falcon</div>
+    
+  </body>
+  <script src="src/dummy-data.js"></script>
+  <script src="src/utils.js"></script>
+  <script src="src/subroutines.js"></script>
+  <script src="src/scene.js"></script>
+</html>
