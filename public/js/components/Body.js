@@ -14,16 +14,9 @@ module.exports = React.createClass({
     return (
       <div className={"row"}>
         <div className={"col-md-1"}></div>
-        <div className="col-md-5">
           <Panel>
             <InputArea {...this.props} />
           </Panel>
-        </div>
-        <div className="col-md-5">
-          <Panel>
-            <Graph data={this.props.data} />
-          </Panel>
-        </div>
       </div>
     );
   }
