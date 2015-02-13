@@ -17,3 +17,11 @@ utils.mockData=function(x){
   }
   return r;
 };
+
+
+utils.toGlossary=function(x){
+  //x is an array of objects, and we're turning it into a hash where 
+  //the id element from each object is it's key
+  for (var i=0, glossary={};i<x.length;glossary[x[i].id]=x[i], i++){}
+  return glossary;
+};
