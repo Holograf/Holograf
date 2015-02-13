@@ -1,8 +1,14 @@
 var displayScene=function(){	
 	var data=utils.mockData(30);
-	var container;
-	var camera, scene, renderer, group, particle, particleLight;
+	var container, containerWidth, containerHeight;
+	var camera, scene, renderer, group, particle, particleLight, axes, geom, cubes, projector, mouseVector;
+	var range=5000;
 	var mouseX = 0, mouseY = 0;
+
+		// Picking stuff
+	
+	projector = new THREE.Projector();
+	mouseVector = new THREE.Vector3();
 	
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
@@ -14,10 +20,14 @@ var displayScene=function(){
 	function init(data) {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
+		
+		containerWidth = container.clientWidth;
+		containerHeight = container.clientHeight;
+		
 
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = -1000;
-		camera.position.y = 4000;
+		camera.position.y = 0;
 		camera.position.x = 4000;
 		
 		
@@ -48,7 +58,7 @@ var displayScene=function(){
 		//scene.add( deck );
 	
 	
-		//loop torus
+		//loop through the data
 		var z=-3000;
 		for (var i=0;i<data.length;i++){
 			z+= i*100;
@@ -60,7 +70,7 @@ var displayScene=function(){
 		}
 	
 		//csg experiment
-		
+		/*
 		var cube_geometry = new THREE.CubeGeometry( 30, 30, 300 );
 		var cube_mesh = new THREE.Mesh( cube_geometry );
 		//cube_mesh.position.x = -7;
@@ -74,16 +84,41 @@ var displayScene=function(){
 		var result = subtract_bsp.toMesh( new THREE.MeshLambertMaterial({ shading: THREE.SmoothShading}) );
 		result.geometry.computeVertexNormals();
 		scene.add( result );
+		*/
+		//end csg experiment
 		
-		//end experiment
+		//raycaster experiment
 		
+		// Add some cubes to the scene
+		geom = new THREE.IcosahedronGeometry( 50 );
 	
+		cubes = new THREE.Object3D();
+		scene.add( cubes );
+	
+		for(var i = 0; i < 100; i++ ) {
+			var grayness = Math.random() * 0.5 + 0.25,
+				mat = new THREE.MeshLambertMaterial(),
+				cube = new THREE.Mesh( geom, mat );
+			mat.color.setRGB( grayness, grayness, grayness );
+			cube.position.set( range * (0.5 - Math.random()), range * (0.5 - Math.random()), range * (0.5 - Math.random()) );
+			//cube.rotation.set( Math.random(), Math.random(), Math.random() ).multiplyScalar( 2 * Math.PI );
+			cube.grayness = grayness;
+			cubes.add( cube );
+		}
+	
+		// Axes
+		//axes = buildAxes();
+		//scene.add( axes );
+	
+		// User interaction
+		window.addEventListener( 'mousemove', onMouseMove, false );
+			//end raycaster experiment
+		
 		renderer = new THREE.CanvasRenderer();
 		renderer.setClearColor( 0x333333, 1);
 		renderer.setSize( window.innerWidth-20, window.innerHeight-20 );
 		container.appendChild( renderer.domElement );
 		window.addEventListener( 'resize', onWindowResize, false );
-	
 	}
 	
 	function onWindowResize() {
@@ -94,17 +129,88 @@ var displayScene=function(){
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	}
 	
+	
+
+	function onMouseMove( e ) {
+		var vector = new THREE.Vector3();
+		var raycaster = new THREE.Raycaster();
+		var dir = new THREE.Vector3();
+		
+		//check the type of camera
+		if ( camera instanceof THREE.OrthographicCamera ) {
+	    vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, - 1 ); // z = - 1 important!
+	    vector.unproject( camera );
+	    dir.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
+	    raycaster.set( vector, dir );
+		} else if ( camera instanceof THREE.PerspectiveCamera ) {
+	    vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 ); // z = 0.5 important!
+	    vector.unproject( camera );
+	    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+		}
+		
+		var intersects = raycaster.intersectObjects( cubes.children, true );	
+		
+		cubes.children.forEach(function( cube ) {
+			cube.material.color.setRGB( cube.grayness, cube.grayness, cube.grayness );
+		});
+		
+		for( var i = 0; i < intersects.length; i++ ) {
+			var intersection = intersects[ i ];
+			var obj = intersection.object;
+			obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+		}
+
+		
+	}
+
+	
 	function animate() {
 		requestAnimationFrame( animate );
 		render();
 	}
 	
+	function buildAxes() {
+		var axes = new THREE.Object3D();
+
+		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 100, 0, 0 ), 0xFF0000, false ) ); // +X
+		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( -100, 0, 0 ), 0x800000, true) ); // -X
+		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 100, 0 ), 0x00FF00, false ) ); // +Y
+		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, -100, 0 ), 0x008000, true ) ); // -Y
+		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, 100 ), 0x0000FF, false ) ); // +Z
+		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, -100 ), 0x000080, true ) ); // -Z
+
+		return axes;
+
+	}
+	
+	function buildAxis( src, dst, colorHex, dashed ) {
+		var geom = new THREE.Geometry(),
+			mat; 
+
+		if(dashed) {
+			mat = new THREE.LineDashedMaterial({ linewidth: 1, color: colorHex, dashSize: 5, gapSize: 5 });
+		} else {
+			mat = new THREE.LineBasicMaterial({ linewidth: 1, color: colorHex });
+		}
+
+		geom.vertices.push( src.clone() );
+		geom.vertices.push( dst.clone() );
+
+		var axis = new THREE.Line( geom, mat );
+
+		return axis;
+
+	}
+	
+	
 	function render() {
 		camera.lookAt(new THREE.Vector3(256,256,256));
-
-		particleLight.position.z +=100;
-		if (particleLight.position.z>10000){
-			particleLight.position.z=-10000;
+		
+		if (window.scenePaused===false){
+			particleLight.position.z +=100;
+			if (particleLight.position.z>10000){
+				particleLight.position.z=-3000;
+			}
 		}
 		
 		renderer.render( scene, camera );
@@ -112,4 +218,10 @@ var displayScene=function(){
 	
 };
 
-window.onload=displayScene;
+window.onload=function(){
+	window.scenePaused=false;
+	displayScene();
+	$("body").on("click","button#pause",function(){
+		window.scenePaused=!window.scenePaused;
+	});
+};
