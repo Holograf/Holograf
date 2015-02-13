@@ -1,5 +1,6 @@
 var displayScene=function(){	
 	var data=utils.mockData(30);
+	
 	var container, containerWidth, containerHeight;
 	var camera, scene, renderer, group, particle, particleLight, axes, geom, cubes, projector, mouseVector;
 	var range=5000;
@@ -60,13 +61,20 @@ var displayScene=function(){
 	
 		//loop through the data
 		var z=-3000;
+		var shape;
+		var composit = new THREE.Object3D();
+		scene.add( composit );
 		for (var i=0;i<data.length;i++){
-			z+= i*100;
+			z+= i*10;
+			var shape;
 			if (data[i].shape==="function"){
-				scene.add( subroutines.fun( {z:z} ));
+				shape = subroutines.fun( {z:z} );
 			} else {
-				scene.add( subroutines.loop( {z:z} ));
+				shape = subroutines.loop( {z:z} );
 			}
+			
+			composit.add( shape );
+			//scene.add( shape );
 		}
 	
 		//csg experiment
@@ -87,6 +95,7 @@ var displayScene=function(){
 		*/
 		//end csg experiment
 		
+		/*
 		//raycaster experiment
 		
 		// Add some cubes to the scene
@@ -105,14 +114,11 @@ var displayScene=function(){
 			cube.grayness = grayness;
 			cubes.add( cube );
 		}
-	
-		// Axes
-		//axes = buildAxes();
-		//scene.add( axes );
-	
+		*/
+		
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
-			//end raycaster experiment
+		//end raycaster experiment
 		
 		renderer = new THREE.CanvasRenderer();
 		renderer.setClearColor( 0x333333, 1);
@@ -150,10 +156,12 @@ var displayScene=function(){
 		
 		var intersects = raycaster.intersectObjects( cubes.children, true );	
 		
+		//cubes (change this later) is just the collection of shapes to check
 		cubes.children.forEach(function( cube ) {
 			cube.material.color.setRGB( cube.grayness, cube.grayness, cube.grayness );
 		});
 		
+		//here i'll manipulate the objects intersected by the ray
 		for( var i = 0; i < intersects.length; i++ ) {
 			var intersection = intersects[ i ];
 			var obj = intersection.object;
@@ -167,39 +175,6 @@ var displayScene=function(){
 	function animate() {
 		requestAnimationFrame( animate );
 		render();
-	}
-	
-	function buildAxes() {
-		var axes = new THREE.Object3D();
-
-		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 100, 0, 0 ), 0xFF0000, false ) ); // +X
-		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( -100, 0, 0 ), 0x800000, true) ); // -X
-		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 100, 0 ), 0x00FF00, false ) ); // +Y
-		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, -100, 0 ), 0x008000, true ) ); // -Y
-		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, 100 ), 0x0000FF, false ) ); // +Z
-		axes.add( buildAxis( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, -100 ), 0x000080, true ) ); // -Z
-
-		return axes;
-
-	}
-	
-	function buildAxis( src, dst, colorHex, dashed ) {
-		var geom = new THREE.Geometry(),
-			mat; 
-
-		if(dashed) {
-			mat = new THREE.LineDashedMaterial({ linewidth: 1, color: colorHex, dashSize: 5, gapSize: 5 });
-		} else {
-			mat = new THREE.LineBasicMaterial({ linewidth: 1, color: colorHex });
-		}
-
-		geom.vertices.push( src.clone() );
-		geom.vertices.push( dst.clone() );
-
-		var axis = new THREE.Line( geom, mat );
-
-		return axis;
-
 	}
 	
 	
