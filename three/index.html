@@ -8,7 +8,15 @@
     body{
       padding:0;
       margin:0;
-      
+    }
+    #controls{
+      position:fixed;
+      top:0px;
+      background:#fff;
+      opacity:0.7;
+      width:100%;
+      z-index:3;
+      cursor:pointer;
     }
   </style>
 
@@ -22,11 +30,14 @@
   <!-- <script src="lib/csg.js"></script> -->
   <!-- <script src="lib/threecsg.js"></script> -->
   <script src="lib/threebsp.js"></script>
+  <script src="lib/jquery.js"></script>
   <script src="lib/underscore.js"></script>
 
 </head>
   <body>
-    
+    <div id='controls'>
+      <button id='pause'>Pause</button>
+    </div>
   </body>
   <script src="src/utils.js"></script>
   <script src="src/subroutines.js"></script>
