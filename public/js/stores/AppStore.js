@@ -6,7 +6,7 @@ var AppDispatcher = require('../dispatcher/appDispatcher');
 var AppConstants = require('../constants/appConstants');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
-var Compiler = require('../utils/Compiler')
+var Compiler = require('../compiler/Compiler')
 
 var CHANGE_EVENT = 'change';
 
@@ -19,16 +19,22 @@ var updateCode = function(code) {
 
 var compileCode = function() {
   _data = Compiler.parse(_code);
-  console.log(_data);
+  console.log(JSON.stringify(_data, null, 2));
 }
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
-  initialize: function(cloudService) {
-    _code = 'var y = 0;\n' +
-            'for (var x = 1; x <= 3; x++) {\n' +
-            '  y++;\n' +
-            '}';
+  initialize: function() {
+    _code = "var f = function (n) {\n" +
+            "  if (n < 2){\n"+
+            "    return 1;\n"+
+            "  }else{\n"+
+            "    return f(n-2) + f(n-1);\n"+
+            "  }\n"+
+            "}\n"+
+            "var x = f(2);";
+            
+
     _data = [];
   },
 
