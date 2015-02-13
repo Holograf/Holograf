@@ -4,6 +4,7 @@
 
 var AppDispatcher = require('../dispatcher/appDispatcher');
 var AppConstants = require('../constants/appConstants');
+var Program = require('../compiler/Program.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 var Compiler = require('../compiler/Compiler')
@@ -12,6 +13,7 @@ var CHANGE_EVENT = 'change';
 
 var _code;
 var _data;
+var _currentStep = {};
 
 var updateCode = function(code) {
   _code = code;
@@ -19,7 +21,7 @@ var updateCode = function(code) {
 
 var compileCode = function() {
   _data = Compiler.parse(_code);
-  console.log(JSON.stringify(_data, null, 2));
+  console.log(_data);
 }
 
 var AppStore = assign({}, EventEmitter.prototype, {
@@ -33,18 +35,21 @@ var AppStore = assign({}, EventEmitter.prototype, {
             "  }\n"+
             "}\n"+
             "var x = f(2);";
-            
-
     _data = [];
   },
 
-  //return an object with all of the files
   getCode: function() {
     return _code;
   },
 
-  getData: function() {
+  getData: function() {       
     return _data;
+  },
+
+  getProgramStep: function(n) {
+    if (_data) {
+      return _data.buildStep(n);
+    }
   },
 
   emitChange: function() {
@@ -64,7 +69,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
     var action = payload.action; 
     switch(action.actionType){
       
-      case AppConstants.CHANGE_CODE:
+      case AppConstants.UPDATE_CODE:
         updateCode(action.code);
         break;
 
