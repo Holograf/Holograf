@@ -13,8 +13,11 @@ subroutines.loop=function(opts){
 	var z=opts.z;
 	var r=opts.r || 300;
 	var geometry=opts.geometry ||  new THREE.TorusGeometry( r, 20, 20, 50 );
+	var grayness = Math.random() * 0.5 + 0.25,
 	material=new THREE.MeshLambertMaterial();
+	material.color.setRGB( grayness, grayness, grayness );
 	object = new THREE.Mesh(geometry, material );
+	object.grayness=grayness;
 	object.position.set( 0, 0, z );
 	return object;
 };
