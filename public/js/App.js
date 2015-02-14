@@ -15,6 +15,7 @@ var App = React.createClass({
     return {
       code: AppStore.getCode(),
       data: AppStore.getData(),
+      shareUrl: AppStore.getShareUrl(),
       // step: AppStore.getProgramStep()
     };
   },

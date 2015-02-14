@@ -1,6 +1,11 @@
 var express = require('express');
+var mongoose = require('mongoose');
 
 var app = express();
+
+// set up mongo database with mongoose
+var location = process.env.LOC || 'localhost/suspiciouspi';
+mongoose.connect('mongodb://' + location);
 
 // configure our server with all the middleware and and routing
 require('./config/middleware.js')(app, express);

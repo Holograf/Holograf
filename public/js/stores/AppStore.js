@@ -14,6 +14,7 @@ var CHANGE_EVENT = 'change';
 
 var _code;
 var _data;
+var _shareUrl;
 var _currentStep = {};
 
 var updateCode = function(code) {
@@ -27,12 +28,17 @@ var compileCode = function() {
   displayScene(timeline);
 };
 
+var updateShareUrl = function(shareUrl) {
+  _shareUrl = shareUrl;
+}
+
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
     _code = "obj = {a: 1, f: function (n) { return 1 }}";
             
     _data = [];
+    _shareUrl = '';
   },
 
   getCode: function() {
@@ -41,6 +47,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
   getData: function() {       
     return _data;
+  },
+
+  getShareUrl: function() {
+    return _shareUrl;
   },
 
   getProgramStep: function(n) {
@@ -72,6 +82,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
       case AppConstants.COMPILE:
         compileCode();
+        break;
+
+      case AppConstants.UPDATE_SHAREURL:
+        updateShareUrl(action.shareUrl);
         break;
     }
 
