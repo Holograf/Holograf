@@ -8,6 +8,8 @@ var displayScene=function(){
 	var camera, scene, renderer, group, particle, particleLight, axes, geom, cubes, projector, mouseVector;
 	var range=5000;
 	var mouseX = 0, mouseY = 0;
+	
+	var tween;
 
 		// Picking stuff
 	
@@ -32,7 +34,7 @@ var displayScene=function(){
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = 5000;
 		camera.position.y = 0;
-		camera.position.x = 4000;
+		camera.position.x = -4000;
 		
 		
 		controls = new THREE.OrbitControls( camera );
@@ -40,11 +42,25 @@ var displayScene=function(){
 		
 		scene = new THREE.Scene();
 
+		/*
+		position = {z:0};
+		var tween = new TWEEN.Tween(position).to({z:10000}, 20000);
+		*/
 		//the execution
 		particleLight = new THREE.Mesh( new THREE.SphereGeometry( 0, 0, 0 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
 		scene.add( particleLight );
 		var pointLight = new THREE.PointLight( 0xffffff, 2 );
 		particleLight.add( pointLight );
+		particleLight.tween=new TWEEN.Tween(particleLight.position).to({z:10000},5000).easing(TWEEN.Easing.Quadratic.InOut);
+		particleLight.tween.start();
+		
+		/*
+		tween.onUpdate(function(){
+	    particleLight.position.z = position.z;
+		});
+		tween.start();
+		*/
+		
 		
 		//the dataLine
 		var geometry = new THREE.CylinderGeometry( 5, 5, 10000, 3 );
@@ -64,14 +80,13 @@ var displayScene=function(){
 		*/
 	
 		//loop through the data
-		var z=-300;
-		var shape;
 		composit = new THREE.Object3D();
-		composit.animating=false;
-		composit.maxSize=10000;
+		composit.maxSize=10000;			
+		var interval=composit.maxSize/(data.length+1);
+		var z=composit.maxSize/2;
 		scene.add( composit );
 		var loopGeometry=new THREE.TorusGeometry(500,20,20,20);
-		var variableGeometry=new THREE.IcosahedronGeometry(300);
+		var variableGeometry=new THREE.IcosahedronGeometry(100);
 		for (var i=0;i<data.length;i++){
 			z+= 10;
 			var shape;
@@ -80,12 +95,13 @@ var displayScene=function(){
 			} else {
 				shape = subroutines.fun( {z:z,geometry:variableGeometry} );
 			}
-			
+			shape.collapse=new TWEEN.Tween(shape.position).to({z:(composit.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+			shape.expand=new TWEEN.Tween(shape.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
 			composit.add( shape );
 			//scene.add( shape );
 		}
-	
-		window.composit=composit;
+		
+
 		//csg experiment
 		/*
 		var cube_geometry = new THREE.CubeGeometry( 30, 30, 300 );
@@ -99,7 +115,7 @@ var displayScene=function(){
 		
 		var subtract_bsp = cube_bsp.subtract( sphere_bsp );
 		var result = subtract_bsp.toMesh( new THREE.MeshLambertMaterial({ shading: THREE.SmoothShading}) );
-		result.geometry.computeVertexNormals();
+		result.geometry.computeVertexNormals();	
 		scene.add( result );
 		*/
 		//end csg experiment
@@ -188,56 +204,38 @@ var displayScene=function(){
 	}
 	
 	
-	function compositAnimationCheck(composit){
-		if (composit && composit.children){
-			var interval=composit.maxSize/(composit.children.length+1);
+	window.pause=function(){
+		if (window.scenePaused){
+			particleLight.tween.start();
+		} else {		
+			particleLight.tween.stop();
+		}
+		window.scenePaused=!window.scenePaused;
+	};
+	
+	window.expand=function(){
+		if (window.expanded){
 			for (var i=0;i<composit.children.length;i++){
-				if (composit.children[i].position.z<(i*interval)){
-					composit.children[i].position.z+=interval/2;	
-				}
+				composit.children[i].collapse.start();
+			}
+		} else {
+			for (var i=0;i<composit.children.length;i++){
+				composit.children[i].expand.start();
 			}
 		}
-		
-		
-		/*
-		if (!window.expanded && composit.animating===false){
-			//do nothing
-		} else if (window.expanded && composit.animating===false){
-			//do nothing
-		} else if (!window.expanded && composit.animating===true){
-			for (var i=0;i<composit.children.length;i++){
-				composit.children[i].position.z+=100;
-			}
-			if (composit.children[length-1].position.z>composit.maxSize){
-				compsit.animating=false;
-				window.expanded=true;
-			}
-		}else if (window.expanded && composit.animating===true){
-			for (var i=0;i<composit.children.length;i++){
-				composit.children[i].position.z-=100;
-			}
-			if (composit.children[length-1].position.z<composit.minSize){
-				compsit.animating=false;
-				window.expanded=false;
-			}
-			
-		}
-		*/
-	}
+		window.expanded=!window.expanded;
+	};
 	
 	function render() {
 		camera.lookAt(new THREE.Vector3(0,0,5000));
-		
-		
-		
-		if (window.scenePaused===false){
-			particleLight.position.z +=100;
-			if (particleLight.position.z>composit.maxSize){
-				particleLight.position.z=0;
-			}
+
+		TWEEN.update();
+
+		//the animation loop
+		if (particleLight.position.z===10000){
+			particleLight.position.z=0;
+			particleLight.tween.start();
 		}
-		
-		compositAnimationCheck(composit);
 		
 		renderer.render( scene, camera );
 	}
@@ -249,10 +247,11 @@ window.onload=function(){
 	window.expanded=false;
 	displayScene();
 	$("body").on("click","button#pause",function(){
-		window.scenePaused=!window.scenePaused;
+		window.pause();
 	});
 	
 	$("body").on("click","button#expand",function(){
-		window.expanded=!window.expanded;
+		window.expand();
 	});
+	
 };
