@@ -3,7 +3,7 @@ var subroutines={};
 subroutines.fun=function(opts){
 	var z=opts.z;
 	var geometry=opts.geometry || new THREE.IcosahedronGeometry(30);
-	material=new THREE.MeshLambertMaterial({wireframe:true});
+	material=new THREE.MeshLambertMaterial();
 	object = new THREE.Mesh( geometry , material );
 	object.position.set( 0, 0, z );
 	return object;
