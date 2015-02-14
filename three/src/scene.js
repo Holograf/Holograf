@@ -1,6 +1,9 @@
 var displayScene=function(){	
 	var data=utils.mockData(30);
 	
+	data=dummyData.programSteps;
+	
+	var composit={animating:false,maxSize:3000,children:[]};
 	var container, containerWidth, containerHeight;
 	var camera, scene, renderer, group, particle, particleLight, axes, geom, cubes, projector, mouseVector;
 	var range=5000;
@@ -27,7 +30,7 @@ var displayScene=function(){
 		
 
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
-		camera.position.z = -1000;
+		camera.position.z = 5000;
 		camera.position.y = 0;
 		camera.position.x = 4000;
 		
@@ -44,39 +47,45 @@ var displayScene=function(){
 		particleLight.add( pointLight );
 		
 		//the dataLine
-		var geometry = new THREE.CylinderGeometry( 5, 5, 3000, 3 );
+		var geometry = new THREE.CylinderGeometry( 5, 5, 10000, 3 );
 		var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 		var dataLine = new THREE.Mesh( geometry, material );
 		dataLine.rotation.x+=Math.PI/2;
+		dataLine.position.z+=5000;
 		scene.add( dataLine );
 
-
+		/*
 		//deck
 		var geometry = new THREE.BoxGeometry( 1000, 10, 1000 );
-		var material = new THREE.MeshLambertMaterial(/*{wireframe:true} */);
+		var material = new THREE.MeshLambertMaterial({wireframe:true});
 		var deck = new THREE.Mesh( geometry, material );
 		deck.translateY(-500);
 		//scene.add( deck );
-	
+		*/
 	
 		//loop through the data
-		var z=-3000;
+		var z=-300;
 		var shape;
-		var composit = new THREE.Object3D();
+		composit = new THREE.Object3D();
+		composit.animating=false;
+		composit.maxSize=10000;
 		scene.add( composit );
+		var loopGeometry=new THREE.TorusGeometry(500,20,20,20);
+		var variableGeometry=new THREE.IcosahedronGeometry(300);
 		for (var i=0;i<data.length;i++){
-			z+= i*10;
+			z+= 10;
 			var shape;
-			if (data[i].shape==="function"){
-				shape = subroutines.fun( {z:z} );
+			if (data[i].value==="cycle"){
+				shape = subroutines.loop( {z:z,geometry:loopGeometry} );
 			} else {
-				shape = subroutines.loop( {z:z} );
+				shape = subroutines.fun( {z:z,geometry:variableGeometry} );
 			}
 			
 			composit.add( shape );
 			//scene.add( shape );
 		}
 	
+		window.composit=composit;
 		//csg experiment
 		/*
 		var cube_geometry = new THREE.CubeGeometry( 30, 30, 300 );
@@ -154,20 +163,21 @@ var displayScene=function(){
 	    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 		}
 		
-		var intersects = raycaster.intersectObjects( cubes.children, true );	
-		
-		//cubes (change this later) is just the collection of shapes to check
-		cubes.children.forEach(function( cube ) {
-			cube.material.color.setRGB( cube.grayness, cube.grayness, cube.grayness );
-		});
-		
-		//here i'll manipulate the objects intersected by the ray
-		for( var i = 0; i < intersects.length; i++ ) {
-			var intersection = intersects[ i ];
-			var obj = intersection.object;
-			obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+		if (cubes){
+			var intersects = raycaster.intersectObjects( cubes.children, true );	
+			
+			//cubes (change this later) is just the collection of shapes to check
+			cubes.children.forEach(function( cube ) {
+				cube.material.color.setRGB( cube.grayness, cube.grayness, cube.grayness );
+			});
+			
+			//here i'll manipulate the objects intersected by the ray
+			for( var i = 0; i < intersects.length; i++ ) {
+				var intersection = intersects[ i ];
+				var obj = intersection.object;
+				obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+			}
 		}
-
 		
 	}
 
@@ -178,15 +188,56 @@ var displayScene=function(){
 	}
 	
 	
+	function compositAnimationCheck(composit){
+		if (composit && composit.children){
+			var interval=composit.maxSize/(composit.children.length+1);
+			for (var i=0;i<composit.children.length;i++){
+				if (composit.children[i].position.z<(i*interval)){
+					composit.children[i].position.z+=interval/2;	
+				}
+			}
+		}
+		
+		
+		/*
+		if (!window.expanded && composit.animating===false){
+			//do nothing
+		} else if (window.expanded && composit.animating===false){
+			//do nothing
+		} else if (!window.expanded && composit.animating===true){
+			for (var i=0;i<composit.children.length;i++){
+				composit.children[i].position.z+=100;
+			}
+			if (composit.children[length-1].position.z>composit.maxSize){
+				compsit.animating=false;
+				window.expanded=true;
+			}
+		}else if (window.expanded && composit.animating===true){
+			for (var i=0;i<composit.children.length;i++){
+				composit.children[i].position.z-=100;
+			}
+			if (composit.children[length-1].position.z<composit.minSize){
+				compsit.animating=false;
+				window.expanded=false;
+			}
+			
+		}
+		*/
+	}
+	
 	function render() {
-		camera.lookAt(new THREE.Vector3(256,256,256));
+		camera.lookAt(new THREE.Vector3(0,0,5000));
+		
+		
 		
 		if (window.scenePaused===false){
 			particleLight.position.z +=100;
-			if (particleLight.position.z>10000){
-				particleLight.position.z=-3000;
+			if (particleLight.position.z>composit.maxSize){
+				particleLight.position.z=0;
 			}
 		}
+		
+		compositAnimationCheck(composit);
 		
 		renderer.render( scene, camera );
 	}
@@ -195,8 +246,13 @@ var displayScene=function(){
 
 window.onload=function(){
 	window.scenePaused=false;
+	window.expanded=false;
 	displayScene();
 	$("body").on("click","button#pause",function(){
 		window.scenePaused=!window.scenePaused;
+	});
+	
+	$("body").on("click","button#expand",function(){
+		window.expanded=!window.expanded;
 	});
 };
