@@ -1,8 +1,4 @@
 var displayScene=function(){	
-	var data=utils.mockData(30);
-	
-	data=dummyData.programSteps;
-	
 	var composit={animating:false,maxSize:3000,children:[]};
 	var container, containerWidth, containerHeight;
 	var camera, scene, renderer, group, particle, particleLight, axes, geom, cubes, projector, mouseVector;
@@ -19,7 +15,19 @@ var displayScene=function(){
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	
-	init(data);
+	
+	/////////////////////////////////////////////////
+	var timeline=utils.mockData(30);
+	
+	timeline=dummyData.programSteps;
+	var glossary=utils.toGlossary(dummyData.components);
+	for (var i=0;i<timeline.length;i++){
+		timeline[i].component=glossary[timeline[i].id];
+	}
+	console.log(timeline);
+	/////////////////////////////////////////////////
+	
+	init(timeline);
 	animate();
 	
 
@@ -80,6 +88,7 @@ var displayScene=function(){
 		*/
 	
 		//loop through the data
+		//this composit monstrosity should be a class
 		composit = new THREE.Object3D();
 		composit.maxSize=10000;			
 		var interval=composit.maxSize/(data.length+1);
@@ -95,6 +104,9 @@ var displayScene=function(){
 			} else {
 				shape = subroutines.fun( {z:z,geometry:variableGeometry} );
 			}
+			
+			shape.componentData=data[i].component;
+			
 			shape.collapse=new TWEEN.Tween(shape.position).to({z:(composit.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
 			shape.expand=new TWEEN.Tween(shape.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
 			composit.add( shape );
@@ -179,12 +191,12 @@ var displayScene=function(){
 	    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 		}
 		
-		if (cubes){
-			var intersects = raycaster.intersectObjects( cubes.children, true );	
+		if (composit){
+			var intersects = raycaster.intersectObjects( composit.children, true );	
 			
 			//cubes (change this later) is just the collection of shapes to check
-			cubes.children.forEach(function( cube ) {
-				cube.material.color.setRGB( cube.grayness, cube.grayness, cube.grayness );
+			composit.children.forEach(function( shape ) {
+				shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
 			});
 			
 			//here i'll manipulate the objects intersected by the ray
@@ -192,6 +204,7 @@ var displayScene=function(){
 				var intersection = intersects[ i ];
 				var obj = intersection.object;
 				obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+				console.log(obj.componentData);
 			}
 		}
 		
