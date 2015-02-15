@@ -25,3 +25,11 @@ utils.toGlossary=function(x){
   for (var i=0, glossary={};i<x.length;glossary[x[i].id]=x[i], i++){}
   return glossary;
 };
+
+utils.parseTimeline=function(timeline,components){
+  var glossary= utils.toGlossary(components);
+	for (var i=0;i<timeline.length;i++){
+		timeline[i].component=glossary[timeline[i].id];
+	}
+	return timeline;
+};
