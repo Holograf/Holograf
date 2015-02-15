@@ -29,9 +29,9 @@ var displayScene=function(){
 		containerHeight = container.clientHeight;
 
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
-		camera.position.z = 5000;
+		camera.position.z = 6000;
 		camera.position.y = 0;
-		camera.position.x = -4000;
+		camera.position.x = 0;
 		
 		controls = new THREE.OrbitControls( camera );
 		controls.addEventListener( 'change', render );
@@ -50,14 +50,16 @@ var displayScene=function(){
 		
 		var steps=30;
 		var interval = 360/steps;
-		
+		var radianInterval = (2*Math.PI)/steps;
 		for (var i=0;i<steps;i++){
-			var geometry = new THREE.PlaneBufferGeometry( 1000, 10 );
+			var geometry = new THREE.PlaneBufferGeometry( 300, 10 );
 			var material = new THREE.MeshLambertMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
 			var plane = new THREE.Mesh( geometry, material );
 			plane.position.z+=5000;
-			plane.position.x=interval*(Math.PI/3);
-			plane.rotation.z+=interval*i;
+			plane.rotation.z-=radianInterval*i;
+			var coords = geo.getPoint(plane.position.x,plane.position.y,500,interval*i);
+			plane.position.x=coords.x2;
+			plane.position.y=coords.y2;
 			scene.add( plane );
 		}
 
