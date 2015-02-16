@@ -149,14 +149,184 @@ The Compiler uses [escodegen](https://github.com/estools/escodegen) to generate 
 
 The injected code is then simply executed inside of an eval statement. The ___Program object is instantiated as an instance of the Program class. This class contains all of the injection mehtods which are used to create a timeline of the flow of data through the program. This data is represented by three properties: components, programState, and scope.
 
-**components**
+**Components**
 
-Each item of interest in the program is registered as a component - this consists of variables, conditionals, loops, and function invocations. Each component has a type: 'var' for variables, 'block' for conditionals and loops, and 'invoke' for function invocations.
+Each item of interest in the program is registered as a component - this consists of variables, conditionals, loops, and function invocations. 
 
-Each component has a unique id that is assigned incrementally based on which scope it was instantiated. A function invocation creates a new scope that will cause components of the same name or type to be registered as new components
+Each component has a unique id that is assigned incrementally based on which scope it was instantiated. A function invocation creates a new scope that will cause components of the same name or type to be registered as new components.
 
-Each component also has 'block' and 'scope' properties that represent the id of the block it is contained in and the scope in which it was 
+Each component also has 'block' and 'scope' properties that represent the id of the block it is contained in and the scope in which it was instantiated or invoked.
+
+```javascript
+// Code to be compiled
+var f = function (n) {
+  if (n < 3){
+    return true;
+  } else {
+    return false
+  }
+}
+var x = f(1);
+```
+```javascript
+// Compiled components array
+"components": [
+  {
+    "id": 0,
+    "type": "block",
+    "name": "global",
+    "block": 0,
+    "scope": 0,
+    "createdAt": 0
+  },
+  { "id": 1,
+    "type": "var",
+    "name": "f",
+    "block": 0,
+    "scope": 0,
+    "createdAt": 0
+  },
+  { "id": 2,
+    "type": "invoke",
+    "name": "f",
+    "block": 0,
+    "scope": 0,
+    "createdAt": 1,
+    "function": 1
+  },
+  { "id": 3,
+    "type": "var",
+    "name": "n",
+    "block": 0,
+    "scope": 2,
+    "createdAt": 2
+  },
+  { "id": 4,
+    "type": "block",
+    "name": "if",
+    "block": 0,
+    "scope": 2,
+    "createdAt": 3,
+    "paths": 2
+  },
+  { "id": 5,
+    "type": "var",
+    "name": "x",
+    "block": 0,
+    "scope": 0,
+    "createdAt": 6
+  }
+]
+```
+Every component has an id, a type, block, scope, and createdAt attributes. Each component has a type: `var` for variables, `block` for conditionals and loops, and `invoke` for function invocations.
+
+A `var` component represents both variables, and function definitions (which are stored just like regular variables).
+
+A `block` component represents either a conditional or a loop. Different kinds of loops have different names: `for` for 'for' loops, `while` for while loops, and `do` for do/while loops. An if statement (and its subsequent `else` and `else if` statements) are represented with a name of 'if'. 'if' blocks have a unique property called `paths`, which indicates the total number of if, else/if, and else blocks in the conditional.
+In addition, there is a special `block` with the name 'global' in every components array. This exists to allow easy indexing based on the id value (instead of id-1).
+
+An `invoke` component represents a function invocation. The `name` property represents the name of the invoked function, and the `function` property represents the id of the original function declaration of the currently invoked function.
+
+Each component has a `block` property, which is the id of the block the component originates from. Likewise, the `scope` property defines the id of the scope the component was initialized in. Each function invocation creates a new scope, listed as the id of that function ivocation. For `block` and `scope`, the value 0 represents no block and the global scope, respectively.
+
+Each component also has a 'createdAt' property, which describes which step in the `programSteps` array the component was instantiated.
+
+**Program Steps**
+```javascript
+// Code to be compiled
+var x = 0;
+while (x < 2) {
+  x = x + 1;
+}
+```
+```javascript
+"programSteps": [
+  { "id": 1,
+    "value": 0
+  },
+  { "id": 2,
+    "while": "open"
+  },
+  { "id": 2,
+    "while": "cycle"
+  },
+  { "id": 1,
+    "value": 1
+  },
+  { "id": 2,
+    "while": "cycle"
+  },
+  { "id": 1,
+    "value": 2
+  },
+  { "id": 2,
+    "while": "close"
+  }
+]
+```
+The above program steps array represents the ordered state of the program throughout the course of its execution. Each step has an id corresponding to a particular component (at index id in the components array), and a property relevant to that particular step.
+
+1. A variable with `id` 1 (x) is assigned a value of 0.
+
+1. Loop invocations have a property corresponding to their type. A while loop therfore has a property `while`, with a value 'open' to signify the start of the loop.
+
+1. On each iteration of the loop, a value of 'cycle' is assigned to the loop-specific (in this case `while`) property.
+
+1. The variable with `id` of 1 (x) is changed to a value of 1. Note that operations are not tracked - just the result of the operation.
+
+1. Another 'cycle' is logged.
+
+1. The variable with `id` 1 is changed to a value of 2.
+
+1. The loop exits with a value of 'close'. In case of a loop not executing, this step comes immediately after the loop's 'open' step.
 
 
+```javascript
+// Code to be compiled
+var f = function (n) {
+  if (n < 3){
+    return true;
+  } else {
+    return false
+  }
+}
+var x = f(1);
+```
+```javascript
+"programSteps": [
+  { "id": 1,
+    "value": "___function code"
+  },
+  { "id": 2,
+    "invoke": "f"
+  },
+  { "id": 3,
+    "param": 1
+  },
+  { "id": 4,
+    "if": 2
+  },
+  { "id": 4,
+    "enter": 0
+  },
+  { "id": 2,
+    "return": true
+  },
+  { "id": 5,
+    "value": true
+  }
+]
+```
+1. The first line `var f = function (n) {...}` is essentially a variable declaration, with `f` being assigned a function. This is represented by the special identifier `___function code` to signify that it is a function definition, and not a normal value.
 
+1. Next, the function `f` is invoked. The id corresponds to the function invocation, allowing for tracking of nested function calls of the same name, as in recursion.
 
+1. Each explicitly named parameter (listed in the parentheses of the function declaration) is defined as a variable. Rather than `value` property, these variables have a `param` property to indicate they are parameter instantiations.
+
+1. Each conditional block has an `if` property, with a value corresponding to the total number of if, else if, and else statements it consists of.
+
+1. Upon satisfying one portion of the conditional, a step with an `enter` property is created. The `enter` property is the index (zero-based) of the path in the if / else if / else block. Here we enter the first `if` statement of an if / else block with 2 paths, so the value of `enter` is 0.
+
+1. The next step represents the return of the invoked function. The `id` of the function invocation is given, along with a `return` property with the returned value.
+
+1. Finally, a simple variable declaration is given to x (id 5) with the returned value (true).
