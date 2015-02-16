@@ -16,8 +16,6 @@ module.exports = React.createClass({
   // this.props should have an array of the program states
 
   getInitialState: function() {
-    console.log('buildState result');
-    console.log(ProgramObject.buildState(3));
     return { currentState: ProgramObject.buildState(0) };
   },
 
@@ -44,14 +42,12 @@ module.exports = React.createClass({
   render: function () {
 
     var displayThings = [];
-    console.log('displayThings');
 
     for (var key in this.state.currentState) {
       if (key !== 'index') {
         displayThings.push(<li><Thing {...this.state.currentState[key]} /></li>);  
       }
     }
-    console.log(displayThings);
 
     return (
       <div>

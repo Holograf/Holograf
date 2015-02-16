@@ -1,7 +1,6 @@
 var ProgramDetail = {
   buildState: function(index) {
     if (index >= this.ProgramState.length - 1) {
-      console.log('Reached end of program');
       index = 0;    // or could set to this.ProgramState.length-1
     }
     // create object to hold the curren state
