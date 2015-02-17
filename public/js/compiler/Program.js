@@ -8,7 +8,15 @@ var Program = function () {
   this._blockStack = [0];
   this._scopeStack = [0];
   this.baseTime = window.performance.now();
+
+  this.initialize();
 }
+
+Program.prototype.initialize = function () {
+  var global = this.makeComponent('block', 'global');
+  this.components.push(global);
+}
+
 
 Program.prototype.getData = function () {
   return {
@@ -31,13 +39,18 @@ Program.prototype.getCurrentBlock = function () {
 Program.prototype.makeStep = function (id, method, value) {
   var step = {};
   step.id = id;
+
+  // Check to see if the value is an object - if so, copy it deeply
+  if (typeof value === 'object') {
+    value = JSON.parse(JSON.stringify(value))
+  }
   step[method] = value;
   // step.time = window.performance.now() - this.baseTime; 
   return step;
 }
 
 Program.prototype.makeComponent = function (type, name) {
-  var id = this.components.length + 1;
+  var id = this.components.length;
   var component = {
     id: id,
     type: type,
@@ -56,7 +69,7 @@ Program.prototype.find = function (name) {
 }
 
 Program.prototype.instantiate = function (name, method, value) {
-  var id = this.components.length + 1;
+  var id = this.components.length;
   
   var component = this.makeComponent('var', name);
   this.components.push(component);
@@ -96,7 +109,7 @@ Program.prototype.addStep = function (name, method, value) {
 }
 
 Program.prototype.openBlock = function (type, state) {
-  var id = this.components.length + 1;
+  var id = this.components.length;
   var component = this.makeComponent('block', type);
 
   // Add number of branches for if statement
@@ -186,11 +199,31 @@ Program.prototype.function = function (name, fn) {
   }  
 }
 
+Program.prototype.getFunctionDefinition = function (name) {
+
+  var currentScope = this.getCurrentScope();
+  var id;
+
+  var traverse = function (scopeId) {
+    var scope = this.scopes[scopeId]
+    if (scope[name]) {
+      id = scope[name];
+    } else {
+      var nextScope = this.getComponent(scopeId).scope;
+      traverse(nextScope);
+    }
+  }.bind(this);
+
+  traverse(currentScope)
+  return id;
+}
+
 Program.prototype.invoke = function (name) {
-  var fn = this.scopes[this.getCurrentScope()];
+
   
   var id = this.components.length + 1;
   var component = this.makeComponent('invoke', name);
+  component.function = this.getFunctionDefinition(name);
   this.components.push(component);
 
   var step = this.makeStep(id, 'invoke', name);
@@ -212,7 +245,7 @@ Program.prototype.return = function (name) {
 }
 
 Program.prototype.getComponent = function (id) {
-  return this.components[id - 1] || 0;
+  return this.components[id] || 0;
 }
 
 Program.prototype.setBlock = function () {
