@@ -49,13 +49,15 @@
     "gulp-concat": "^2.2.0",
     "gulp-jshint": "^1.9.0",
     "gulp-minify-css": "^0.4.4",
-    "gulp-rename": "^1.2.0",
-    "gulp-sass": "^1.3.2",
     "gulp-notify": "^2.2.0",
     "gulp-react": "^2.0.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-sass": "^1.3.2",
+    "gulp-sequence": "^0.3.2",
     "gulp-shell": "^0.2.11",
     "gulp-streamify": "0.0.5",
     "gulp-uglifyjs": "^0.5.0",
-    "reactify": "^0.13.1"
+    "reactify": "^0.13.1",
+    "run-sequence": "^1.0.2"
   }
 }

@@ -8,7 +8,7 @@ var bower = require('gulp-bower');
 var reactify = require('reactify');
 var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
-
+var runSequence = require('run-sequence');
 var paths = {
   scripts: ['public/**/*.js'],
   html: ['public/**/*.html'],
@@ -59,9 +59,15 @@ gulp.task('run', shell.task([
   'cd server && nodemon server.js'
 ]));
 
-gulp.task('build', ['clean', 'compile', 'copy', 'sass']);
+// gulp.task('build', ['clean', 'compile', 'copy', 'sass']);
+gulp.task( 'build', function(callback) {
+  runSequence('clean', 'compile', 'copy', 'sass', callback); 
+});
 
-gulp.task('default', ['build', 'watch', 'run']);
+// gulp.task('default', ['build', 'watch', 'run']);
+gulp.task( 'default', function(callback) {
+  runSequence('build', 'watch', 'run', callback);
+});
 
 gulp.task('watch', function() {
   gulp.watch('public/**/*.*', ['build']);
