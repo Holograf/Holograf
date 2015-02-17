@@ -34,7 +34,7 @@ var ProgramObject = {
 
   // This method is a hybrid of the prior two:
     // It provides the ProgramSteps values with all their info from Components array
-  buildState: function(index) {
+  buildStep: function(index) {
     
     // Create objects that have been instantiated so far
     if (index >= this.ProgramSteps.length) {

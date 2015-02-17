@@ -6,7 +6,7 @@ var Actions = {
 
   updateCode: function(code) {
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.CHANGE_CODE,
+      actionType: AppConstants.UPDATE_CODE,
       code: code
     })
   },
