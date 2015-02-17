@@ -6,18 +6,18 @@ This workflow is based (nearly verbatim) on the workflow described [here](https:
 
 ### Local development
 
-1. Fork the central repo at [https://github.com/cloudrebalance/CloudBalance](https://github.com/cloudrebalance/CloudBalance)
+1. Fork the central repo at [https://github.com/SuspiciousPi/SuspiciousPi](https://github.com/SuspiciousPi/SuspiciousPi.git)
 
 1. Clone the forked repo to your local machine
 
     ```bash
-    $ git clone https://github.com/USERNAME/CloudBalance.git
+    $ git clone https://github.com/USERNAME/SuspiciousPi.git
     ```
 
 1. Configure the remotes by adding the central repository as 'upstream'
 
     ```bash
-    $ git remote add upstream https://github.com/cloudrebalance/CloudBalance.git
+    $ git remote add upstream https://github.com/SuspiciousPi/SuspiciousPi.git
     ```
 
 1. Create a new branch for the feature you'd like to work on. Please try to name the branch as appropriately as possible (be terse, yet descriptive).

@@ -7,12 +7,6 @@ var CodeMirror = require('./CodeMirror/');
 var Button = require('react-bootstrap/Button');
 var Actions = require('../actions/Actions');
 
-var div = React.createFactory('div');
-var h1 = React.createFactory('h1');
-var p = React.createFactory('p');
-var pre = React.createFactory('pre');
-var code = React.createFactory('code');
-
 module.exports = React.createClass({
 
   options: {

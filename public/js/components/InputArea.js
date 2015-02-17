@@ -6,7 +6,8 @@ var React = require('react');
 var TabbedArea = require('react-bootstrap/TabbedArea');
 var TabPane = require('react-bootstrap/TabPane');
 var CodeEditor = require('./CodeEditor');
-var DataEditor = require('./DataEditor');
+// var DataEditor = require('./DataEditor');
+var ProgramStateView = require('./ProgramStateView');
 
 
 module.exports = React.createClass({
@@ -18,8 +19,8 @@ module.exports = React.createClass({
             <TabPane eventKey={1} tab="Code">
               <CodeEditor code={this.props.code} />
             </TabPane>
-            <TabPane eventKey={2} tab="Data">
-              <DataEditor data={this.props.data} />
+            <TabPane eventKey={2} tab="View State">
+              <ProgramStateView />
             </TabPane>
       </TabbedArea>
     );
