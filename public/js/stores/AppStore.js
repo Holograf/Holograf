@@ -27,14 +27,8 @@ var compileCode = function() {
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
-    _code = "var f = function (n) {\n" +
-            "  if (n < 2){\n"+
-            "    return 1;\n"+
-            "  }else{\n"+
-            "    return f(n-2) + f(n-1);\n"+
-            "  }\n"+
-            "}\n"+
-            "var x = f(2);";
+    _code = "obj = {a: 1, f: function (n) { return 1 }}";
+            
     _data = [];
   },
 
