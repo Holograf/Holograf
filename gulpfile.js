@@ -4,7 +4,6 @@ var concat = require('gulp-concat');
 var shell = require('gulp-shell');
 var sass = require('gulp-sass') ;
 var rename = require('gulp-rename');
-var bower = require('gulp-bower');
 var reactify = require('reactify');
 var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
