@@ -3,6 +3,7 @@
  */
 
 var React = require('react');
+var Panel = require('react-bootstrap/Panel');
 var CodeMirror = require('./CodeMirror/');
 var Button = require('react-bootstrap/Button');
 var Actions = require('../actions/Actions');
@@ -21,6 +22,8 @@ module.exports = React.createClass({
   },
 
   compile: function () {
+    // Actions.compile(function(data) {  // });
+    deleteScene();
     Actions.compile();
   },
 
@@ -28,9 +31,10 @@ module.exports = React.createClass({
 
     this.options.value = this.props.code;
 
+    // <Panel className="codeMirrorPanel">        </Panel>
     return (
-      <div>
-        <CodeMirror {...this.options} />
+      <div className="codeContainer">
+          <CodeMirror {...this.options} />
         <Button bsStyle="primary" className={'pull-right'} onClick={this.compile} >Compile</Button>
       </div>
     );

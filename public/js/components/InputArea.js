@@ -17,17 +17,12 @@ module.exports = React.createClass({
   render: function() {
 
     return (
+
       <TabbedArea defaultActiveKey={1}>
         <TabPane eventKey={1} tab="Code">
           <CodeEditor code={this.props.code} />
         </TabPane>
-        <TabPane eventKey={2} tab="View State">
-          <ProgramStateView data={this.props.data} />
-        </TabPane>
-        <TabPane eventKey={3} tab="2D Visualization">
-          <Visual2D data={this.props.data} />
-        </TabPane>
-        <TabPane eventKey={4} tab="3D Visualization">
+        <TabPane eventKey={2} tab="3D Visualization">
           <Visual3D data={this.props.data} />
         </TabPane>
       </TabbedArea>
