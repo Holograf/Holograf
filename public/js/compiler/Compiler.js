@@ -3,15 +3,14 @@ var generateCode = require('escodegen').generate;
 var inject = require('./Inject');
 var execute = require('./Execute');
 
-
-// 
 var Compiler = {
   
-  parse: function (code) {
+  parse: function (code, callback) {
 
     var parsedCode = parse(code);
     var programBody = parsedCode.body;
 
+    console.log(JSON.stringify(parsedCode, null, 2));
 
 
     var traverse = function (body) {
@@ -20,28 +19,71 @@ var Compiler = {
         var node = body[index];
 
         if (node.type === 'VariableDeclaration') {
+
+          var declarationType = node.declarations[0].init.type;
+
           // Check for special declaration of function.
           // If so, push the function into the call stack and traverse the body of the function
-          if (node.declarations[0].init.type === 'FunctionExpression') {
+          if (declarationType === 'FunctionExpression') {
             var name = node.declarations[0].id.name;
-            functionStack.push(name);
-
             var functionBody = node.declarations[0].init.body
             var params = node.declarations[0].init.params;
             
+            functionStack.push(name);
             // Inject a function variable watcher after the declaration
             body.splice(index + 1, 0, inject.function(node));
             // Inject invocation and parameter watchers inside the function body 
             inject.invoke(functionBody, name, params);
             
             traverse(functionBody.body);
-
             functionStack.pop();
           } 
-          else { // Else regular variable declaration
-            body.splice(index + 1, 0, inject.variable(node));
+
+
+          // Check for special declaration of an object.
+          else if (declarationType === 'ObjectExpression') {
+
+            var objName = node.declarations[0].id.name;
+            var properties = node.declarations[0].init.properties;
+            
+            var traverseObjectProperties = function (properties, objName) {
+
+
+              for (var i = 0; i < properties.length; i++) {
+                var property = properties[i];
+                var keyName = objName + '.' + property.key.name;
+                
+                if (property.value.type === 'FunctionExpression') {
+
+
+                  var functionBody = property.value.body;
+                  var params = property.value.params;
+
+                  functionStack.push(keyName);
+
+                  // Inject invocation and parameter watchers inside the function body 
+                  inject.method(functionBody, keyName, params);
+                  traverse(functionBody.body);
+
+                  functionStack.pop();
+                } else if (property.value.type === 'ObjectExpression') {
+                  traverseObjectProperties(property.value.properties, keyName);
+                }
+              }
+            }
+
+            traverseObjectProperties(properties, objName);
+
+            body.splice(index + 1, 0, inject.object(node));
+            index++;
           }
-          index++;
+
+          // Else regular variable declaration
+          else { 
+            body.splice(index + 1, 0, inject.variable(node));
+            index++;
+          }
+          
         }
 
         if (node.type === 'ForStatement') {
@@ -72,9 +114,51 @@ var Compiler = {
 
 
         if (node.type === 'ExpressionStatement') {
+
           if (inject.isNotInjectedFunction(node)) {
-            body.splice(index + 1, 0, inject.expression(node) );
-            index++;
+
+            // Check for special declaration of function.
+            // If so, push the function into the call stack and traverse the body of the function
+            if (node.expression.right.type === 'FunctionExpression') {
+
+              if (node.expression.left.object) {
+                var name = inject.traverseMemberExpression(node.expression.left);
+              } else { 
+                var name = node.expression.left.name;
+              }
+
+              var functionBody = node.expression.right.body
+              var params = node.expression.right.params;
+              
+              functionStack.push(name);
+              // Inject a function variable watcher after the declaration
+
+              if (node.expression.left.object) {
+                // body.splice(index + 1, 0, inject.function(node));
+              } else {
+                body.splice(index + 1, 0, inject.function(node));
+              }
+              // Inject invocation and parameter watchers inside the function body 
+              inject.invoke(functionBody, name, params);
+              
+              traverse(functionBody.body);
+              functionStack.pop();
+            }   
+
+            if (node.expression.left.type === 'MemberExpression') {
+              body.splice(index + 1, 0, inject.memberExpression(node) );
+              index++;
+            } 
+            // else {
+            //   body.splice(index + 1, 0, inject.expression(node) );
+            //   index++;
+            // }
+
+            if (node.expression.right.type === 'ObjectExpression') {
+              body.splice(index + 1, 0, inject.object(node) );
+              index++; 
+            } 
+
           }
         }
 
@@ -114,7 +198,11 @@ var Compiler = {
 
     traverse(programBody);
 
+    console.log('CODE!', JSON.stringify(parsedCode, null, 2));
     var wrappedCode = generateCode(parsedCode);
+    if (callback) {
+      callback(wrappedCode);
+    }
     console.log(wrappedCode);
 
     return execute(wrappedCode);
@@ -125,7 +213,6 @@ var Compiler = {
 
 // External variable to help manage tracking of function invocations
 var functionStack = [];
-
 
 
 module.exports = Compiler;

@@ -20,13 +20,62 @@ module.exports = {
   },
 
   function: function (node) {
-    var name = node.declarations[0].id.name;
+    if (node.declarations) {
+      var name = node.declarations[0].id.name
+    } else if (node.expression) {
+      var name = node.expression.left.name; 
+    }
 
     return this.createNode('function', name);    
   },
 
-  forLoopInit: function (node, type) {
+  object: function (node) {
 
+    // console.log(node);
+
+    if (node.type === 'VariableDeclaration') {
+      var name = node.declarations[0].id.name;
+    } else if (node.type ==='ExpressionStatement') {
+
+      if (node.expression.left.type === 'Identifier') {
+        var name = node.expression.left.name;
+      } else if (node.expression.left.type === 'MemberExpression') {
+        var name = this.traverseMemberExpression(node.expression.left);
+      }
+
+    }
+
+    return this.createNode('object', name);    
+  },
+
+  traverseMemberExpression: function (object) {
+    var string = '';
+    var traverse = function (object) {
+      if (object.property) {
+        string = '.' + object.property.name + string;
+      }
+      if (object.object) {
+        traverse(object.object);
+      } else {
+        string = object.name + string;
+      }
+    }.bind(this);
+    traverse(object);
+
+    return string;
+  },
+
+  memberExpression: function (node) {
+    var object = node.expression.left;
+
+    console.log('OBJECT!', object)
+
+    var string = this.traverseMemberExpression(object);
+
+    return this.createNode('setObjectProperty', string);
+  },
+
+  forLoopInit: function (node, type) {
     var name = node.init.declarations[0].id.name;
     var value = node.init.declarations[0].init.value;
 
@@ -95,7 +144,10 @@ module.exports = {
     return this.createNode('block', 'if', 'close');
   },
 
-  invoke: function (node, name, params) {
+  invoke: function (node, name, params, term) {
+    if (term === undefined) {
+      term = 'invoke';
+    }
     var injectionPoint = node.body;
 
     for (var i = params.length - 1; i >= 0; i--) {
@@ -103,12 +155,16 @@ module.exports = {
       injectionPoint.unshift(injectedNode);
     }
 
-    var injectedNode = this.createNode('invoke', name);
+    var injectedNode = this.createNode(term, name);
     injectionPoint.unshift(injectedNode);
 
 
     var injectedNode = this.createNode('return', name);
     injectionPoint.push(injectedNode);
+  },
+
+  method: function (node, name, params) {
+    this.invoke(node, name, params, 'method');
   },
 
   return: function (node, name) {
@@ -166,7 +222,11 @@ module.exports = {
     }
 
     if (args.length === 1) {
-      if (method === 'set' || method === 'function' || method === 'param') {
+      if (method === 'set' || 
+          method === 'function' || 
+          method === 'param' || 
+          method === 'object' || 
+          method === 'setObjectProperty') {
         injectedNode.expression.arguments.push({
           "type": "Identifier",
           "name": args[0]

@@ -7,7 +7,8 @@ var AppConstants = require('../constants/appConstants');
 var Program = require('../compiler/Program.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
-var Compiler = require('../compiler/Compiler')
+var Compiler = require('../compiler/Compiler');
+
 
 var CHANGE_EVENT = 'change';
 
@@ -17,24 +18,20 @@ var _currentStep = {};
 
 var updateCode = function(code) {
   _code = code;
-}
+};
 
 var compileCode = function() {
   _data = Compiler.parse(_code);
-  console.log(_data);
-}
+  // console.log(_data);
+  var timeline = utils.parseTimeline(_data.programSteps, _data.components);
+  displayScene(timeline);
+};
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
-    _code = "var f = function (n) {\n" +
-            "  if (n < 2){\n"+
-            "    return 1;\n"+
-            "  }else{\n"+
-            "    return f(n-2) + f(n-1);\n"+
-            "  }\n"+
-            "}\n"+
-            "var x = f(2);";
+    _code = "obj = {a: 1, f: function (n) { return 1 }}";
+            
     _data = [];
   },
 
