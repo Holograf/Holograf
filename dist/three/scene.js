@@ -273,7 +273,6 @@ var displayScene=function(timeline){
 				//otherwise, open the modal and set the hovered-on object to yellow
 				var d="";
 				var selectedId=intersects[0].object.componentData.id;
-				console.log(selectedId);
 				for (var key in intersects[0].object.componentData){
 					d+="<div>"+key+": "+intersects[0].object.componentData[key]+"</div>";
 				}
