@@ -9,11 +9,9 @@ var TabPane = require('react-bootstrap/TabPane');
 var CodeEditor = require('./CodeEditor');
 var Visual3D = require('./Visual3D.js');
 
-
 module.exports = React.createClass({
 
   render: function() {
-
     return (
       <div className="appContainer">
         <div className="navbar-brand">SuspiciousPi</div>
