@@ -9,6 +9,7 @@ var reactify = require('reactify');
 var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
+
 var paths = {
   scripts: ['public/**/*.js'],
   html: ['public/**/*.html'],
@@ -46,8 +47,10 @@ gulp.task('compile', function(){
   b.add('./public/js/main.js');
   return b.bundle()
     .pipe(source('main.js'))
+    // .pipe(streamify(uglify('main.min.js')))
     .pipe(gulp.dest('./dist/js'));
 });
+
 
 gulp.task('compress', function() {
   gulp.src('./dist/js/*.js')
@@ -59,15 +62,12 @@ gulp.task('run', shell.task([
   'cd server && nodemon server.js'
 ]));
 
-// gulp.task('build', ['clean', 'compile', 'copy', 'sass']);
-gulp.task( 'build', function(callback) {
-  runSequence('clean', 'compile', 'copy', 'sass', callback); 
+gulp.task('build', function(callback) {
+  runSequence('clean', 'compile', 'copy', 'sass', callback);
 });
 
-// gulp.task('default', ['build', 'watch', 'run']);
-gulp.task( 'default', function(callback) {
-  runSequence('build', 'watch', 'run', callback);
-});
+gulp.task('default', ['build', 'watch', 'run']);
+
 
 gulp.task('watch', function() {
   gulp.watch('public/**/*.*', ['build']);

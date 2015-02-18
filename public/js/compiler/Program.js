@@ -44,7 +44,11 @@ Program.prototype.makeStep = function (id, method, value) {
   if (typeof value === 'object') {
     value = JSON.parse(JSON.stringify(value))
   }
+  if (value === undefined) {
+    value = '___undefined';
+  }
   step[method] = value;
+
   // step.time = window.performance.now() - this.baseTime; 
   return step;
 }
@@ -65,7 +69,7 @@ Program.prototype.makeComponent = function (type, name) {
 
 
 Program.prototype.find = function (name) {
-  return !!this.scopes[this.getCurrentScope()][name];
+  return this.scopes[this.getCurrentScope()][name];
 }
 
 Program.prototype.instantiate = function (name, method, value) {
@@ -78,6 +82,7 @@ Program.prototype.instantiate = function (name, method, value) {
   this.programSteps.push(step);
 
   this.scopes[this.getCurrentScope()][name] = component.id;
+  return component;
 }
 
 Program.prototype.getId = function (name) {
@@ -219,9 +224,7 @@ Program.prototype.getFunctionDefinition = function (name) {
 }
 
 Program.prototype.invoke = function (name) {
-
-  
-  var id = this.components.length + 1;
+  var id = this.components.length;
   var component = this.makeComponent('invoke', name);
   component.function = this.getFunctionDefinition(name);
   this.components.push(component);
@@ -232,6 +235,105 @@ Program.prototype.invoke = function (name) {
   this._scopeStack.push(component.id);
   this._currentScope = component.id;;
   this.scopes[component.id] = {};
+}
+
+
+Program.prototype.method = function(name) {
+  this.invoke(name);
+}
+
+Program.prototype.lastIdOfObject = function (id) {
+
+  for (var i = this.programSteps.length - 1; i >= 0; i--) {
+    var step = this.programSteps[i];
+    if (step.id === id) {
+      return step.pointer;
+    }
+  }
+}
+
+Program.prototype.setObjectProperty = function (object, value) {
+  var id = this.getId(object);
+
+  if (id) {
+    if (typeof value === 'object') {
+      this.addStep(this.components.length + 1, 'pointer', value);
+    } else {
+      this.addStep(id, 'value', value);
+    }
+  } else {
+    // Object/property was not found, therefor a new property is being defined.
+    var parent = object.substring(0, object.lastIndexOf('.'));
+    var key = object.substring(object.lastIndexOf('.') + 1, object.length);
+    var id = this.getId(parent);
+
+    if (typeof value === 'object') {
+      var component = this.instantiate(object, 'pointer', id);
+      component.name = key;
+      component.type = 'property';
+      component.parent = id;
+    } else if (typeof value === 'function') {
+      var component = this.instantiate(object, 'value', '___function code');
+      component.name = key;
+      component.type = 'method';
+      component.parent = id;
+    } else {
+      var component = this.instantiate(object, 'value', value);
+      component.name = key;
+      component.type = 'property';
+      component.parent = id;
+    }
+
+  }
+}
+
+Program.prototype.object = function(name, obj) {
+
+  var object = this.makeComponent('object');
+  this.components.push(object);
+
+  var found = this.find(name);
+  if (!found) {
+    var variable = this.instantiate(name, 'pointer', object.id);
+  } else {
+    this.addStep(found, 'pointer', object.id);
+  }
+
+  var traverseKeys = function(name, obj, parent) {
+    for (var key in obj) {
+
+      var propertyName = name + '.' + key;
+      var value = obj[key];
+
+      if (typeof value === 'object') {
+        var newObject = this.makeComponent('object');
+        this.components.push(newObject);
+
+        var id = this.components.length + 1;
+        var component = this.instantiate(propertyName, 'pointer', id);
+        component.name = key;
+        component.type = 'property';
+        component.parent = parent.id;
+
+        traverseKeys(propertyName, value, newObject);
+      } else if (typeof value === 'function') {
+
+        var component = this.instantiate(propertyName, 'value', '___function code');
+        component.name = key;
+        component.type = 'method';
+        component.parent = parent.id;
+
+
+      } else {
+        var component = this.instantiate(propertyName, 'value', value);
+        component.name = key;
+        component.type = 'property';
+        component.parent = parent.id;
+      }
+    }
+  }.bind(this)
+  traverseKeys(name, obj, object);
+
 }
 
 
