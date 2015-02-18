@@ -4,8 +4,6 @@
 
 var React = require('react');
 var Panel = require('react-bootstrap/Panel');
-// var InputArea = require('./InputArea');
-// var React = require('react');
 var TabbedArea = require('react-bootstrap/TabbedArea');
 var TabPane = require('react-bootstrap/TabPane');
 var CodeEditor = require('./CodeEditor');
@@ -31,17 +29,4 @@ module.exports = React.createClass({
     );
   }
 });
-
-
-
-
-// module.exports = React.createClass({
-//   render: function() {
-//     return (
-//         <Panel>
-//           <InputArea {...this.props} />
-//         </Panel>
-//     );
-//   }
-// });
 

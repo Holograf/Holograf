@@ -4,7 +4,6 @@
 
 var React = require('react');
 var Panel = require('react-bootstrap/Panel');
-// var Router = require('react-router');
 var CodeMirror = require('./CodeMirror/');
 var Button = require('react-bootstrap/Button');
 var Input = require('react-bootstrap/Input');

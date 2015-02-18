@@ -36,7 +36,6 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
     _code = "obj = {a: 1, f: function (n) { return 1 }}";
-            
     _data = [];
     _shareUrl = '';
   },
