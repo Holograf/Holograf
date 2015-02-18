@@ -38,6 +38,7 @@ module.exports = React.createClass({
         <Button className="visualButton" bsStyle="primary" onClick={this.pauseScene} >Pause</Button>
         <Button className="visualButton" bsStyle="primary" onClick={this.expandScene} >Expand</Button>
         <div id="three-scene" data={this.props.data} />
+        <div id="three-modal"></div>
       </div>
     );
   }

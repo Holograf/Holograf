@@ -40,3 +40,17 @@ body {
 .codeMirrorPanel {
   padding: 0;
 }
+
+#three-modal{
+  display:none;
+  position:fixed;
+  top:50%;
+  left:0px;
+  height:50%;
+  z-index:4;
+  color:#fff;
+  background:transparent;
+  font-family:courier;
+  font-size:2em;
+  padding:20px;
+}
