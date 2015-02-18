@@ -68,14 +68,12 @@ module.exports = {
   memberExpression: function (node) {
     var object = node.expression.left;
 
-    console.log('OBJECT!', object)
-
     var string = this.traverseMemberExpression(object);
 
     return this.createNode('setObjectProperty', string);
   },
 
-  forLoopInit: function (node, type) {
+  loopInit: function (node, type) {
     var name = node.init.declarations[0].id.name;
     var value = node.init.declarations[0].init.value;
 
@@ -109,7 +107,7 @@ module.exports = {
     return this.createNode('loop', type, 'close');
   },
 
-  loopSet: function (node, type) {
+  loopPost: function (node, type) {
     var name = node.init.declarations[0].id.name;
     var injectedNode = this.createNode('set', name);
 
@@ -117,7 +115,7 @@ module.exports = {
   },
 
 
-  ifStart: function (node) {
+  ifOpen: function (node) {
     var paths = 0;
 
     var traverse = function(node) {
@@ -140,7 +138,7 @@ module.exports = {
     return this.createNode('block', 'if', paths);
   },
 
-  ifEnd: function (node) {
+  ifClose: function (node) {
     return this.createNode('block', 'if', 'close');
   },
 
