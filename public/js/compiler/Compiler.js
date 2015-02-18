@@ -5,7 +5,7 @@ var execute = require('./Execute');
 
 var Compiler = {
   
-  parse: function (code) {
+  parse: function (code, callback) {
 
     var parsedCode = parse(code);
     var programBody = parsedCode.body;
@@ -200,6 +200,9 @@ var Compiler = {
 
     console.log('CODE!', JSON.stringify(parsedCode, null, 2));
     var wrappedCode = generateCode(parsedCode);
+    if (callback) {
+      callback(wrappedCode);
+    }
     console.log(wrappedCode);
 
     return execute(wrappedCode);

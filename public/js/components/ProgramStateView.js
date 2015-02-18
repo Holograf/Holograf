@@ -13,27 +13,20 @@ var Thing = require('./Thing.js')
 // var Actions = require('../actions/Actions');
 
 module.exports = React.createClass({
-
   compile: function () {
     Actions.compile();
   },
-
-  previousStep: function() {
-  },
-
-  nextStep: function() {
-  },
+  previousStep: function() {},
+  nextStep: function() {},
 
   render: function () {
 
     var displayThings = [];
-
     // for (var key in this.props.currentStep) {
     //   if (key !== 'index') {
     //     displayThings.push(<li><Thing {...this.state.currentStep[key]} /></li>);  
     //   }
     // }
-
     return (
       <div>
         <Panel>
@@ -47,5 +40,3 @@ module.exports = React.createClass({
     );
   }
 });
-
-

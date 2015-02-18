@@ -14,7 +14,7 @@ var App = React.createClass({
   getAppState: function() {
     return {
       code: AppStore.getCode(),
-      program: AppStore.getData(),
+      data: AppStore.getData(),
       // step: AppStore.getProgramStep()
     };
   },
@@ -29,7 +29,6 @@ var App = React.createClass({
   //register an event listener with the store once the component has been successfully rendered/mounted on the page
   componentDidMount: function() {
     AppStore.addChangeListener(this._onChange);
-    this.getAppState();
   },
 
   componentWillUnmount: function() {
@@ -47,6 +46,7 @@ var App = React.createClass({
   //having an _onChange function here prevents an error from popping up in the console, though it doesn't impact functionality currently
   _onChange: function() {
     this.setState(this.getAppState());
+    console.log('state updated');
   }
 });
 
