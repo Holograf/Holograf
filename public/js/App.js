@@ -3,7 +3,7 @@
  */
 
 var React = require('react');
-var Body = require('./Components/Body');
+var Body = require('./components/Body');
 var AppStore = require('./stores/AppStore');
 var Actions = require('./actions/Actions');
 
