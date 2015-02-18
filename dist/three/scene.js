@@ -1,15 +1,37 @@
+var renderer, scene, camera, controls;
+var sceneRendered = false;
+
+var deleteScene=function() {	
+	cancelAnimationFrame('three-scene');// Stop the animation
+	scene = null;
+	camera = null;
+	controls = null;
+	// renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
+	// projector = null;
+	// empty(this.modelContainer);
+};
+// var empty=function(elem){
+//   while (elem.lastChild) elem.removeChild(elem.lastChild);
+// }
+
+
+
 var displayScene=function(timeline){	
+	console.log('scene displayed');
+
 	var composite,
 	container, 
 	containerWidth, 
 	containerHeight,
-	camera,
-	scene,
-	renderer,
+	// camera,
+	// scene,
+	// renderer,
 	particle,
 	particleLight,
 	cubes,
 	modal,
+	scenePaused=false,
+	expanded=false,
 	tween;
 	
 	var windowHalfX = window.innerWidth / 2;
@@ -224,8 +246,6 @@ var displayScene=function(timeline){
 		window.expanded=!window.expanded;
 	};
 	
-	
-	
 	function render() {
 		camera.lookAt(new THREE.Vector3(0,0,5000));
 
@@ -238,21 +258,9 @@ var displayScene=function(timeline){
 		}
 		
 		renderer.render( scene, camera );
+		sceneRendered = true;
 	}
 	
 };
 
-displayScene.scenePaused=false;
-displayScene.expanded=false;
 
-window.onload=function(){
-	displayScene();
-	$("body").on("click","button#pause",function(){
-		window.pause();
-	});
-	
-	$("body").on("click","button#expand",function(){
-		window.expand();
-	});
-	
-};
