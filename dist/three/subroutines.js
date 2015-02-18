@@ -12,6 +12,19 @@ subroutines.Fun=function(opts){
 	return object;
 };
 
+
+subroutines.Dflt=function(opts){
+	var opts=opts || {};
+	particle = new THREE.Sprite( subroutines.dfltMaterial );
+	particle.position.x = opts.x===undefined ? 0 : opts.x ;
+	particle.position.y = opts.y===undefined ? 0 : opts.y ;
+	particle.position.z = opts.z===undefined ? 0 : opts.z ;
+	particle.grayness = 0.5;
+	particle.scale.x = particle.scale.y = opts.scale || 100;
+	return particle;
+};
+
+
 subroutines.Loop=function(opts){
 	var z=opts.z;
 	var r=opts.r || 300;
@@ -28,3 +41,10 @@ subroutines.Loop=function(opts){
 
 subroutines.loopGeometry=new THREE.TorusGeometry(500,20,20,30);
 subroutines.variableGeometry=new THREE.IcosahedronGeometry(100);
+subroutines.dfltMaterial=new THREE.SpriteCanvasMaterial({
+	program: function(context){
+		context.beginPath();
+		context.arc( 0, 0, 0.5, 0, 2*Math.PI, true );
+		context.fill();
+	}
+});
