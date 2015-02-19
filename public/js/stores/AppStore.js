@@ -7,8 +7,7 @@ var AppConstants = require('../constants/appConstants');
 var Program = require('../compiler/Program.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
-var Compiler = require('../compiler/Compiler');
-
+var compile = require('../compiler/Compiler')
 
 var CHANGE_EVENT = 'change';
 
@@ -22,7 +21,7 @@ var updateCode = function(code) {
 };
 
 var compileCode = function() {
-  _data = Compiler.parse(_code);
+  _data = compile(_code);
   // console.log(_data);
   var timeline = utils.parseTimeline(_data.programSteps, _data.components);
   displayScene(timeline);
@@ -35,7 +34,7 @@ var updateShareUrl = function(shareUrl) {
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
-    _code = "obj = {a: 1, f: function (n) { return 1 }}";
+    _code = "var x = 1;x++;";
             
     _data = [];
     _shareUrl = '';
