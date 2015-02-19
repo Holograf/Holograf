@@ -15,6 +15,8 @@ var CHANGE_EVENT = 'change';
 var _code;
 var _data;
 var _currentStep = {};
+var _compiledStatus = false;
+var _tabKey = 1;
 
 var updateCode = function(code) {
   _code = code;
@@ -22,6 +24,8 @@ var updateCode = function(code) {
 
 var compileCode = function() {
   _data = Compiler.parse(_code);
+  _compiledStatus = true;
+  _tabKey = 2;
   // console.log(_data);
   var timeline = utils.parseTimeline(_data.programSteps, _data.components);
   displayScene(timeline);
@@ -41,6 +45,15 @@ var AppStore = assign({}, EventEmitter.prototype, {
     _data = [];
   },
 
+  getState: function() {
+    return ({
+      code: _code,
+      data: _data,
+      compiledStatus: _compiledStatus,
+      tabKey: _tabKey
+    });
+  },
+
   getCode: function() {
     return _code;
   },
@@ -49,11 +62,15 @@ var AppStore = assign({}, EventEmitter.prototype, {
     return _data;
   },
 
-  getProgramStep: function(n) {
-    if (_data) {
-      return _data.buildStep(n);
-    }
+  getCompiledStatus: function() {
+    return _compiledStatus;
   },
+
+  // getProgramStep: function(n) {
+  //   if (_data) {
+  //     return _data.buildStep(n);
+  //   }
+  // },
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);

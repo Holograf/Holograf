@@ -35,6 +35,7 @@
     "object-assign": "^2.0.0",
     "q": "^1.1.2",
     "querystring": "^0.2.0",
+    "react-addons": "^0.9.1-deprecated",
     "react-bootstrap": "^0.13.3",
     "react-tools": "^0.12.2",
     "reactify": "^1.0.0",

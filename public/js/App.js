@@ -12,11 +12,13 @@ var App = React.createClass({
 
   //get the current data from the Store
   getAppState: function() {
-    return {
-      code: AppStore.getCode(),
-      data: AppStore.getData(),
-      // step: AppStore.getProgramStep()
-    };
+    return AppStore.getState();
+    // {
+      // code: AppStore.getCode(),
+      // data: AppStore.getData(),
+      // compiledStatus: AppStore.getCompiledStatus(),
+      // // tabKey: AppStore
+    // };
   },
 
   //this is run automatically each time a new <App /> is created
