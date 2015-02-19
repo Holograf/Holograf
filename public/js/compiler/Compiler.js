@@ -10,7 +10,7 @@ var Compiler = {
     var parsedCode = parse(code);
     var programBody = parsedCode.body;
 
-    console.log(JSON.stringify(parsedCode, null, 2));
+    // console.log(JSON.stringify(parsedCode, null, 2));
 
 
     var traverse = function (body) {
@@ -198,12 +198,12 @@ var Compiler = {
 
     traverse(programBody);
 
-    console.log('CODE!', JSON.stringify(parsedCode, null, 2));
+    // console.log('CODE!', JSON.stringify(parsedCode, null, 2));
     var wrappedCode = generateCode(parsedCode);
     if (callback) {
       callback(wrappedCode);
     }
-    console.log(wrappedCode);
+    // console.log(wrappedCode);
 
     return execute(wrappedCode);
   }
