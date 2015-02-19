@@ -27,6 +27,7 @@ var compileCode = function() {
   _data = Compiler.parse(_code);
   _compiledStatus = true;
   _tabKey = 2;
+  _shareUrl = shareUrl;
   // console.log(_data);
   var timeline = utils.parseTimeline(_data.programSteps, _data.components);
   displayScene(timeline);
