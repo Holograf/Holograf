@@ -15,6 +15,8 @@ var _code;
 var _data;
 var _shareUrl;
 var _currentStep = {};
+var _compiledStatus = false;
+var _tabKey = 1;
 
 var updateCode = function(code) {
   _code = code;
@@ -22,9 +24,10 @@ var updateCode = function(code) {
 
 var compileCode = function() {
   _data = compile(_code);
-  // console.log(_data);
+  _compiledStatus = true;
+  _tabKey = 2;
   var timeline = utils.parseTimeline(_data.programSteps, _data.components);
-  displayScene(timeline);
+  displayScene(_data);
 };
 
 var updateShareUrl = function(shareUrl) {
@@ -35,9 +38,18 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
     _code = "var x = 1;x++;";
-            
+    // _code = "obj = {a: 1, f: function (n) { return 1 }}";
     _data = [];
     _shareUrl = '';
+  },
+
+  getState: function() {
+    return ({
+      code: _code,
+      data: _data,
+      compiledStatus: _compiledStatus,
+      tabKey: _tabKey
+    });
   },
 
   getCode: function() {
@@ -52,11 +64,20 @@ var AppStore = assign({}, EventEmitter.prototype, {
     return _shareUrl;
   },
 
-  getProgramStep: function(n) {
-    if (_data) {
-      return _data.buildStep(n);
-    }
+  // getProgramStep: function(n) {
+  //   if (_data) {
+  //     return _data.buildStep(n);
+  //   },
+  
+  getCompiledStatus: function() {
+    return _compiledStatus;
   },
+
+  // getProgramStep: function(n) {
+  //   if (_data) {
+  //     return _data.buildStep(n);
+  //   }
+  // },
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
