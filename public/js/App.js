@@ -15,10 +15,7 @@ var App = React.createClass({
     return {
       code: AppStore.getCode(),
       data: AppStore.getData(),
-<<<<<<< HEAD
       shareUrl: AppStore.getShareUrl(),
-=======
->>>>>>> Adds Three.js with buttons; Adds css/bootstrap styling
       // step: AppStore.getProgramStep()
     };
   },

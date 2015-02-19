@@ -8,10 +8,21 @@ var TabbedArea = require('react-bootstrap/TabbedArea');
 var TabPane = require('react-bootstrap/TabPane');
 var CodeEditor = require('./CodeEditor');
 var Visual3D = require('./Visual3D.js');
+var addons = require('react-addons');
 
 module.exports = React.createClass({
 
   render: function() {
+
+    // var codeClasses = addons.classSet({
+    //   'active': !this.props.compiledStatus
+    // });
+    // className={codeClasses}
+    // var visualClasses = addons.classSet({
+    //   'active': this.props.compiledStatus
+    // });
+    // className={visualClasses}
+
     return (
       <div className="appContainer">
         <div className="navbar-brand">SuspiciousPi</div>
