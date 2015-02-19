@@ -12,11 +12,13 @@ var App = React.createClass({
 
   //get the current data from the Store
   getAppState: function() {
-    return {
-      code: AppStore.getCode(),
-      data: AppStore.getData(),
-      // step: AppStore.getProgramStep()
-    };
+    return AppStore.getState();
+    // {
+    //   // code: AppStore.getCode(),
+    //   // data: AppStore.getData(),
+    //   // shareUrl: AppStore.getShareUrl(),
+    //   // step: AppStore.getProgramStep()
+    // };
   },
 
   //this is run automatically each time a new <App /> is created
@@ -46,7 +48,6 @@ var App = React.createClass({
   //having an _onChange function here prevents an error from popping up in the console, though it doesn't impact functionality currently
   _onChange: function() {
     this.setState(this.getAppState());
-    console.log('state updated');
   }
 });
 

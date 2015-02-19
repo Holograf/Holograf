@@ -7,32 +7,49 @@ var AppConstants = require('../constants/appConstants');
 var Program = require('../compiler/Program.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
-var Compiler = require('../compiler/Compiler');
-
+var compile = require('../compiler/Compiler')
 
 var CHANGE_EVENT = 'change';
 
 var _code;
 var _data;
+var _shareUrl;
 var _currentStep = {};
+var _compiledStatus = false;
+var _tabKey = 1;
 
 var updateCode = function(code) {
   _code = code;
 };
 
 var compileCode = function() {
-  _data = Compiler.parse(_code);
-  // console.log(_data);
+  _data = compile(_code);
+  _compiledStatus = true;
+  _tabKey = 2;
   var timeline = utils.parseTimeline(_data.programSteps, _data.components);
-  displayScene(timeline);
+  displayScene(_data);
 };
+
+var updateShareUrl = function(shareUrl) {
+  _shareUrl = shareUrl;
+}
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
-    _code = "obj = {a: 1, f: function (n) { return 1 }}";
-            
+    _code = "var x = 1;x++;";
+    // _code = "obj = {a: 1, f: function (n) { return 1 }}";
     _data = [];
+    _shareUrl = '';
+  },
+
+  getState: function() {
+    return ({
+      code: _code,
+      data: _data,
+      compiledStatus: _compiledStatus,
+      tabKey: _tabKey
+    });
   },
 
   getCode: function() {
@@ -43,11 +60,24 @@ var AppStore = assign({}, EventEmitter.prototype, {
     return _data;
   },
 
-  getProgramStep: function(n) {
-    if (_data) {
-      return _data.buildStep(n);
-    }
+  getShareUrl: function() {
+    return _shareUrl;
   },
+
+  // getProgramStep: function(n) {
+  //   if (_data) {
+  //     return _data.buildStep(n);
+  //   },
+  
+  getCompiledStatus: function() {
+    return _compiledStatus;
+  },
+
+  // getProgramStep: function(n) {
+  //   if (_data) {
+  //     return _data.buildStep(n);
+  //   }
+  // },
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
@@ -72,6 +102,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
       case AppConstants.COMPILE:
         compileCode();
+        break;
+
+      case AppConstants.UPDATE_SHAREURL:
+        updateShareUrl(action.shareUrl);
         break;
     }
 

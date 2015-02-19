@@ -17,7 +17,7 @@ var deleteScene=function() {
 
 
 var displayScene=function(timeline){	
-	console.log('scene displayed');
+	// console.log('scene displayed');
 
 	var composite,
 	container, 

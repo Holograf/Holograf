@@ -2,5 +2,6 @@ var keyMirror = require('keymirror');
 
 module.exports = keyMirror({
   UPDATE_CODE: null,
-  COMPILE: null
+  COMPILE: null,
+  UPDATE_SHAREURL: null
 });
