@@ -16,16 +16,15 @@ var deleteScene=function() {
 
 
 
-var displayScene=function(timeline){	
-	// console.log('scene displayed');
+
+var displayScene=function(allData){	
+	console.log('scene displayed');
 
 	var composite,
 	container, 
 	containerWidth, 
 	containerHeight,
-	// camera,
-	// scene,
-	// renderer,
+	scopes,
 	particle,
 	particleLight,
 	cubes,
@@ -37,8 +36,23 @@ var displayScene=function(timeline){
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	
+	
+	//extract this later
+	
+	scopes={};
+	console.log("---scopes---");
+	console.log(allData);
+	var scopeX=0;
+	for (var key in allData.scopes){
+		scopes[key]=scopeX;
+		scopeX+=1000;
+	}
+	console.log(scopes);
+	console.log("---end scopes---");
+	//end extraction
+	
 	/////////////////////////////////////////////////
-	var timeline= timeline || utils.parseTimeline(dummyData.programSteps,dummyData.components);
+	var timeline= allData || utils.parseTimeline(dummyData.programSteps,dummyData.components);
 	/////////////////////////////////////////////////
 	
 	init(timeline);
@@ -67,15 +81,23 @@ var displayScene=function(timeline){
 		particleLight = TimeLight();
 		particleLight.tween.start();
 		scene.add( particleLight );
-		
+	
 		composite = Composite(data);
 		scene.add( composite );
 		
-		var dataLine=DataLine();
+		/* 
+		//I will make this work
+		console.log(scopes);
+		for (var key in scopes){
+			var dataLine=DataLine(scopes[key]);
+			scene.add( dataLine );
+		}
+		*/
+		
+		
+		var dataLine=DataLine(scopes[key]);
 		scene.add( dataLine );
-		
-		
-		
+	
 		
 		/*
 		for (var i=0;i<10;i++){
@@ -104,14 +126,13 @@ var displayScene=function(timeline){
 		window.addEventListener( 'resize', onWindowResize, false );
 	}
 	
-	function DataLine() {
-		
+	function DataLine(x) {
 		var geometry = new THREE.CylinderGeometry( 5, 5, 10000, 3 );
 		var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 		var dataLine = new THREE.Mesh( geometry, material );
 		dataLine.rotation.x+=Math.PI/2;
 		dataLine.position.z+=5000;
-		
+		dataLine.position.x+=x;
 		return dataLine;
 	}
 	
@@ -133,7 +154,13 @@ var displayScene=function(timeline){
 	
 
 	function Composite(data){
+		
+		console.log("---data start---")
 		console.log(data);
+		console.log("---data end---")
+		
+		
+
 		
 		var composite=new THREE.Object3D();
 		composite.maxSize=10000;var interval=composite.maxSize/(data.length+1);
@@ -141,6 +168,10 @@ var displayScene=function(timeline){
 		
 		for (var i=0;i<data.length;i++){
 			z+= 10;
+			var radius=500;
+			if (data[i].component.block && data[i].component.block>0){
+				radius=200;
+			}
 			var shape;
 			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for!=="cycle"){
 				shape = subroutines.Loop( {z:z} );
@@ -156,6 +187,7 @@ var displayScene=function(timeline){
 			
 			
 			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for==="cycle"){
+				
 				var steps=60;
 				var planeInterval = 360/steps;
 				var radianInterval = (2*Math.PI)/steps;
@@ -166,7 +198,7 @@ var displayScene=function(timeline){
 					plane.grayness=1;
 					plane.position.z=z;
 					plane.rotation.z-=radianInterval*j;
-					var coords = geo.getPoint(plane.position.x,plane.position.y,500,planeInterval*j);
+					var coords = geo.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
 					plane.position.x=coords.x2;
 					plane.position.y=coords.y2;
 					
