@@ -246,15 +246,18 @@ var displayScene=function(timeline){
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
 		var dir = new THREE.Vector3();
-		
+
 		//check the type of camera
+		//extract that offset into an external variable that doesn't have to be recalculated every time... later
+		var x =  ( event.clientX / window.innerWidth ) * 2 - 1;
+		var y = - ( (event.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
 		if ( camera instanceof THREE.OrthographicCamera ) {
-	    vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, - 1 ); // z = - 1 important!
+	    vector.set( x, y, - 1 ); // z = - 1 important!
 	    vector.unproject( camera );
 	    dir.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
 	    raycaster.set( vector, dir );
 		} else if ( camera instanceof THREE.PerspectiveCamera ) {
-	    vector.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1, 0.5 ); // z = 0.5 important!
+	    vector.set( x, y, 0.5 ); // z = 0.5 important!
 	    vector.unproject( camera );
 	    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 		}
