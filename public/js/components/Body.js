@@ -39,16 +39,3 @@ module.exports = React.createClass({
   }
 });
 
-
-
-
-// module.exports = React.createClass({
-//   render: function() {
-//     return (
-//         <Panel>
-//           <InputArea {...this.props} />
-//         </Panel>
-//     );
-//   }
-// });
-
