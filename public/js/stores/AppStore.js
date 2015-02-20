@@ -14,7 +14,6 @@ var COMPILE_EVENT = 'compile';
 
 var _code, _data, _shareUrl, _compiledStatus, _tabKey;
 
-
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
@@ -43,9 +42,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
     _data = compile(_code);
     _compiledStatus = true;
     _tabKey = 2;
-    var timeline = utils.parseTimeline(_data.programSteps, _data.components);
-    displayScene(timeline);
-    // displayScene(_data);
+    displayScene(_data);
   },
 
   updateShareUrl : function(shareUrl) {
