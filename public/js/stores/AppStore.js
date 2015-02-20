@@ -35,7 +35,11 @@ var AppStore = assign({}, EventEmitter.prototype, {
   },
 
   updateCode : function(code) {
-    _code = code;
+    if (code) {
+      _code = code;
+    } else {
+      _code = 'var x = 1;x++;';
+    }
   },
 
   compileCode : function() {

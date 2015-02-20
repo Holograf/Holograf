@@ -21,7 +21,7 @@ module.exports = {
     var id = req.id;
     Code.find({_id: id}, function(err, results){
       if (err) {
-        res.sendStatus(500); // TODO: Handle incorrect IDs
+        res.sendStatus(500);
       }
       res.send(results);
     });
