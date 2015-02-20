@@ -24,30 +24,39 @@ var Actions = {
       type: 'POST',
       data: data,
       success: function(data) {
-        var shareUrl = 'http://127.0.0.1:5000/code/' + data.code;
+        var shareUrl = 'http://127.0.0.1:5000/#/code/' + data.code;
         AppDispatcher.handleViewAction({
           actionType: AppConstants.UPDATE_SHAREURL,
           shareUrl: shareUrl
         });
       },
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
+        console.error(xhr, status, err.toString());
       }.bind(this)
     });
   },
 
-  fetchUrl: function(id) {
+  fetchCode: function(id) {
     $.ajax({
       url: 'http://127.0.0.1:5000/api/code/' + id,
       dataType: 'json',
       type: 'GET',
       success: function(data) {
-        this.updateCode(data[0].rawCode);
+        Actions.updateCode(data[0].rawCode);
+        console.log(JSON.parse(data[0].processedCode)); // TODO: Deal with this
       },
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString()); // TODO: Handle incorrect IDs
+        console.error(xhr, status, err.toString()); // TODO: Handle incorrect IDs
       }.bind(this)
     });
+  },
+
+  insertCode: function (id) {
+    if (id) {
+      Actions.fetchCode(id);
+    } else {
+      Actions.updateCode('var x = 1;x++;'); // TODO: Use appstore?
+    }
   }
 
 };

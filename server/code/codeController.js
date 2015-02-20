@@ -10,7 +10,7 @@ module.exports = {
     res.header('Access-Control-Allow-Origin', "*");
     new Code(req.body).save(function(err, code, numAffected){
       if (err) {
-        next(err);
+        return res.sendStatus(500);
       }
       return res.status(200).send({'code': code._id});
     });
