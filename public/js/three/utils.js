@@ -1,24 +1,5 @@
 utils={};
 
-
-
-utils.mockData=function(x){
-  if (x===undefined){var x=1;}
-  
-  var r=[];
-  var time=_.random(1,1000);
-  for (var i=0;i<x;i++){
-    time+=_.random(10,200);
-    var mock={};
-    mock.time=time;
-    mock.shape=_.sample(["function","loop"]);
-    mock.duration=_.random(10,200);
-    r.push(mock);
-  }
-  return r;
-};
-
-
 utils.toGlossary=function(x){
   //x is an array of objects, and we're turning it into a hash where 
   //the id element from each object is it's key
@@ -43,4 +24,13 @@ utils.parseTimeline=function(timeline,components){
 	}
 
 	return timeline;
+};
+
+utils.getPoint=function(x,y,r,theta){
+  theta+=90;
+  theta=theta*(Math.PI/180);
+  var x2=x+(r*Math.sin(theta));
+  var y2=y+(r*Math.cos(theta));
+  var circle={x1:x,y1:y,r:r,x2:x2,y2:y2};
+  return circle;
 };

@@ -1,5 +1,5 @@
-var renderer, scene, camera, controls;
-var sceneRendered = false;
+// var renderer, scene, camera, controls;
+// var sceneRendered = false;
 
 var deleteScene=function() {	
 	cancelAnimationFrame('three-scene');// Stop the animation
@@ -15,8 +15,6 @@ var deleteScene=function() {
 // }
 
 
-
-
 var displayScene=function(allData){	
 	console.log('scene displayed');
 
@@ -25,6 +23,10 @@ var displayScene=function(allData){
 	containerWidth, 
 	containerHeight,
 	scopes,
+	controls,
+	camera,
+	scene,
+	renderer,
 	particle,
 	particleLight,
 	cubes,
@@ -73,9 +75,11 @@ var displayScene=function(allData){
 		camera.position.y = 0;
 		camera.position.x = -4000;
 		
-		controls = new THREE.OrbitControls( camera, container );
+		controls = new THREE.OrbitControls(camera, container);
 		controls.addEventListener( 'change', render );
 		
+
+
 		scene = new THREE.Scene();
 
 		particleLight = TimeLight();
@@ -90,8 +94,8 @@ var displayScene=function(allData){
 		scene.add(visualTimeline);
 		
 		dotGrid(data,scopes,composite.maxSize);
-			
-			
+
+
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		renderer = new THREE.CanvasRenderer();
@@ -99,6 +103,14 @@ var displayScene=function(allData){
 		renderer.setSize( window.innerWidth-20, window.innerHeight-20 );
 		container.appendChild( renderer.domElement );
 		window.addEventListener( 'resize', onWindowResize, false );
+
+
+		// Stereoscopic effect
+		// effect = new THREE.StereoEffect( renderer );
+		// effect.eyeSeparation = 10;
+		// effect.setSize( window.innerWidth, window.innerHeight );
+
+
 	}
 	
 	function DataLine(x) {
@@ -230,10 +242,9 @@ var displayScene=function(allData){
 					plane.position.z=z;
 					plane.position.x=x;
 					plane.rotation.z-=radianInterval*j;
-					var coords = geo.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
+					var coords = utils.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
 					plane.position.x=coords.x2;
 					plane.position.y=coords.y2;
-					
 					
 					plane.componentData=data[i].component;
 					plane.rotate=new TWEEN.Tween(plane.position).to({})
@@ -315,6 +326,7 @@ var displayScene=function(allData){
 	
 	function animate() {
 		requestAnimationFrame( animate );
+		controls.update();
 		render();
 	}
 	
@@ -352,6 +364,7 @@ var displayScene=function(allData){
 		}
 		
 		renderer.render( scene, camera );
+		// effect.render( scene, camera );			// This is used for stereoEffect
 		sceneRendered = true;
 	}
 	
