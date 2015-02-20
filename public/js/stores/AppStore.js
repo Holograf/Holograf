@@ -10,29 +10,10 @@ var EventEmitter = require('events').EventEmitter;
 var compile = require('../compiler/Compiler')
 
 var CHANGE_EVENT = 'change';
+var COMPILE_EVENT = 'compile';
 
-var _code;
-var _data;
-var _shareUrl;
-var _currentStep = {};
-var _compiledStatus = false;
-var _tabKey = 1;
+var _code, _data, _shareUrl, _compiledStatus, _tabKey;
 
-var updateCode = function(code) {
-  _code = code;
-};
-
-var compileCode = function() {
-  _data = compile(_code);
-  _compiledStatus = true;
-  _tabKey = 2;
-  var timeline = utils.parseTimeline(_data.programSteps, _data.components);
-  displayScene(_data);
-};
-
-var updateShareUrl = function(shareUrl) {
-  _shareUrl = shareUrl;
-}
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
@@ -40,6 +21,8 @@ var AppStore = assign({}, EventEmitter.prototype, {
     _code = '';
     _data = [];
     _shareUrl = '';
+    _compiledStatus = false;
+    _tabKey = 1;
   },
 
   getState: function() {
@@ -52,26 +35,43 @@ var AppStore = assign({}, EventEmitter.prototype, {
     });
   },
 
-  getCode: function() {
-    return _code;
+  updateCode : function(code) {
+    _code = code;
   },
 
-  getData: function() {       
-    return _data;
+  compileCode : function() {
+    _data = compile(_code);
+    _compiledStatus = true;
+    _tabKey = 2;
+    var timeline = utils.parseTimeline(_data.programSteps, _data.components);
+    displayScene(timeline);
+    // displayScene(_data);
   },
 
-  getShareUrl: function() {
-    return _shareUrl;
+  updateShareUrl : function(shareUrl) {
+    _shareUrl = shareUrl;
   },
+
+  // getCode: function() {
+  //   return _code;
+  // },
+
+  // getData: function() {       
+  //   return _data;
+  // },
+
+  // getShareUrl: function() {
+  //   return _shareUrl;
+  // },
 
   // getProgramStep: function(n) {
   //   if (_data) {
   //     return _data.buildStep(n);
   //   },
   
-  getCompiledStatus: function() {
-    return _compiledStatus;
-  },
+  // getCompiledStatus: function() {
+  //   return _compiledStatus;
+  // },
 
   // getProgramStep: function(n) {
   //   if (_data) {
@@ -81,14 +81,23 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
-  },
-  
+  }, 
   addChangeListener: function(callback) {
     this.on(CHANGE_EVENT, callback);
   },
-
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
+  },
+
+  // Not using because still can't detect when data has gone done
+  emitCompile: function() {
+    this.emit(COMPILE_EVENT);
+  },
+  addCompileListener: function(callback) {
+    this.on(COMPILE_EVENT, callback);
+  },
+  removeCompileListener: function(callback) {
+    this.removeListener(COMPILE_EVENT, callback);
   },
 
   dispatcherIndex: AppDispatcher.register(function(payload){
@@ -97,15 +106,15 @@ var AppStore = assign({}, EventEmitter.prototype, {
     switch(action.actionType){
       
       case AppConstants.UPDATE_CODE:
-        updateCode(action.code);
+        AppStore.updateCode(action.code);
         break;
 
       case AppConstants.COMPILE:
-        compileCode();
+        AppStore.compileCode();
         break;
 
       case AppConstants.UPDATE_SHAREURL:
-        updateShareUrl(action.shareUrl);
+        AppStore.updateShareUrl(action.shareUrl);
         break;
     }
 
