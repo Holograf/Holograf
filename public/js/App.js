@@ -16,12 +16,6 @@ var App = React.createClass({
   //get the current data from the Store
   getAppState: function() {
     return AppStore.getState();
-    // {
-    //   // code: AppStore.getCode(),
-    //   // data: AppStore.getData(),
-    //   // shareUrl: AppStore.getShareUrl(),
-    //   // step: AppStore.getProgramStep()
-    // };
   },
 
   //this is run automatically each time a new <App /> is created
