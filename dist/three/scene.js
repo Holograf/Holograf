@@ -190,10 +190,13 @@ var displayScene=function(allData){
 		composite.maxSize=10000;
 		var interval=composite.maxSize/(data.length+1);
 		var z=composite.maxSize/2;
+		var scopeStack=[];
 		var x=0;
 		for (var i=0;i<data.length;i++){
 			z+= 10;
 			if (data[i].component.scope!==undefined){
+				var scope=data[i].component.scope;
+				//handle scope stack here
 				x=scopes[data[i].component.scope];
 			}
 			var radius=500;
