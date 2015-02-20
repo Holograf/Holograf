@@ -31,11 +31,6 @@ module.exports = React.createClass({
     Actions.compile();
   },
 
-  handleSubmit: function(e) {
-    console.log('submit logged');
-    e.preventDefault();
-  },
-
   save: function () {
     var data = {rawCode: this.props.code, processedCode: JSON.stringify(this.props.data)};
     Actions.updateUrl(data);
@@ -96,7 +91,7 @@ module.exports = React.createClass({
     return (
       <div className="codeContainer">
         <CodeMirror {...this.options} className="codeBox"/>
-        <Col xs={6} md={4}><Input onSubmit={this.handleSubmit} readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} className={shareClasses}>Share</Button>} /></Col>
+        <Col xs={6} md={4}><Input readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} className={shareClasses}>Share</Button>} /></Col>
         <Button bsStyle="primary" onClick={this.compile} className={compileClasses} >Compile</Button>
         <Button bsStyle="danger" onClick={this.refresh} className={resetClasses} >Reset Code</Button>
       </div>
