@@ -37,8 +37,7 @@ var updateShareUrl = function(shareUrl) {
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {
-    _code = "var x = 1;x++;";
-    // _code = "obj = {a: 1, f: function (n) { return 1 }}";
+    _code = '';
     _data = [];
     _shareUrl = '';
   },
@@ -48,6 +47,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
       code: _code,
       data: _data,
       compiledStatus: _compiledStatus,
+      shareUrl: _shareUrl,
       tabKey: _tabKey
     });
   },
