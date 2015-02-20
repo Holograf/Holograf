@@ -45,6 +45,7 @@
     "karma": "^0.12.31",
     "karma-browserify": "^3.0.2",
     "reactify": "^1.0.0",
+    "rewireify": "0.0.13",
     "run-sequence": "^1.0.2",
     "vinyl-source-stream": "^1.0.0"
   }
