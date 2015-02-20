@@ -30863,14 +30863,12 @@ module.exports = {
   memberExpression: function (node) {
     var object = node.expression.left;
 
-    console.log('OBJECT!', object)
-
     var string = this.traverseMemberExpression(object);
 
     return this.createNode('setObjectProperty', string);
   },
 
-  forLoopInit: function (node, type) {
+  loopInit: function (node, type) {
     var name = node.init.declarations[0].id.name;
     var value = node.init.declarations[0].init.value;
 
@@ -30904,7 +30902,7 @@ module.exports = {
     return this.createNode('loop', type, 'close');
   },
 
-  loopSet: function (node, type) {
+  loopPost: function (node, type) {
     var name = node.init.declarations[0].id.name;
     var injectedNode = this.createNode('set', name);
 
@@ -30912,7 +30910,7 @@ module.exports = {
   },
 
 
-  ifStart: function (node) {
+  ifOpen: function (node) {
     var paths = 0;
 
     var traverse = function(node) {
@@ -30935,7 +30933,7 @@ module.exports = {
     return this.createNode('block', 'if', paths);
   },
 
-  ifEnd: function (node) {
+  ifClose: function (node) {
     return this.createNode('block', 'if', 'close');
   },
 
@@ -31083,207 +31081,193 @@ module.exports.__set__ = function __set__() {
 
 
 },{}],184:[function(require,module,exports){
-var parse = require('esprima').parse;
+var esprimaParse = require('esprima').parse;
 var inject = require('./Inject');
-
-var Parser = function (code) {
-
-  var parsedCode = parse(code);
-  var programBody = parsedCode.body;
-
-  var traverse = function (body) {
-
-    for (var index = 0; index < body.length; index++) {
-      var node = body[index];
-
-      if (node.type === 'VariableDeclaration') {
-
-        var declarationType = node.declarations[0].init.type;
-
-        // Check for special declaration of function.
-        // If so, push the function into the call stack and traverse the body of the function
-        if (declarationType === 'FunctionExpression') {
-          var name = node.declarations[0].id.name;
-          var functionBody = node.declarations[0].init.body
-          var params = node.declarations[0].init.params;
-          
-          functionStack.push(name);
-          // Inject a function variable watcher after the declaration
-          body.splice(index + 1, 0, inject.function(node));
-          // Inject invocation and parameter watchers inside the function body 
-          inject.invoke(functionBody, name, params);
-          
-          traverse(functionBody.body);
-          functionStack.pop();
-        } 
-
-
-        // Check for special declaration of an object.
-        else if (declarationType === 'ObjectExpression') {
-
-          var objName = node.declarations[0].id.name;
-          var properties = node.declarations[0].init.properties;
-          
-          var traverseObjectProperties = function (properties, objName) {
-
-
-            for (var i = 0; i < properties.length; i++) {
-              var property = properties[i];
-              var keyName = objName + '.' + property.key.name;
-              
-              if (property.value.type === 'FunctionExpression') {
-
-
-                var functionBody = property.value.body;
-                var params = property.value.params;
-
-                functionStack.push(keyName);
-
-                // Inject invocation and parameter watchers inside the function body 
-                inject.method(functionBody, keyName, params);
-                traverse(functionBody.body);
-
-                functionStack.pop();
-              } else if (property.value.type === 'ObjectExpression') {
-                traverseObjectProperties(property.value.properties, keyName);
-              }
-            }
-          }
-
-          traverseObjectProperties(properties, objName);
-
-          body.splice(index + 1, 0, inject.object(node));
-          index++;
-        }
-
-        // Else regular variable declaration
-        else { 
-          body.splice(index + 1, 0, inject.variable(node));
-          index++;
-        }
-        
-      }
-
-      if (node.type === 'ForStatement') {
-        body.splice(index, 0, inject.forLoopInit(node, 'for'));
-        body.splice(index + 1, 0, inject.loopOpen(node, 'for'));
-        body.splice(index + 3, 0, inject.loopClose(node, 'for'));
-        body.splice(index + 4, 0, inject.loopSet(node, 'for'));
-        index += 4;
-      }
-
-      if (node.type === 'WhileStatement') {
-        body.splice(index, 0, inject.loopOpen(node, 'while'));
-        body.splice(index + 2, 0, inject.loopClose(node, 'while'));
-        index += 2;
-      }
-
-      if (node.type === 'DoWhileStatement') {
-        body.splice(index, 0, inject.loopOpen(node, 'do'));
-        body.splice(index + 2, 0, inject.loopClose(node, 'do'));
-        index += 2;
-      }
-
-      if (node.type === 'ReturnStatement') {
-        body.splice(index, 0, inject.returnState(node));
-        body.splice(index + 1, 0, inject.return(node, functionStack[functionStack.length - 1]));
-        index += 2;
-      }
-
-
-      if (node.type === 'ExpressionStatement') {
-
-        if (node.expression.type === 'UpdateExpression') {
-          body.splice(index + 1, 0, inject.expression(node) );
-          index++;
-        }
-
-        else if (inject.isNotInjectedFunction(node)) {
-          // Check for special declaration of function.
-          // If so, push the function into the call stack and traverse the body of the function
-          if (node.expression.right.type === 'FunctionExpression') {
-
-            if (node.expression.left.object) {
-              var name = inject.traverseMemberExpression(node.expression.left);
-            } else { 
-              var name = node.expression.left.name;
-            }
-
-            var functionBody = node.expression.right.body
-            var params = node.expression.right.params;
-            
-            functionStack.push(name);
-            // Inject a function variable watcher after the declaration
-
-            if (node.expression.left.object) {
-              // body.splice(index + 1, 0, inject.function(node));
-            } else {
-              body.splice(index + 1, 0, inject.function(node));
-            }
-            // Inject invocation and parameter watchers inside the function body 
-            inject.invoke(functionBody, name, params);
-            
-            traverse(functionBody.body);
-            functionStack.pop();
-          }   
-
-          if (node.expression.left.type === 'MemberExpression') {
-            body.splice(index + 1, 0, inject.memberExpression(node) );
-            index++;
-          } 
-          else {
-            body.splice(index + 1, 0, inject.expression(node) );
-            index++;
-          }
-
-          if (node.expression.right.type === 'ObjectExpression') {
-            body.splice(index + 1, 0, inject.object(node) );
-            index++; 
-          } 
-
-        }
-      }
-
-      if (node.type === 'IfStatement') {
-        body.splice(index, 0, inject.ifStart(node) );
-        body.splice(index + 2, 0, inject.ifEnd(node) );
-        index++;
-
-        // Traverse if statement tree
-        var traverseIf = function (node) {
-          if (node.consequent) {
-            if (node.consequent.body) {
-              var block = node.consequent;
-              traverse(block.body);
-            }
-          }
-          if (node.alternate) {
-            if (node.alternate.body) {
-              var block = node.alternate;
-              traverse(block.body);
-            } else {
-              var block = node.alternate;
-              traverseIf(block);
-            }
-          }
-        }
-        traverseIf(node);
-      }
-      // Traverse loop bodies
-      if (node.body) {
-        var block = node.body;
-        traverse(block.body);
-      }
-    }
-  }
-
-  traverse(programBody);
-
-  return parsedCode;
-}
 
 // External variable to help manage tracking of function invocations
 var functionStack = [];
+
+var Parser = function (code) {
+  var syntaxTree = esprimaParse(code);
+  var programBody = syntaxTree.body;
+
+  // console.log(JSON.stringify(syntaxTree, null, 2));
+  traverse(programBody);
+  return syntaxTree;
+}
+
+var traverseFunction = function (fn, name) {
+  var functionBody = fn.body
+  var params = fn.params;
+
+  functionStack.push(name);
+
+  // Inject invocation and parameter watchers inside the function body 
+  inject.invoke(functionBody, name, params);
+  traverse(functionBody.body);
+
+  functionStack.pop();
+}
+
+var traverseMethod = function (method, name) {
+  var methodBody = method.body;
+  var params = method.params;
+
+  functionStack.push(name);
+
+  // Inject invocation and parameter watchers inside the function body 
+  inject.method(methodBody, name, params);
+  traverse(methodBody.body);
+
+  functionStack.pop();
+}
+
+var traverseObjectProperties = function (properties, objName) {
+  for (var i = 0; i < properties.length; i++) {
+    var property = properties[i];
+    var keyName = objName + '.' + property.key.name;
+    
+    if (property.value.type === 'FunctionExpression') {
+      traverseMethod(property.value, keyName);
+    } else if (property.value.type === 'ObjectExpression') {
+      traverseObjectProperties(property.value.properties, keyName);
+    }
+  }
+}
+
+var injectBefore = function (node, body, index, type, param) {
+  body.splice(index, 0, inject[type](node, param));
+}
+
+var injectAfter = function (node, body, index, type, param) {
+  body.splice(index + 1, 0, inject[type](node, param));
+}
+
+var getLastFunction = function () {
+  return functionStack[functionStack.length - 1];
+}
+
+
+var traverse = function (body) {
+  var advance = function (n) { index += n; }
+
+  for (var index = 0; index < body.length; index++) {
+    var node = body[index];
+
+    if (node.type === 'VariableDeclaration') {
+      var declaration = node.declarations[0]
+      var declarationType = declaration.init.type;
+
+      if (declarationType === 'FunctionExpression') { // ie var f = function () { return 1; };
+        var fn = declaration;
+        traverseFunction(fn.init, fn.id.name);
+        injectAfter(node, body, index, 'function');
+      } 
+      else if (declarationType === 'ObjectExpression') { // ie var obj = {name: 'andy'};
+        var objName = declaration.id.name;
+        var properties = declaration.init.properties;
+        traverseObjectProperties(properties, objName);
+
+        injectAfter(node, body, index, 'object');
+      }
+      else { 
+        injectAfter(node, body, index, 'variable'); // ie var x = 12;
+      }
+    }
+
+    if (node.type === 'ReturnStatement') {
+      injectBefore(node, body, index, 'returnState');
+      injectAfter(node, body, index, 'return', getLastFunction());
+      advance(2);
+    }
+
+    if (node.type === 'ForStatement') {
+      injectBefore(node, body, index, 'loopInit', 'for');
+      injectAfter(node, body, index, 'loopOpen', 'for');
+      injectAfter(node, body, index + 2, 'loopClose', 'for');
+      injectAfter(node, body, index + 3, 'loopPost', 'for');
+      advance(4);
+    }
+
+    if (node.type === 'WhileStatement') {
+      injectBefore(node, body, index, 'loopOpen', 'while');
+      injectAfter(node, body, index + 1, 'loopClose', 'while');
+      advance(2);
+    }
+
+    if (node.type === 'DoWhileStatement') {
+      injectBefore(node, body, index, 'loopOpen', 'do');
+      injectAfter(node, body, index + 1, 'loopClose', 'do');
+      advance(2)
+    }
+
+    // Traverse loop bodies
+    if (node.body) {
+      var block = node.body;
+      traverse(block.body);
+    }
+
+    if (node.type === 'IfStatement') { 
+      injectBefore(node, body, index, 'ifOpen', 'do');
+      injectAfter(node, body, index + 1, 'ifClose', 'do');
+      advance(2);
+
+      // Traverse if statement tree
+      var traverseIf = function (node) {
+        if (node.consequent && node.consequent.body) {
+          traverse(node.consequent.body);
+        }
+        if (node.alternate) {
+          if (node.alternate.body) {
+            traverse(node.alternate.body);
+          } else {
+            traverseIf(node.alternate);
+          }
+        }
+      }
+      traverseIf(node);
+    }
+
+
+    if (node.type === 'ExpressionStatement' && inject.isNotInjectedFunction(node)) {
+
+      if (node.expression.type === 'UpdateExpression') { // ie x++;
+        injectAfter(node, body, index, 'expression');
+        advance(1);
+      } else if (node.expression.type === 'CallExpression') {
+
+      } else if (node.expression.type === 'AssignmentExpression') {
+        var left = node.expression.left;
+        var right = node.expression.right;
+
+        if (left.type === 'MemberExpression') {
+          injectAfter(node, body, index, 'memberExpression');
+          advance(1);
+        } else {
+          injectAfter(node, body, index, 'expression');
+          advance(1);
+        }
+
+        if (right.type === 'ObjectExpression') {
+          injectAfter(node, body, index, 'object');
+          advance(1);
+        } 
+
+        if (right.type === 'FunctionExpression') {
+          if (node.expression.left.object) {
+            var name = inject.traverseMemberExpression(node.expression.left);
+          } else { 
+            var name = node.expression.left.name;
+          }
+
+          traverseFunction(node.expression.right, name);
+        }
+      }
+    }
+  }
+}
+
+
 
 module.exports = Parser;
 

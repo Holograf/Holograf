@@ -8,6 +8,7 @@ var reactify = require('reactify');
 var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
+var jasmine = require('gulp-jasmine');
 
 var paths = {
   scripts: ['public/**/*.js'],
@@ -57,12 +58,25 @@ gulp.task('compress', function() {
     .pipe(gulp.dest('dist/js'))
 });
 
-gulp.task('run', shell.task([
+gulp.task('run', shell.task([ 
   'cd server && nodemon server.js'
 ]));
 
+gulp.task('testScript', shell.task([ 
+  'npm test'
+]));
+
+gulp.task('specs', function () {
+    return gulp.src('test/spec/suite.js')
+        .pipe(jasmine());
+});
+
+gulp.task('test', function(callback) {
+  runSequence('testScript', 'specs', callback);
+});
+
 gulp.task('build', function(callback) {
-  runSequence('clean', 'compile', 'copy', 'sass', callback);
+  runSequence('clean', 'compile', 'copy', 'sass', 'test', callback);
 });
 
 gulp.task('default', ['build', 'watch', 'run']);

@@ -11,35 +11,29 @@ body {
   font-family: "Open Sans","lucida grande","Segoe UI",arial,verdana,"lucida sans unicode",tahoma,sans-serif;
   font-size: 13px;
 }
-
 .dataInput {
   margin-top: $input-margin;
   min-height: $input-height - 35px;
   font-family: monospace;
   font-size: 16px;
 }
-
 .navbar-brand {
   padding-bottom: 0;
   height: auto;
 }
-
 .visualButton {
   margin: 5px 5px 5px 10px;
 }
 .codeButton {
   margin: 5px 5px 5px 10px;
 }
-
 .appContainer {
   // background-color: beige;
   padding-top: 3px;
 }
-
 .codeContainer {
   width: 80%;
 }
-
 .codeMirrorPanel {
   padding: 0;
 }

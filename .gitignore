@@ -27,6 +27,7 @@ dist/js
 dist/index.html
 dist/css
 data/
+test/spec/bundle.js
 
 # Dependency directorys
 # Deployed apps should consider commenting these lines out:
