@@ -48,12 +48,10 @@ theatre.display=function(allData){
 
 		// theatre.camera = camera;
 		// theatre.target = target;
-		// scene.add(subroutines.Axes()[0]);
-		// scene.add(subroutines.Axes()[1]);
-		// scene.add(subroutines.Axes()[2]);
 		selectHalo = subroutines.SelectHalo(scene);
 		scene.add(selectHalo);
 		selectHalo.material.opacity = 0;
+
 
 		// renderer
 		renderer = new THREE.WebGLRenderer({antialias:true});
