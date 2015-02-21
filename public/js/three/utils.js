@@ -13,17 +13,17 @@ utils.toGlossary=function(x){
 utils.parseTimeline=function(timeline,components){
   var glossary= utils.toGlossary(components);
   
-	for (var i=0;i<timeline.length;i++){
-	  //deep clone to avoid altering the glossary
-	  timeline[i].component={};
-	  for (var key in glossary[timeline[i].id]){
-	    //if (key==='id'){continue;}
-	    timeline[i].component[key]=glossary[timeline[i].id][key];
-	  }
-		timeline[i].component.value=timeline[i].value;
-	}
+  for (var i=0;i<timeline.length;i++){
+    //deep clone to avoid altering the glossary
+    timeline[i].component={};
+    for (var key in glossary[timeline[i].id]){
+      //if (key==='id'){continue;}
+      timeline[i].component[key]=glossary[timeline[i].id][key];
+    }
+    timeline[i].component.value=timeline[i].value;
+  }
 
-	return timeline;
+  return timeline;
 };
 
 utils.getPoint=function(x,y,r,theta){
@@ -33,4 +33,26 @@ utils.getPoint=function(x,y,r,theta){
   var y2=y+(r*Math.cos(theta));
   var circle={x1:x,y1:y,r:r,x2:x2,y2:y2};
   return circle;
+};
+
+utils.extractScopes=function(allData){  
+  var scopes={};  
+  var scopeX=0;
+  for (var key in allData.scopes){
+    scopes[key]=scopeX+500;
+    scopeX+=500;
+  }
+  return scopes;
+};
+
+utils.tweenify=function(obj,opts){
+  //tweenify is a decorator
+  if (obj===undefined){var obj={};}
+  if (opts===undefined){var opts={};}
+  if (opts.z1===undefined){opts.z1=0;}
+  if (opts.z2===undefined){opts.z2=0;}
+  console.log(opts);
+  obj.collapse=new TWEEN.Tween(obj.position).to({z:opts.z1},1500).easing(TWEEN.Easing.Quadratic.InOut);
+  obj.expand=new TWEEN.Tween(obj.position).to({z:opts.z2},1500).easing(TWEEN.Easing.Quadratic.InOut);
+  return obj;
 };
