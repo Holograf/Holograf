@@ -83,8 +83,10 @@ gulp.task('test', function(callback) {
 });
 
 gulp.task('build', function(callback) {
-  runSequence('clean', 'compile', 'copy', 'three', 'sass', 'test', callback);
+  runSequence('clean', 'compile', 'copy', 'three', 'sass', callback);
 });
+// , 'test'     // removed to speed up build process
+    // we should (/it's recommended to) do this whenever we PUSH 
 
 gulp.task('default', ['build', 'watch', 'run']);
 
