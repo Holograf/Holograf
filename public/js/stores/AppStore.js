@@ -18,6 +18,7 @@ var _shareUrl;
 var _currentStep = {};
 var _compiledStatus = false;
 var _tabKey = 1;
+var templateCode = 'var x = 1;x++;';
 
 var updateCode = function(code) {
   _code = code;
@@ -56,10 +57,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
   },
 
   updateCode : function(code) {
-    if (code) {
-      _code = code;
+    if (code === null) {
+      _code = templateCode;
     } else {
-      _code = 'var x = 1;x++;';
+      _code = code;
     }
   },
 

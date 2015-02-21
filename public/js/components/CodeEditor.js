@@ -14,7 +14,6 @@ var Actions = require('../actions/Actions');
 
 module.exports = React.createClass({
 
-  // mixins: [ Router.Navigation, Router.State ],
   options: {
     textAreaClassName: ['form-control'],
     textAreaStyle: {minHeight: '10em'},

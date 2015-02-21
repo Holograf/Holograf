@@ -14,10 +14,6 @@ $(document).ready(function() {
   var Link = Router.Link;
   require('codemirror/mode/javascript/javascript');
 
-  // React.render(
-  //   <App />,
-  //   document.getElementById('App')
-  // );
 
   var Main = React.createClass({
     render: function() {
@@ -39,5 +35,4 @@ $(document).ready(function() {
     React.render(<Handler/>, document.getElementById('App'));
   });
 
-  
 });
