@@ -1,5 +1,5 @@
 // controls.js
-
+/*
 
 controls = new THREE.OrbitControls(camera, container);
 controls.addEventListener( 'change', render );
@@ -19,3 +19,4 @@ controls.dynamicDampingFactor = 0.3;
 
 // inside animate()
 controls.update();
+*/

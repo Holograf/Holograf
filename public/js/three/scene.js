@@ -1,3 +1,5 @@
+
+/*
 // var renderer, scene, camera, controls;
 // var sceneRendered = false;
 
@@ -13,7 +15,7 @@ var deleteScene=function() {
 // var empty=function(elem){
 //   while (elem.lastChild) elem.removeChild(elem.lastChild);
 // }
-
+*/
 
 var displayScene=function(allData){	
 	console.log('scene displayed');
@@ -141,6 +143,117 @@ var displayScene=function(allData){
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	}
 	
+	
+	function VisualTimeline(data){
+		var maxSize=10000;
+		var interval=maxSize/(data.length+1);
+		var z = 0;
+		var x = 0;
+		var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+		var geometry = new THREE.Geometry();
+		for (var i=0;i<data.length;i++){
+			z += interval;
+			if (data[i].component.scope!==undefined){
+				x=scopes[data[i].component.scope];
+				geometry.vertices.push(
+					new THREE.Vector3( x, 0, z )
+				);
+			}
+		}
+		var line = new THREE.Line( geometry, material );
+		return line;
+	};
+
+	function dotGrid(data,scopes,maxSize){
+		var dotSteps=maxSize/data.length;
+		for (var key in scopes){
+			var dotX=scopes[key];
+			for (var i=0;i<data.length;i++){
+				var opts={};
+				opts.scale=10;
+				opts.x=dotX;
+				opts.z=dotSteps*i;
+				scene.add(subroutines.Dflt(opts) );
+			}
+		}
+	}
+
+
+
+	function Composite(data){
+		var composite=new THREE.Object3D();
+		composite.maxSize=10000;
+		var interval=composite.maxSize/(data.length+1);
+		var z=composite.maxSize/2;
+		var scopeStack=[];
+		var x=0;
+		for (var i=0;i<data.length;i++){
+			z+= 10;
+			if (data[i].component.scope!==undefined){
+				var scope=data[i].component.scope;
+				//handle scope stack here
+				x=scopes[data[i].component.scope];
+			}
+			var radius=500;
+			if (data[i].component.block && data[i].component.block>0){
+				radius=200;
+			}
+			var shape;
+			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for!=="cycle"){
+				shape = subroutines.Loop( {z:z,x:x} );
+			} else {
+				shape = subroutines.Fun( {z:z,x:x} );
+			}
+			
+			//don't forget to handle the x coordinate for the tic marks
+			shape.componentData=data[i].component;
+			shape.collapse=new TWEEN.Tween(shape.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+			shape.expand=new TWEEN.Tween(shape.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+			composite.add( shape );
+			
+			
+			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for==="cycle"){
+				
+				var steps=60;
+				var planeInterval = 360/steps;
+				var radianInterval = (2*Math.PI)/steps;
+				//var ticHalo=new THREE.Geometry();
+				for (var j=0;j<steps;j++){
+					var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
+					var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+					var plane = new THREE.Mesh( ticGeometry, material );
+					plane.grayness=1;
+					plane.position.z=z;
+					plane.position.x=x;
+					plane.rotation.z-=radianInterval*j;
+					var coords = geo.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
+					plane.position.x=coords.x2;
+					plane.position.y=coords.y2;
+					
+					
+					plane.componentData=data[i].component;
+					plane.rotate=new TWEEN.Tween(plane.position).to({})
+					plane.collapse=new TWEEN.Tween(plane.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+					plane.expand=new TWEEN.Tween(plane.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+					composite.add( plane );
+							
+				}
+				
+	
+			}
+			
+			
+		}
+		
+		
+		
+		
+		return composite;
+	
+	};	
+
+
+	/*
 
 	function Composite(data){
 		console.log(data);
@@ -196,6 +309,9 @@ var displayScene=function(allData){
 		return composite;
 	
 	};	
+	
+	*/
+	
 	
 	function onMouseMove( e ) {
 		var vector = new THREE.Vector3();

@@ -1,5 +1,5 @@
 // controls.js
-
+/*
 
 controls = new THREE.OrbitControls(camera, container);
 controls.addEventListener( 'change', render );
@@ -19,7 +19,9 @@ controls.dynamicDampingFactor = 0.3;
 
 // inside animate()
 controls.update();
+*/
 
+/*
 // var renderer, scene, camera, controls;
 // var sceneRendered = false;
 
@@ -35,7 +37,7 @@ var deleteScene=function() {
 // var empty=function(elem){
 //   while (elem.lastChild) elem.removeChild(elem.lastChild);
 // }
-
+*/
 
 var displayScene=function(allData){	
 	console.log('scene displayed');
@@ -110,8 +112,7 @@ var displayScene=function(allData){
 	
 		composite = Composite(data);
 		scene.add( composite );
-		
-
+	
 		var visualTimeline = VisualTimeline(data);
 		scene.add(visualTimeline);
 		
@@ -164,6 +165,7 @@ var displayScene=function(allData){
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	}
 	
+	
 	function VisualTimeline(data){
 		var maxSize=10000;
 		var interval=maxSize/(data.length+1);
@@ -184,27 +186,6 @@ var displayScene=function(allData){
 		return line;
 	};
 
-	function SplineLine(data){
-		var maxSize=10000;
-		var interval=maxSize/(data.length+1);
-		var z = 0;
-		var x = 0;
-		var material = new THREE.LineBasicMaterial({color: 0xff0000});
-		var geometry = new THREE.Geometry();
-		var spline = [];
-		for (var i=0;i<data.length;i++){
-			z+= interval;
-			if (data[i].component.scope!==undefined){
-				x=scopes[data[i].component.scope];
-				spline.push( new THREE.Vector3( x, 0, z ) );
-			}
-		}
-		var curve = new THREE.SplineCurve3(spline);
-		geometry.vertices=curve.getPoints( 500 );
-		var line = new THREE.Line( geometry, material );
-		return line;
-	}
-
 	function dotGrid(data,scopes,maxSize){
 		var dotSteps=maxSize/data.length;
 		for (var key in scopes){
@@ -218,6 +199,8 @@ var displayScene=function(allData){
 			}
 		}
 	}
+
+
 
 	function Composite(data){
 		var composite=new THREE.Object3D();
@@ -256,6 +239,7 @@ var displayScene=function(allData){
 				var steps=60;
 				var planeInterval = 360/steps;
 				var radianInterval = (2*Math.PI)/steps;
+				//var ticHalo=new THREE.Geometry();
 				for (var j=0;j<steps;j++){
 					var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
 					var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
@@ -264,9 +248,10 @@ var displayScene=function(allData){
 					plane.position.z=z;
 					plane.position.x=x;
 					plane.rotation.z-=radianInterval*j;
-					var coords = utils.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
+					var coords = geo.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
 					plane.position.x=coords.x2;
 					plane.position.y=coords.y2;
+					
 					
 					plane.componentData=data[i].component;
 					plane.rotate=new TWEEN.Tween(plane.position).to({})
@@ -289,6 +274,67 @@ var displayScene=function(allData){
 	
 	};	
 
+
+	/*
+
+	function Composite(data){
+		console.log(data);
+		
+		var composite=new THREE.Object3D();
+		composite.maxSize=10000;var interval=composite.maxSize/(data.length+1);
+		var z=composite.maxSize/2;
+		
+		for (var i=0;i<data.length;i++){
+			z+= 10;
+			var shape;
+			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for!=="cycle"){
+				shape = subroutines.Loop( {z:z} );
+			} else {
+				shape = subroutines.Fun( {z:z} );
+			}
+			
+			
+			shape.componentData=data[i].component;
+			shape.collapse=new TWEEN.Tween(shape.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+			shape.expand=new TWEEN.Tween(shape.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+			composite.add( shape );
+			
+			
+			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for==="cycle"){
+				var steps=60;
+				var planeInterval = 360/steps;
+				var radianInterval = (2*Math.PI)/steps;
+				for (var j=0;j<steps;j++){
+					var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
+					var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+					var plane = new THREE.Mesh( ticGeometry, material );
+					plane.grayness=1;
+					plane.position.z=z;
+					plane.rotation.z-=radianInterval*j;
+					var coords = utils.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
+					plane.position.x=coords.x2;
+					plane.position.y=coords.y2;
+					
+					plane.componentData=data[i].component;
+					plane.rotate=new TWEEN.Tween(plane.position).to({})
+					plane.collapse=new TWEEN.Tween(plane.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+					plane.expand=new TWEEN.Tween(plane.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
+					composite.add( plane );
+							
+				}
+				
+	
+			}
+			
+			
+		}
+		return composite;
+	
+	};	
+	
+	*/
+	
+	
 	function onMouseMove( e ) {
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
@@ -391,8 +437,6 @@ var displayScene=function(allData){
 	}
 	
 };
-
-
 
 // stereoEffect.js
 
