@@ -19,20 +19,9 @@ theatre.display=function(allData){
 	function init(data) {
 
 		// PerspectiveCamera method args: (field of view angle, aspectRatio, near, far)
-		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
-		camera.position.x = -3000;
-		camera.position.y = 3000;
-		camera.position.z = 5000;
-
-		controls = new THREE.OrbitControls(camera, container);
-		// controls.addEventListener( 'change', render );
 		
 		scene = new THREE.Scene();
 		
-		// theatre.camera = camera;
-		// theatre.target = target;
-
-
 		// timeline elements
 
 		particleLight = subroutines.TimeLight();
@@ -46,17 +35,26 @@ theatre.display=function(allData){
 		composite = subroutines.Composite(data,scopes);
 		scene.add( composite );
 
-		visualTimeline = subroutines.VisualTimeline(data,scopes);
+
+		visualTimeline = subroutines.VisualTimeline(data, scopes);
 		scene.add(visualTimeline);
 
 		//will add the dotgrid to the scene;
 		subroutines.dotGrid(scene,data,scopes,composite.maxSize);
 		subroutines.skybox(scene, composite.maxSize);
 
-		// scene.add(subroutines.Axes()[0]);
-		// scene.add(subroutines.Axes()[1]);
-		// scene.add(subroutines.Axes()[2]);
+		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+		camera.position.x = -2000;
+		camera.position.y = 2000;
+		camera.position.z = composite.maxSize / 2;
+		var target = new THREE.Vector3(0, 0, composite.maxSize/2);
+		// camera.lookAt(target);
 
+		controls = new THREE.OrbitControls(camera, container, target);
+		// controls.addEventListener( 'change', render );
+
+		// theatre.camera = camera;
+		// theatre.target = target;
 
 		// renderer
 		renderer = new THREE.WebGLRenderer({antialias:true});
@@ -146,16 +144,8 @@ theatre.display=function(allData){
 		
 	}
 
-<<<<<<< HEAD
 	function onMouseDown () {
 		var cameraSpeed = 1500;
-
-		if (theatre.nodeView) {
-
-			new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).start();
-			new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).start();
-			theatre.nodeView = false;
-		}
 
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
@@ -175,20 +165,30 @@ theatre.display=function(allData){
 	    vector.unproject( camera );
 	    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 		}
-		
-		if (composite && !theatre.nodeView){
+
+		if (composite){
 			var intersects = raycaster.intersectObjects( composite.children, true );	
-			if (intersects.length > 0) { 
 
-				// save initial camera position for return
-				theatre.lastPosition = new THREE.Vector3().copy( camera.position );
-				theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
+			//  if object is not clicked and not in nodeView, return to prior position
+			if (intersects.length < 1 && theatre.nodeView) {  
+				new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).start();
+				new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).start();
+				theatre.nodeView = false;
+
+			// if an object is clicked, enter nodeView and zoom in
+			} else if (intersects.length > 0) { 
+				// save the prior position before entering nodeView
+				if (!theatre.nodeView) {
+					theatre.lastPosition = new THREE.Vector3().copy( camera.position );
+					theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
+
+				}
+
 				// final camera position
-				var newX = intersects[0].point.x - 600;
-				var newY = intersects[0].point.y + 600;
-				var newZ = intersects[0].point.z - 300;
+				var newX = intersects[0].object.position.x - 800;			
+				var newY = intersects[0].object.position.y + 800;
+				var newZ = intersects[0].object.position.z - 300;
 				var targetPosition = new THREE.Vector3(newX, newY, newZ);
-
 
 				// camera rotation
 					// use extra camera to find rotation at target location
@@ -196,7 +196,7 @@ theatre.display=function(allData){
 				nextCamera.position.x = targetPosition.x;
 				nextCamera.position.y = targetPosition.y;
 				nextCamera.position.z = targetPosition.z;
-				nextCamera.lookAt(intersects[0].point);
+				nextCamera.lookAt(intersects[0].object.position);
 				var endRotation = new THREE.Quaternion().copy( nextCamera.rotation );
 
 				// camera motion on click - position & rotation
@@ -204,12 +204,12 @@ theatre.display=function(allData){
 				new TWEEN.Tween( camera.rotation ).to(endRotation, cameraSpeed).start();
 				nextCamera = null;
 				theatre.nodeView = true;
+				// console.log('theatre.lastPosition:', theatre.lastPosition);
+
 			}
 		}
 	}
 
-
-=======
 
 
 	function createModal(){
@@ -228,7 +228,6 @@ theatre.display=function(allData){
 	  return c;
 	}
 	
->>>>>>> first approximation of the updated modal using a Raphael overlay
 	function animate() {
 		requestAnimationFrame( animate );
 		// controls.update();
