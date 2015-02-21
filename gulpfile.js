@@ -30,13 +30,14 @@ gulp.task('sass', function(done) {
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('./dist/css/'));
 });
+
 gulp.task('copy', function () {
   return gulp.src(paths.html)
     .pipe(gulp.dest('dist/'));
-})
+});
 
 gulp.task('clean', function () {
-  return gulp.src(['dist/js', 'dist/index.html'], {read: false})
+  return gulp.src(['dist/js', 'dist/index.html', 'dist/js/three'], {read: false})
     .pipe(clean());
 });
 
@@ -58,6 +59,12 @@ gulp.task('compress', function() {
     .pipe(gulp.dest('dist/js'))
 });
 
+gulp.task('three', function() {
+  return gulp.src('./public/js/three/*.js')
+    .pipe(concat('threeMaster.js'))
+    .pipe(gulp.dest('./dist/three'));
+});
+
 gulp.task('run', shell.task([ 
   'cd server && nodemon server.js'
 ]));
@@ -76,7 +83,7 @@ gulp.task('test', function(callback) {
 });
 
 gulp.task('build', function(callback) {
-  runSequence('clean', 'compile', 'copy', 'sass', 'test', callback);
+  runSequence('clean', 'compile', 'copy', 'three', 'sass', 'test', callback);
 });
 
 gulp.task('default', ['build', 'watch', 'run']);
