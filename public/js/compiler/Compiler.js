@@ -5,6 +5,9 @@ var execute = require('./Execute');
 var Compiler = function (code) {
 
   var parsedSyntaxTree = parse(code);
+
+  console.log(JSON.stringify(parsedSyntaxTree, null, 1));
+
   var wrappedCode = generateCode(parsedSyntaxTree);
   var data = execute(wrappedCode);
 
@@ -20,3 +23,4 @@ var functionStack = [];
 
 
 module.exports = Compiler;
+

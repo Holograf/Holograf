@@ -1,20 +1,17 @@
 module.exports = {
 input: function() {
-var object = {
-  stuff: {
-    name: 'andy',
-    quest: 'to test'
-  }
-};
+var y = [1,2,3];
+y[3] = 'new';
 },
 output: function() {
-var object = {
-    stuff: {
-        name: 'andy',
-        quest: 'to test'
-    }
-};
-___Program.object('object', object, '{"stuff":{}}');
+var y = [
+    1,
+    2,
+    3
+];
+___Program.array('y', y, '{}');
+y[3] = 'new';
+___Program.setObjectProperty('y[3]', y);
 },
 data: {
  "programSteps": [
@@ -23,16 +20,28 @@ data: {
    "pointer": 1
   },
   {
+   "id": 1,
+   "length": 3
+  },
+  {
+   "id": 3,
+   "value": 1
+  },
+  {
    "id": 4,
-   "pointer": 3
+   "value": 2
   },
   {
    "id": 5,
-   "value": "andy"
+   "value": 3
   },
   {
    "id": 6,
-   "value": "to test"
+   "value": "new"
+  },
+  {
+   "id": 1,
+   "length": 4
   }
  ],
  "components": [
@@ -46,7 +55,7 @@ data: {
   },
   {
    "id": 1,
-   "type": "object",
+   "type": "array",
    "block": 0,
    "scope": 0,
    "createdAt": 0
@@ -54,52 +63,55 @@ data: {
   {
    "id": 2,
    "type": "var",
-   "name": "object",
+   "name": "y",
    "block": 0,
    "scope": 0,
    "createdAt": 0
   },
   {
    "id": 3,
-   "type": "object",
+   "type": "element",
+   "name": "0",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2,
+   "parent": 1
   },
   {
    "id": 4,
-   "type": "property",
-   "name": "stuff",
+   "type": "element",
+   "name": "1",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
+   "createdAt": 3,
    "parent": 1
   },
   {
    "id": 5,
-   "type": "property",
-   "name": "name",
+   "type": "element",
+   "name": "2",
    "block": 0,
    "scope": 0,
-   "createdAt": 2,
-   "parent": 3
+   "createdAt": 4,
+   "parent": 1
   },
   {
    "id": 6,
-   "type": "property",
-   "name": "quest",
+   "type": "element",
+   "name": "3",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
-   "parent": 3
+   "createdAt": 5,
+   "parent": 1
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
-   "object[stuff]": 4,
-   "object[stuff][name]": 5,
-   "object[stuff][quest]": 6
+   "y": 2,
+   "y[0]": 3,
+   "y[1]": 4,
+   "y[2]": 5,
+   "y[3]": 6
   }
  }
 }

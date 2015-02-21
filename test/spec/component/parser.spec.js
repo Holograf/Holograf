@@ -277,7 +277,56 @@ describe("Parser", function() {
       expect(code).toBe(output);
     });
 
-    
+    it("should create a pointer to an object outside of the current scope", function() {
+      var test = 'objects/pointer_to_object_outside_scope';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+
+    it("should create a pointer to a new object assigned to a property", function() {
+      var test = 'objects/object_property_new_object';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+
+    it("should create a pointer to an object assigned to a property", function() {
+      var test = 'objects/pointer_to_object_as_property';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+   
   });
 
+  describe("Array", function() {
+    it("should handle array declarations", function() {
+      var test = 'arrays/array_declaration';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+
+    it("should handle arrays with objects", function() {
+      var test = 'arrays/array_with_objects';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+
+    it("should handle nested arrays", function() {
+      var test = 'arrays/nested_arrays';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+
+    it("should change a value at an indexed position", function() {
+      var test = 'arrays/change_array_index';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
+  });
 });

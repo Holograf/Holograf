@@ -17,7 +17,7 @@ var object = {
         ___Program.return('object.speak');
     }
 };
-___Program.object('object', object);
+___Program.object('object', object, '{}');
 var result = object.speak();
 ___Program.set('result', result);
 },
@@ -33,7 +33,7 @@ data: {
   },
   {
    "id": 4,
-   "invoke": "object.speak"
+   "invoke": "object[speak]"
   },
   {
    "id": 4,
@@ -80,7 +80,7 @@ data: {
   {
    "id": 4,
    "type": "invoke",
-   "name": "object.speak",
+   "name": "object[speak]",
    "block": 0,
    "scope": 0,
    "createdAt": 2,
@@ -98,7 +98,7 @@ data: {
  "scopes": {
   "0": {
    "object": 2,
-   "object.speak": 3,
+   "object[speak]": 3,
    "result": 5
   },
   "4": {}

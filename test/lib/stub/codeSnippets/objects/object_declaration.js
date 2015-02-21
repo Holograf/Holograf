@@ -4,7 +4,7 @@ var object = {};
 },
 output: function() {
 var object = {};
-___Program.object('object', object);
+___Program.object('object', object, '{}');
 },
 data: {
  "programSteps": [
