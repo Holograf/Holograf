@@ -52,6 +52,19 @@ var Actions = {
         console.error(xhr, status, err.toString());
       }.bind(this)
     });
+  },
+
+  insertCode: function (id) {
+    if (id) {
+      Actions.fetchCode(id);
+    } else {
+      Actions.updateCode(
+        'var x = 1;\n' +
+        'for (var i = 0; i < 10; i++) {\n' +
+        '  x = x + i;\n' +
+        '}'
+      ); // TODO: Use appstore?
+    }
   }
 
 };
