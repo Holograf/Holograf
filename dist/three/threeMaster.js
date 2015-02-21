@@ -117,7 +117,8 @@ var makeRenderer = function() {
   // var renderer = new THREE.CanvasRenderer();
 
   // http://codepen.io/nireno/pen/cAoGI?editors=001
-  renderer = new THREE.WebGLRenderer( { antialias: false } );
+  var renderer = new THREE.WebGLRenderer();    
+      // ( { antialias: true } );
 
   renderer.setClearColor( 0x333333, 1);
   renderer.setSize( window.innerWidth - 20, window.innerHeight - 20 );
@@ -211,6 +212,7 @@ var displayScene=function(allData){
 
 
 		scene = new THREE.Scene();
+		scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
 		particleLight = TimeLight();
 		particleLight.tween.start();

@@ -25670,7 +25670,7 @@ THREE.SpritePlugin = function ( renderer, sprites ) {
 			}
 
 			if ( material.map !== null ) {
-
+				// !!!
 				gl.uniform2f( uniforms.uvOffset, material.map.offset.x, material.map.offset.y );
 				gl.uniform2f( uniforms.uvScale, material.map.repeat.x, material.map.repeat.y );
 

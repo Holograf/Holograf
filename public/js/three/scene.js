@@ -26,7 +26,13 @@ theatre.display=function(allData){
 		// controls = new THREE.OrbitControls(camera, container);
 
 		scene = new THREE.Scene();
+<<<<<<< HEAD
 		particleLight = subroutines.TimeLight();
+=======
+		scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+
+		particleLight = TimeLight();
+>>>>>>> c8fb045... Tests Three controls; edits codeEditor styles
 		particleLight.tween.start();
 		particleLight.tween.onComplete(function(){
 			particleLight.position.z=0;
