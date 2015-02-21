@@ -4,11 +4,13 @@ var execute = require('./Execute');
 
 var Compiler = function (code) {
 
-  var parsedCode = parse(code);
-  var wrappedCode = generateCode(parsedCode);
+  var parsedSyntaxTree = parse(code);
+  var wrappedCode = generateCode(parsedSyntaxTree);
   var data = execute(wrappedCode);
 
   console.log(wrappedCode);
+  console.log(JSON.stringify(data,null,1));
+
   return data;
 }
 
