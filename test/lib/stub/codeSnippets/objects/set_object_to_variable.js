@@ -6,8 +6,8 @@ var object = {
 object = 12;
 },
 output: function() {
-var object = { name: 'andy' };
-___Program.object('object', object, '{}');
+var object = { name: 'andy' }.___obj();
+___Program.set('object', object);
 object = 12;
 ___Program.set('object', object);
 },
@@ -20,6 +20,10 @@ data: {
   {
    "id": 3,
    "value": "andy"
+  },
+  {
+   "id": 1,
+   "snapshot": "{\"name\":\"andy\"}"
   },
   {
    "id": 2,

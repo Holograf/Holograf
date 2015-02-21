@@ -105,4 +105,5 @@ gulp.task('default', ['build', 'watch', 'run']);
 
 gulp.task('watch', function() {
   gulp.watch('public/**/*.*', ['build']);
+  gulp.watch('test/**/*.*', ['test']);
 });

@@ -7,46 +7,49 @@ f(1, 2, 3);
 },
 output: function() {
 var f = function (x, y, z) {
-    ___Program.invoke('f');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.param('x', x);
     ___Program.param('y', y);
     ___Program.param('z', z);
     x = y + z;
     ___Program.set('x', x);
-    ___Program.return('f');
-};
-___Program.function('f', f);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.set('f', f);
 f(1, 2, 3);
 },
 data: {
  "programSteps": [
   {
-   "id": 1,
-   "value": "___function code"
-  },
-  {
    "id": 2,
-   "invoke": "f"
+   "pointer": 1
   },
   {
    "id": 3,
-   "param": 1
+   "invoke": 1
   },
   {
    "id": 4,
-   "param": 2
+   "value": 1
   },
   {
    "id": 5,
-   "param": 3
+   "value": 2
   },
   {
-   "id": 3,
+   "id": 6,
+   "value": 3
+  },
+  {
+   "id": 4,
    "value": 5
   },
   {
-   "id": 2,
-   "return": "___undefined"
+   "id": 3,
+   "return": {
+    "value": "___undefined"
+   }
   }
  ],
  "components": [
@@ -60,6 +63,13 @@ data: {
   },
   {
    "id": 1,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 2,
    "type": "var",
    "name": "f",
    "block": 0,
@@ -67,7 +77,7 @@ data: {
    "createdAt": 0
   },
   {
-   "id": 2,
+   "id": 3,
    "type": "invoke",
    "name": "f",
    "block": 0,
@@ -76,38 +86,38 @@ data: {
    "function": 1
   },
   {
-   "id": 3,
-   "type": "var",
+   "id": 4,
+   "type": "param",
    "name": "x",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 2
   },
   {
-   "id": 4,
-   "type": "var",
+   "id": 5,
+   "type": "param",
    "name": "y",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 3
   },
   {
-   "id": 5,
-   "type": "var",
+   "id": 6,
+   "type": "param",
    "name": "z",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 4
   }
  ],
  "scopes": {
   "0": {
-   "f": 1
+   "f": 2
   },
-  "2": {
-   "x": 3,
-   "y": 4,
-   "z": 5
+  "3": {
+   "x": 4,
+   "y": 5,
+   "z": 6
   }
  }
 }

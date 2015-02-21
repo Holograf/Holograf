@@ -13,42 +13,53 @@ output: function() {
 var object = {
     nested: {
         f: function () {
-            ___Program.method('object[nested][f]');
+            var ___functionId = arguments.callee.___id;
+            ___Program.method(___functionId);
             ___Program.returnState = true;
-            ___Program.return('object[nested][f]');
+            ___Program.return(___functionId);
             return ___Program.returnState;
-            ___Program.return('object[nested][f]');
-        }
-    }
-};
-___Program.object('object', object, '{"nested":{}}');
+            ___Program.return(___functionId);
+        }.___fn()
+    }.___obj()
+}.___obj();
+___Program.set('object', object);
 var result = object.nested.f();
 ___Program.set('result', result);
 },
 data: {
  "programSteps": [
   {
-   "id": 2,
-   "pointer": 1
-  },
-  {
    "id": 4,
    "pointer": 3
   },
   {
    "id": 5,
-   "value": "___function code"
+   "pointer": 2
   },
   {
    "id": 6,
-   "invoke": "object[nested][f]"
+   "pointer": 1
   },
   {
-   "id": 6,
-   "return": true
+   "id": 2,
+   "snapshot": "{}"
+  },
+  {
+   "id": 3,
+   "snapshot": "{\"nested\":{}}"
   },
   {
    "id": 7,
+   "invoke": 1
+  },
+  {
+   "id": 7,
+   "return": {
+    "value": true
+   }
+  },
+  {
+   "id": 8,
    "value": true
   }
  ],
@@ -63,15 +74,14 @@ data: {
   },
   {
    "id": 1,
-   "type": "object",
+   "type": "function",
    "block": 0,
    "scope": 0,
    "createdAt": 0
   },
   {
    "id": 2,
-   "type": "var",
-   "name": "object",
+   "type": "object",
    "block": 0,
    "scope": 0,
    "createdAt": 0
@@ -81,52 +91,60 @@ data: {
    "type": "object",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 0
   },
   {
    "id": 4,
+   "type": "var",
+   "name": "object",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 5,
    "type": "property",
    "name": "nested",
    "block": 0,
    "scope": 0,
    "createdAt": 1,
-   "parent": 1
-  },
-  {
-   "id": 5,
-   "type": "method",
-   "name": "f",
-   "block": 0,
-   "scope": 0,
-   "createdAt": 2,
    "parent": 3
   },
   {
    "id": 6,
-   "type": "invoke",
-   "name": "object[nested][f]",
+   "type": "property",
+   "name": "f",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
-   "function": 5
+   "createdAt": 2,
+   "parent": 2
   },
   {
    "id": 7,
+   "type": "invoke",
+   "name": "f",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 5,
+   "function": 1
+  },
+  {
+   "id": 8,
    "type": "var",
    "name": "result",
    "block": 0,
    "scope": 0,
-   "createdAt": 5
+   "createdAt": 7
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
-   "object[nested]": 4,
-   "object[nested][f]": 5,
-   "result": 7
+   "object": 4,
+   "object[nested]": 5,
+   "object[nested][f]": 6,
+   "result": 8
   },
-  "6": {}
+  "7": {}
  }
 }
 }

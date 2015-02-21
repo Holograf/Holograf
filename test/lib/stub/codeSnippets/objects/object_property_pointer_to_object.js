@@ -23,12 +23,24 @@ data: {
    "value": "andy"
   },
   {
+   "id": 1,
+   "snapshot": "{\"name\":\"andy\"}"
+  },
+  {
    "id": 5,
    "pointer": 4
   },
   {
+   "id": 4,
+   "snapshot": "{}"
+  },
+  {
    "id": 6,
    "pointer": 1
+  },
+  {
+   "id": 4,
+   "snapshot": "{\"o\":{\"name\":\"andy\"}}"
   }
  ],
  "components": [
@@ -69,7 +81,7 @@ data: {
    "type": "object",
    "block": 0,
    "scope": 0,
-   "createdAt": 2
+   "createdAt": 3
   },
   {
    "id": 5,
@@ -77,7 +89,7 @@ data: {
    "name": "next",
    "block": 0,
    "scope": 0,
-   "createdAt": 2
+   "createdAt": 3
   },
   {
    "id": 6,
@@ -85,16 +97,16 @@ data: {
    "name": "o",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
+   "createdAt": 5,
    "parent": 4
   }
  ],
  "scopes": {
   "0": {
    "obj": 2,
-   "obj.name": 3,
+   "obj[name]": 3,
    "next": 5,
-   "next.o": 6
+   "next[o]": 6
   }
  }
 }

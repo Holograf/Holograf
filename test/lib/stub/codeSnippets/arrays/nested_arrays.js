@@ -10,35 +10,27 @@ var x = [
         'a',
         'b',
         'c'
-    ]
-];
-___Program.array('x', x, '{"2":{}}');
+    ].___obj()
+].___obj();
+___Program.set('x', x);
 },
 data: {
  "programSteps": [
   {
-   "id": 2,
-   "pointer": 1
-  },
-  {
-   "id": 1,
-   "length": 3
-  },
-  {
    "id": 3,
-   "value": 1
+   "pointer": 2
   },
   {
    "id": 4,
+   "value": 1
+  },
+  {
+   "id": 5,
    "value": 2
   },
   {
    "id": 6,
-   "pointer": 5
-  },
-  {
-   "id": 5,
-   "length": 3
+   "pointer": 1
   },
   {
    "id": 7,
@@ -51,6 +43,16 @@ data: {
   {
    "id": 9,
    "value": "c"
+  },
+  {
+   "id": 1,
+   "length": 3,
+   "snapshot": "[\"a\",\"b\",\"c\"]"
+  },
+  {
+   "id": 2,
+   "length": 3,
+   "snapshot": "[1,2,[\"a\",\"b\",\"c\"]]"
   }
  ],
  "components": [
@@ -71,6 +73,13 @@ data: {
   },
   {
    "id": 2,
+   "type": "array",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 3,
    "type": "var",
    "name": "x",
    "block": 0,
@@ -78,29 +87,22 @@ data: {
    "createdAt": 0
   },
   {
-   "id": 3,
+   "id": 4,
    "type": "element",
    "name": "0",
    "block": 0,
    "scope": 0,
-   "createdAt": 2,
-   "parent": 1
+   "createdAt": 1,
+   "parent": 2
   },
   {
-   "id": 4,
+   "id": 5,
    "type": "element",
    "name": "1",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
-   "parent": 1
-  },
-  {
-   "id": 5,
-   "type": "array",
-   "block": 0,
-   "scope": 0,
-   "createdAt": 4
+   "createdAt": 2,
+   "parent": 2
   },
   {
    "id": 6,
@@ -108,8 +110,8 @@ data: {
    "name": "2",
    "block": 0,
    "scope": 0,
-   "createdAt": 4,
-   "parent": 1
+   "createdAt": 3,
+   "parent": 2
   },
   {
    "id": 7,
@@ -117,8 +119,8 @@ data: {
    "name": "0",
    "block": 0,
    "scope": 0,
-   "createdAt": 6,
-   "parent": 5
+   "createdAt": 4,
+   "parent": 1
   },
   {
    "id": 8,
@@ -126,8 +128,8 @@ data: {
    "name": "1",
    "block": 0,
    "scope": 0,
-   "createdAt": 7,
-   "parent": 5
+   "createdAt": 5,
+   "parent": 1
   },
   {
    "id": 9,
@@ -135,15 +137,15 @@ data: {
    "name": "2",
    "block": 0,
    "scope": 0,
-   "createdAt": 8,
-   "parent": 5
+   "createdAt": 6,
+   "parent": 1
   }
  ],
  "scopes": {
   "0": {
-   "x": 2,
-   "x[0]": 3,
-   "x[1]": 4,
+   "x": 3,
+   "x[0]": 4,
+   "x[1]": 5,
    "x[2]": 6,
    "x[2][0]": 7,
    "x[2][1]": 8,

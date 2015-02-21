@@ -12,19 +12,19 @@ var object = {
     stuff: {
         name: 'andy',
         quest: 'to test'
-    }
-};
-___Program.object('object', object, '{"stuff":{}}');
+    }.___obj()
+}.___obj();
+___Program.set('object', object);
 },
 data: {
  "programSteps": [
   {
-   "id": 2,
-   "pointer": 1
+   "id": 3,
+   "pointer": 2
   },
   {
    "id": 4,
-   "pointer": 3
+   "pointer": 1
   },
   {
    "id": 5,
@@ -33,6 +33,14 @@ data: {
   {
    "id": 6,
    "value": "to test"
+  },
+  {
+   "id": 1,
+   "snapshot": "{\"name\":\"andy\",\"quest\":\"to test\"}"
+  },
+  {
+   "id": 2,
+   "snapshot": "{\"stuff\":{\"name\":\"andy\",\"quest\":\"to test\"}}"
   }
  ],
  "components": [
@@ -53,18 +61,18 @@ data: {
   },
   {
    "id": 2,
-   "type": "var",
-   "name": "object",
+   "type": "object",
    "block": 0,
    "scope": 0,
    "createdAt": 0
   },
   {
    "id": 3,
-   "type": "object",
+   "type": "var",
+   "name": "object",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 0
   },
   {
    "id": 4,
@@ -73,7 +81,7 @@ data: {
    "block": 0,
    "scope": 0,
    "createdAt": 1,
-   "parent": 1
+   "parent": 2
   },
   {
    "id": 5,
@@ -82,7 +90,7 @@ data: {
    "block": 0,
    "scope": 0,
    "createdAt": 2,
-   "parent": 3
+   "parent": 1
   },
   {
    "id": 6,
@@ -91,12 +99,12 @@ data: {
    "block": 0,
    "scope": 0,
    "createdAt": 3,
-   "parent": 3
+   "parent": 1
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
+   "object": 3,
    "object[stuff]": 4,
    "object[stuff][name]": 5,
    "object[stuff][quest]": 6

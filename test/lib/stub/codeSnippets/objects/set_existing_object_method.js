@@ -9,16 +9,17 @@ object.f = function () {
 var result = object.f();
 },
 output: function() {
-var object = { f: 'andy' };
-___Program.object('object', object);
+var object = { f: 'andy' }.___obj();
+___Program.set('object', object);
 object.f = function () {
-    ___Program.invoke('object.f');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.returnState = 1;
-    ___Program.return('object.f');
+    ___Program.return(___functionId);
     return ___Program.returnState;
-    ___Program.return('object.f');
-};
-___Program.setObjectProperty('object.f', object.f);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.setObjectProperty('object[f]', object);
 var result = object.f();
 ___Program.set('result', result);
 },

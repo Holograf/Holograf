@@ -1,37 +1,47 @@
 module.exports = {
 input: function() {
-var x = [1,2,3];
+var x = {inner: [1,2,3]};
 },
 output: function() {
-var x = [
-    1,
-    2,
-    3
-].___obj();
+var x = {
+    inner: [
+        1,
+        2,
+        3
+    ].___obj()
+}.___obj();
 ___Program.set('x', x);
 },
 data: {
  "programSteps": [
   {
-   "id": 2,
-   "pointer": 1
-  },
-  {
    "id": 3,
-   "value": 1
+   "pointer": 2
   },
   {
    "id": 4,
-   "value": 2
+   "pointer": 1
   },
   {
    "id": 5,
+   "value": 1
+  },
+  {
+   "id": 6,
+   "value": 2
+  },
+  {
+   "id": 7,
    "value": 3
   },
   {
    "id": 1,
    "length": 3,
    "snapshot": "[1,2,3]"
+  },
+  {
+   "id": 2,
+   "snapshot": "{\"inner\":[1,2,3]}"
   }
  ],
  "components": [
@@ -52,6 +62,13 @@ data: {
   },
   {
    "id": 2,
+   "type": "object",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 3,
    "type": "var",
    "name": "x",
    "block": 0,
@@ -59,39 +76,49 @@ data: {
    "createdAt": 0
   },
   {
-   "id": 3,
-   "type": "element",
-   "name": "0",
+   "id": 4,
+   "type": "property",
+   "name": "inner",
    "block": 0,
    "scope": 0,
    "createdAt": 1,
-   "parent": 1
+   "parent": 2
   },
   {
-   "id": 4,
+   "id": 5,
    "type": "element",
-   "name": "1",
+   "name": "0",
    "block": 0,
    "scope": 0,
    "createdAt": 2,
    "parent": 1
   },
   {
-   "id": 5,
+   "id": 6,
+   "type": "element",
+   "name": "1",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 3,
+   "parent": 1
+  },
+  {
+   "id": 7,
    "type": "element",
    "name": "2",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
+   "createdAt": 4,
    "parent": 1
   }
  ],
  "scopes": {
   "0": {
-   "x": 2,
-   "x[0]": 3,
-   "x[1]": 4,
-   "x[2]": 5
+   "x": 3,
+   "x[inner]": 4,
+   "x[inner][0]": 5,
+   "x[inner][1]": 6,
+   "x[inner][2]": 7
   }
  }
 }

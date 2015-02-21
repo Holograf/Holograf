@@ -11,131 +11,142 @@ fibonacci(3);
 },
 output: function() {
 var fibonacci = function (n) {
-    ___Program.invoke('fibonacci');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.param('n', n);
     ___Program.block('if', 2);
     if (n < 2) {
         ___Program.enter('if', 0);
         ___Program.returnState = 1;
-        ___Program.return('fibonacci');
+        ___Program.return(___functionId);
         return ___Program.returnState;
     } else {
         ___Program.enter('if', 1);
         ___Program.returnState = fibonacci(n - 2) + fibonacci(n - 1);
-        ___Program.return('fibonacci');
+        ___Program.return(___functionId);
         return ___Program.returnState;
     }
     ___Program.block('if', 'close');
-    ___Program.return('fibonacci');
-};
-___Program.function('fibonacci', fibonacci);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.set('fibonacci', fibonacci);
 fibonacci(3);
 },
 data: {
  "programSteps": [
   {
-   "id": 1,
-   "value": "___function code"
-  },
-  {
    "id": 2,
-   "invoke": "fibonacci"
+   "pointer": 1
   },
   {
    "id": 3,
-   "param": 3
+   "invoke": 1
   },
   {
    "id": 4,
-   "if": 2
-  },
-  {
-   "id": 4,
-   "enter": 1
+   "value": 3
   },
   {
    "id": 5,
-   "invoke": "fibonacci"
+   "if": 2
+  },
+  {
+   "id": 5,
+   "enter": 1
   },
   {
    "id": 6,
-   "param": 1
+   "invoke": 1
   },
   {
    "id": 7,
-   "if": 2
-  },
-  {
-   "id": 7,
-   "enter": 0
-  },
-  {
-   "id": 5,
-   "return": 1
+   "value": 1
   },
   {
    "id": 8,
-   "invoke": "fibonacci"
+   "if": 2
+  },
+  {
+   "id": 8,
+   "enter": 0
+  },
+  {
+   "id": 6,
+   "return": {
+    "value": 1
+   }
   },
   {
    "id": 9,
-   "param": 2
+   "invoke": 1
   },
   {
    "id": 10,
+   "value": 2
+  },
+  {
+   "id": 11,
    "if": 2
   },
   {
-   "id": 10,
+   "id": 11,
    "enter": 1
   },
   {
-   "id": 11,
-   "invoke": "fibonacci"
+   "id": 12,
+   "invoke": 1
+  },
+  {
+   "id": 13,
+   "value": 0
+  },
+  {
+   "id": 14,
+   "if": 2
+  },
+  {
+   "id": 14,
+   "enter": 0
   },
   {
    "id": 12,
-   "param": 0
-  },
-  {
-   "id": 13,
-   "if": 2
-  },
-  {
-   "id": 13,
-   "enter": 0
-  },
-  {
-   "id": 11,
-   "return": 1
-  },
-  {
-   "id": 14,
-   "invoke": "fibonacci"
+   "return": {
+    "value": 1
+   }
   },
   {
    "id": 15,
-   "param": 1
+   "invoke": 1
   },
   {
    "id": 16,
+   "value": 1
+  },
+  {
+   "id": 17,
    "if": 2
   },
   {
-   "id": 16,
+   "id": 17,
    "enter": 0
   },
   {
-   "id": 14,
-   "return": 1
+   "id": 15,
+   "return": {
+    "value": 1
+   }
   },
   {
-   "id": 8,
-   "return": 2
+   "id": 9,
+   "return": {
+    "value": 2
+   }
   },
   {
-   "id": 2,
-   "return": 3
+   "id": 3,
+   "return": {
+    "value": 3
+   }
   }
  ],
  "components": [
@@ -149,6 +160,13 @@ data: {
   },
   {
    "id": 1,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 2,
    "type": "var",
    "name": "fibonacci",
    "block": 0,
@@ -156,7 +174,7 @@ data: {
    "createdAt": 0
   },
   {
-   "id": 2,
+   "id": 3,
    "type": "invoke",
    "name": "fibonacci",
    "block": 0,
@@ -165,145 +183,145 @@ data: {
    "function": 1
   },
   {
-   "id": 3,
-   "type": "var",
+   "id": 4,
+   "type": "param",
    "name": "n",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 2
   },
   {
-   "id": 4,
+   "id": 5,
    "type": "block",
    "name": "if",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 3,
    "paths": 2
   },
   {
-   "id": 5,
+   "id": 6,
    "type": "invoke",
    "name": "fibonacci",
-   "block": 4,
-   "scope": 2,
+   "block": 5,
+   "scope": 3,
    "createdAt": 5,
    "function": 1
   },
   {
-   "id": 6,
-   "type": "var",
+   "id": 7,
+   "type": "param",
    "name": "n",
-   "block": 4,
-   "scope": 5,
+   "block": 5,
+   "scope": 6,
    "createdAt": 6
   },
   {
-   "id": 7,
+   "id": 8,
    "type": "block",
    "name": "if",
-   "block": 4,
-   "scope": 5,
+   "block": 5,
+   "scope": 6,
    "createdAt": 7,
    "paths": 2
   },
   {
-   "id": 8,
+   "id": 9,
    "type": "invoke",
    "name": "fibonacci",
-   "block": 4,
-   "scope": 2,
+   "block": 5,
+   "scope": 3,
    "createdAt": 10,
    "function": 1
   },
   {
-   "id": 9,
-   "type": "var",
+   "id": 10,
+   "type": "param",
    "name": "n",
-   "block": 4,
-   "scope": 8,
+   "block": 5,
+   "scope": 9,
    "createdAt": 11
   },
   {
-   "id": 10,
+   "id": 11,
    "type": "block",
    "name": "if",
-   "block": 4,
-   "scope": 8,
+   "block": 5,
+   "scope": 9,
    "createdAt": 12,
    "paths": 2
   },
   {
-   "id": 11,
+   "id": 12,
    "type": "invoke",
    "name": "fibonacci",
-   "block": 10,
-   "scope": 8,
+   "block": 11,
+   "scope": 9,
    "createdAt": 14,
    "function": 1
   },
   {
-   "id": 12,
-   "type": "var",
+   "id": 13,
+   "type": "param",
    "name": "n",
-   "block": 10,
-   "scope": 11,
+   "block": 11,
+   "scope": 12,
    "createdAt": 15
   },
   {
-   "id": 13,
+   "id": 14,
    "type": "block",
    "name": "if",
-   "block": 10,
-   "scope": 11,
+   "block": 11,
+   "scope": 12,
    "createdAt": 16,
    "paths": 2
   },
   {
-   "id": 14,
+   "id": 15,
    "type": "invoke",
    "name": "fibonacci",
-   "block": 10,
-   "scope": 8,
+   "block": 11,
+   "scope": 9,
    "createdAt": 19,
    "function": 1
   },
   {
-   "id": 15,
-   "type": "var",
+   "id": 16,
+   "type": "param",
    "name": "n",
-   "block": 10,
-   "scope": 14,
+   "block": 11,
+   "scope": 15,
    "createdAt": 20
   },
   {
-   "id": 16,
+   "id": 17,
    "type": "block",
    "name": "if",
-   "block": 10,
-   "scope": 14,
+   "block": 11,
+   "scope": 15,
    "createdAt": 21,
    "paths": 2
   }
  ],
  "scopes": {
   "0": {
-   "fibonacci": 1
+   "fibonacci": 2
   },
-  "2": {
-   "n": 3
+  "3": {
+   "n": 4
   },
-  "5": {
-   "n": 6
+  "6": {
+   "n": 7
   },
-  "8": {
-   "n": 9
+  "9": {
+   "n": 10
   },
-  "11": {
-   "n": 12
+  "12": {
+   "n": 13
   },
-  "14": {
-   "n": 15
+  "15": {
+   "n": 16
   }
  }
 }

@@ -8,19 +8,20 @@ var f = function (verb) {
 var result = f('eat');
 },
 output: function() {
-var x = { name: 'charlie' };
-___Program.object('x', x, '{}');
+var x = { name: 'charlie' }.___obj();
+___Program.set('x', x);
 var f = function (verb) {
-    ___Program.invoke('f');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.param('verb', verb);
     var y = x;
-    ___Program.set('y', y, 'x');
+    ___Program.set('y', y);
     ___Program.returnState = 'I want to ' + verb + ' ' + y.name;
-    ___Program.return('f');
+    ___Program.return(___functionId);
     return ___Program.returnState;
-    ___Program.return('f');
-};
-___Program.function('f', f);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.set('f', f);
 var result = f('eat');
 ___Program.set('result', result);
 },
@@ -35,27 +36,33 @@ data: {
    "value": "charlie"
   },
   {
-   "id": 4,
-   "value": "___function code"
+   "id": 1,
+   "snapshot": "{\"name\":\"charlie\"}"
   },
   {
    "id": 5,
-   "invoke": "f"
+   "pointer": 4
   },
   {
    "id": 6,
-   "param": "eat"
+   "invoke": 4
   },
   {
    "id": 7,
-   "pointer": 1
-  },
-  {
-   "id": 5,
-   "return": "I want to eat charlie"
+   "value": "eat"
   },
   {
    "id": 8,
+   "pointer": 1
+  },
+  {
+   "id": 6,
+   "return": {
+    "value": "I want to eat charlie"
+   }
+  },
+  {
+   "id": 9,
    "value": "I want to eat charlie"
   }
  ],
@@ -94,56 +101,63 @@ data: {
   },
   {
    "id": 4,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 3
+  },
+  {
+   "id": 5,
    "type": "var",
    "name": "f",
    "block": 0,
    "scope": 0,
-   "createdAt": 2
+   "createdAt": 3
   },
   {
-   "id": 5,
+   "id": 6,
    "type": "invoke",
    "name": "f",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
+   "createdAt": 4,
    "function": 4
   },
   {
-   "id": 6,
-   "type": "var",
+   "id": 7,
+   "type": "param",
    "name": "verb",
    "block": 0,
-   "scope": 5,
-   "createdAt": 4
-  },
-  {
-   "id": 7,
-   "type": "var",
-   "name": "y",
-   "block": 0,
-   "scope": 5,
+   "scope": 6,
    "createdAt": 5
   },
   {
    "id": 8,
    "type": "var",
+   "name": "y",
+   "block": 0,
+   "scope": 6,
+   "createdAt": 6
+  },
+  {
+   "id": 9,
+   "type": "var",
    "name": "result",
    "block": 0,
    "scope": 0,
-   "createdAt": 7
+   "createdAt": 8
   }
  ],
  "scopes": {
   "0": {
    "x": 2,
    "x[name]": 3,
-   "f": 4,
-   "result": 8
+   "f": 5,
+   "result": 9
   },
-  "5": {
-   "verb": 6,
-   "y": 7
+  "6": {
+   "verb": 7,
+   "y": 8
   }
  }
 }

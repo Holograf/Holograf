@@ -11,55 +11,58 @@ var result = f(12);
 },
 output: function() {
 var f = function (x) {
-    ___Program.invoke('f');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.param('x', x);
     ___Program.block('if', 2);
     if (x > 10) {
         ___Program.enter('if', 0);
         ___Program.returnState = 'large';
-        ___Program.return('f');
+        ___Program.return(___functionId);
         return ___Program.returnState;
     } else {
         ___Program.enter('if', 1);
         ___Program.returnState = 'small';
-        ___Program.return('f');
+        ___Program.return(___functionId);
         return ___Program.returnState;
     }
     ___Program.block('if', 'close');
-    ___Program.return('f');
-};
-___Program.function('f', f);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.set('f', f);
 var result = f(12);
 ___Program.set('result', result);
 },
 data: {
  "programSteps": [
   {
-   "id": 1,
-   "value": "___function code"
-  },
-  {
    "id": 2,
-   "invoke": "f"
+   "pointer": 1
   },
   {
    "id": 3,
-   "param": 12
+   "invoke": 1
   },
   {
    "id": 4,
-   "if": 2
-  },
-  {
-   "id": 4,
-   "enter": 0
-  },
-  {
-   "id": 2,
-   "return": "large"
+   "value": 12
   },
   {
    "id": 5,
+   "if": 2
+  },
+  {
+   "id": 5,
+   "enter": 0
+  },
+  {
+   "id": 3,
+   "return": {
+    "value": "large"
+   }
+  },
+  {
+   "id": 6,
    "value": "large"
   }
  ],
@@ -74,6 +77,13 @@ data: {
   },
   {
    "id": 1,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 2,
    "type": "var",
    "name": "f",
    "block": 0,
@@ -81,7 +91,7 @@ data: {
    "createdAt": 0
   },
   {
-   "id": 2,
+   "id": 3,
    "type": "invoke",
    "name": "f",
    "block": 0,
@@ -90,24 +100,24 @@ data: {
    "function": 1
   },
   {
-   "id": 3,
-   "type": "var",
+   "id": 4,
+   "type": "param",
    "name": "x",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 2
   },
   {
-   "id": 4,
+   "id": 5,
    "type": "block",
    "name": "if",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 3,
    "paths": 2
   },
   {
-   "id": 5,
+   "id": 6,
    "type": "var",
    "name": "result",
    "block": 0,
@@ -117,11 +127,11 @@ data: {
  ],
  "scopes": {
   "0": {
-   "f": 1,
-   "result": 5
+   "f": 2,
+   "result": 6
   },
-  "2": {
-   "x": 3
+  "3": {
+   "x": 4
   }
  }
 }

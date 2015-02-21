@@ -6,15 +6,16 @@ object.f = function () {
 }
 },
 output: function() {
-var object = {};
-___Program.object('object', object, '{}');
+var object = {}.___obj();
+___Program.set('object', object);
 object.f = function () {
-    ___Program.invoke('object[f]');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.returnState = 1;
-    ___Program.return('object[f]');
+    ___Program.return(___functionId);
     return ___Program.returnState;
-    ___Program.return('object[f]');
-};
+    ___Program.return(___functionId);
+}.___fn();
 ___Program.setObjectProperty('object[f]', object);
 },
 data: {
@@ -24,8 +25,16 @@ data: {
    "pointer": 1
   },
   {
-   "id": 3,
-   "value": "___function code"
+   "id": 1,
+   "snapshot": "{}"
+  },
+  {
+   "id": 4,
+   "pointer": 3
+  },
+  {
+   "id": 1,
+   "snapshot": "{}"
   }
  ],
  "components": [
@@ -54,18 +63,25 @@ data: {
   },
   {
    "id": 3,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 2
+  },
+  {
+   "id": 4,
    "type": "method",
    "name": "f",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
+   "createdAt": 2,
    "parent": 1
   }
  ],
  "scopes": {
   "0": {
    "object": 2,
-   "object[f]": 3
+   "object[f]": 4
   }
  }
 }

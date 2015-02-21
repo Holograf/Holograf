@@ -4,10 +4,9 @@ var x = {};
 x.a = {};
 },
 output: function() {
-var x = {};
-___Program.object('x', x, '{}');
-x.a = {};
-___Program.object('x[a]', x['a'], '{}');
+var x = {}.___obj();
+___Program.set('x', x);
+x.a = {}.___obj();
 ___Program.setObjectProperty('x[a]', x);
 },
 data: {
@@ -17,8 +16,16 @@ data: {
    "pointer": 1
   },
   {
+   "id": 1,
+   "snapshot": "{}"
+  },
+  {
    "id": 4,
    "pointer": 3
+  },
+  {
+   "id": 1,
+   "snapshot": "{\"a\":{}}"
   }
  ],
  "components": [
@@ -50,7 +57,7 @@ data: {
    "type": "object",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2
   },
   {
    "id": 4,
@@ -58,7 +65,7 @@ data: {
    "name": "a",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
+   "createdAt": 2,
    "parent": 1
   }
  ],

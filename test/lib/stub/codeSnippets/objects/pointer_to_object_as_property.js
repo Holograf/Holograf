@@ -4,10 +4,10 @@ var obj = {};
 var next = {prop: obj};
 },
 output: function() {
-var obj = {};
-___Program.object('obj', obj, '{}');
-var next = { prop: obj };
-___Program.object('next', next, '{"prop":"obj"}');
+var obj = {}.___obj();
+___Program.set('obj', obj);
+var next = { prop: obj }.___obj();
+___Program.set('next', next);
 },
 data: {
  "programSteps": [
@@ -16,12 +16,24 @@ data: {
    "pointer": 1
   },
   {
+   "id": 1,
+   "snapshot": "{}"
+  },
+  {
    "id": 4,
    "pointer": 3
   },
   {
    "id": 5,
    "pointer": 1
+  },
+  {
+   "id": 1,
+   "snapshot": "{}"
+  },
+  {
+   "id": 3,
+   "snapshot": "{\"prop\":{}}"
   }
  ],
  "components": [
@@ -53,7 +65,7 @@ data: {
    "type": "object",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2
   },
   {
    "id": 4,
@@ -61,7 +73,7 @@ data: {
    "name": "next",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2
   },
   {
    "id": 5,
@@ -69,7 +81,7 @@ data: {
    "name": "prop",
    "block": 0,
    "scope": 0,
-   "createdAt": 2,
+   "createdAt": 3,
    "parent": 3
   }
  ],

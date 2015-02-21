@@ -7,36 +7,39 @@ f(3);
 },
 output: function() {
 var f = function (n) {
-    ___Program.invoke('f');
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
     ___Program.param('n', n);
     n++;
     ___Program.set('n', n);
-    ___Program.return('f');
-};
-___Program.function('f', f);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.set('f', f);
 f(3);
 },
 data: {
  "programSteps": [
   {
-   "id": 1,
-   "value": "___function code"
-  },
-  {
    "id": 2,
-   "invoke": "f"
+   "pointer": 1
   },
   {
    "id": 3,
-   "param": 3
+   "invoke": 1
   },
   {
-   "id": 3,
+   "id": 4,
+   "value": 3
+  },
+  {
+   "id": 4,
    "value": 4
   },
   {
-   "id": 2,
-   "return": "___undefined"
+   "id": 3,
+   "return": {
+    "value": "___undefined"
+   }
   }
  ],
  "components": [
@@ -50,6 +53,13 @@ data: {
   },
   {
    "id": 1,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 2,
    "type": "var",
    "name": "f",
    "block": 0,
@@ -57,7 +67,7 @@ data: {
    "createdAt": 0
   },
   {
-   "id": 2,
+   "id": 3,
    "type": "invoke",
    "name": "f",
    "block": 0,
@@ -66,20 +76,20 @@ data: {
    "function": 1
   },
   {
-   "id": 3,
-   "type": "var",
+   "id": 4,
+   "type": "param",
    "name": "n",
    "block": 0,
-   "scope": 2,
+   "scope": 3,
    "createdAt": 2
   }
  ],
  "scopes": {
   "0": {
-   "f": 1
+   "f": 2
   },
-  "2": {
-   "n": 3
+  "3": {
+   "n": 4
   }
  }
 }

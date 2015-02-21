@@ -1,14 +1,17 @@
 module.exports = {
 input: function() {
-var x = [1,2,3];
+var arr = [1,2,3];
+var p = arr.pop();
 },
 output: function() {
-var x = [
+var arr = [
     1,
     2,
     3
 ].___obj();
-___Program.set('x', x);
+___Program.set('arr', arr);
+var p = arr.pop();
+___Program.set('p', p);
 },
 data: {
  "programSteps": [
@@ -32,6 +35,15 @@ data: {
    "id": 1,
    "length": 3,
    "snapshot": "[1,2,3]"
+  },
+  {
+   "id": 1,
+   "length": 2,
+   "snapshot": "[1,2]"
+  },
+  {
+   "id": 6,
+   "value": 3
   }
  ],
  "components": [
@@ -53,7 +65,7 @@ data: {
   {
    "id": 2,
    "type": "var",
-   "name": "x",
+   "name": "arr",
    "block": 0,
    "scope": 0,
    "createdAt": 0
@@ -84,14 +96,23 @@ data: {
    "scope": 0,
    "createdAt": 3,
    "parent": 1
+  },
+  {
+   "id": 6,
+   "type": "var",
+   "name": "p",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 6
   }
  ],
  "scopes": {
   "0": {
-   "x": 2,
-   "x[0]": 3,
-   "x[1]": 4,
-   "x[2]": 5
+   "arr": 2,
+   "arr[0]": 3,
+   "arr[1]": 4,
+   "arr[2]": 5,
+   "p": 6
   }
  }
 }

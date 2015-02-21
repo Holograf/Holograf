@@ -9,8 +9,8 @@ output: function() {
 var object = {
     a: 'name',
     b: 2
-};
-___Program.object('object', object, '{}');
+}.___obj();
+___Program.set('object', object);
 },
 data: {
  "programSteps": [
@@ -25,6 +25,10 @@ data: {
   {
    "id": 4,
    "value": 2
+  },
+  {
+   "id": 1,
+   "snapshot": "{\"a\":\"name\",\"b\":2}"
   }
  ],
  "components": [
