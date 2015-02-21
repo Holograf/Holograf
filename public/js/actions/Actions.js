@@ -38,7 +38,7 @@ var Actions = {
 
   fetchCode: function(id) {
     if (!id) {
-      return Actions.updateCode();
+      return Actions.updateCode(null);
     }
     $.ajax({
       url: 'http://127.0.0.1:5000/api/code/' + id,
@@ -46,25 +46,12 @@ var Actions = {
       type: 'GET',
       success: function(data) {
         Actions.updateCode(data[0].rawCode);
-        console.log(JSON.parse(data[0].processedCode)); // TODO: Deal with this?
+        // console.log(JSON.parse(data[0].processedCode)); // TODO: Deal with this?
       },
       error: function(xhr, status, err) {
         console.error(xhr, status, err.toString());
       }.bind(this)
     });
-  },
-
-  insertCode: function (id) {
-    if (id) {
-      Actions.fetchCode(id);
-    } else {
-      Actions.updateCode(
-        'var x = 1;\n' +
-        'for (var i = 0; i < 10; i++) {\n' +
-        '  x = x + i;\n' +
-        '}'
-      ); // TODO: Use appstore?
-    }
   }
 
 };
