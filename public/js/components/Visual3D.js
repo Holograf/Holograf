@@ -37,10 +37,10 @@ module.exports = React.createClass({
   // },
 
   pauseScene: function() {
-    pause();
+    theatre.pause();
   },
   expandScene: function() {
-    expand();
+    theatre.expand();
   },
 
   render: function() {
