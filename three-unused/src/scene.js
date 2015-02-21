@@ -37,7 +37,7 @@ var displayScene=function(timeline){
 		camera.position.y = 0;
 		camera.position.x = -4000;
 		
-		controls = new THREE.OrbitControls( camera );
+		controls = new THREE.OrbitControls( camera, container );
 		controls.addEventListener( 'change', render );
 		
 		scene = new THREE.Scene();

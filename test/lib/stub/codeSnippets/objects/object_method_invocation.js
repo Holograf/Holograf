@@ -5,6 +5,7 @@ var object = {
     return 'woof!';
   }
 };
+var result = object.speak();
 },
 output: function() {
 var object = {
@@ -17,6 +18,8 @@ var object = {
     }
 };
 ___Program.object('object', object);
+var result = object.speak();
+___Program.set('result', result);
 },
 data: {
  "programSteps": [
@@ -27,6 +30,18 @@ data: {
   {
    "id": 3,
    "value": "___function code"
+  },
+  {
+   "id": 4,
+   "invoke": "object.speak"
+  },
+  {
+   "id": 4,
+   "return": "woof!"
+  },
+  {
+   "id": 5,
+   "value": "woof!"
   }
  ],
  "components": [
@@ -61,13 +76,32 @@ data: {
    "scope": 0,
    "createdAt": 1,
    "parent": 1
+  },
+  {
+   "id": 4,
+   "type": "invoke",
+   "name": "object.speak",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 2,
+   "function": 3
+  },
+  {
+   "id": 5,
+   "type": "var",
+   "name": "result",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 4
   }
  ],
  "scopes": {
   "0": {
    "object": 2,
-   "object.speak": 3
-  }
+   "object.speak": 3,
+   "result": 5
+  },
+  "4": {}
  }
 }
 }
