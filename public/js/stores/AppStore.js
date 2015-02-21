@@ -68,7 +68,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
     _data = compile(_code);
     _compiledStatus = true;
     _tabKey = 2;
-    displayScene(_data);
+    theatre.display(_data);
   },
 
   updateShareUrl : function(shareUrl) {
