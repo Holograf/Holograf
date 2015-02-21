@@ -13,8 +13,7 @@ var CHANGE_EVENT = 'change';
 var COMPILE_EVENT = 'compile';
 
 var _code, _data, _shareUrl, _compiledStatus, _tabKey;
-var templateCode = 'var x = 1;x++;';
-
+var templateCode = 'var s = function(a) {a();};var q = function () {  var x = 1;  for (var i = 0; i< 5; i++){    x++; } };var r = q(); s(r);';
 
 var AppStore = assign({}, EventEmitter.prototype, {
 

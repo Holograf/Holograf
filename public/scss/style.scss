@@ -1,5 +1,6 @@
 $input-height: 500px;
 $input-margin: 20px;
+// var sceneHeight: 
 
 @import "../../dist/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "codeMirror";
@@ -23,19 +24,24 @@ body {
 }
 .visualButton {
   margin: 5px 5px 5px 10px;
-}
-.codeButton {
-  margin: 5px 5px 5px 10px;
+  display: inline;
 }
 .appContainer {
-  // background-color: beige;
   padding-top: 3px;
 }
 .codeContainer {
   width: 80%;
+  height: 80%;     // not doing anything
 }
-.codeMirrorPanel {
-  padding: 0;
+// .codeBox {
+  // height: ...;
+// }
+.codeButton {
+  margin: 5px 5px 5px 10px;
+}
+#three-scene {
+  background-color: #333333;
+  // max-height: 
 }
 
 #three-modal{

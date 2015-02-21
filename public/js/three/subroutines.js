@@ -215,7 +215,7 @@ subroutines.VisualTimeline=function (data,scopes){
 	var x = 0;
 	var material = new THREE.LineBasicMaterial( { color: 0xffffff, transparent:true, opacity:0 } );
 	var geometry = new THREE.Geometry();
-	for (var i=0;i<data.length;i++){
+	for (var i = 0; i < data.length; i++){
 		z += interval;
 		if (data[i].return!==undefined){
 			x-=500;
@@ -236,7 +236,7 @@ subroutines.VisualTimeline=function (data,scopes){
 };
 
 
-subroutines.dotGrid=function(scene,data,scopes,maxSize){
+subroutines.dotGrid = function(scene,data,scopes,maxSize) {
 	var dotSteps=maxSize/data.length;
 	for (var key in scopes){
 		var dotX=scopes[key];
@@ -248,6 +248,107 @@ subroutines.dotGrid=function(scene,data,scopes,maxSize){
 			scene.add(subroutines.Dflt(opts) );
 		}
 	}
+};
+
+subroutines.skybox = function(scene, maxSize) {
+	var x, y, z;
+	var interval = maxSize / 10;
+	var material = new THREE.LineBasicMaterial( { color: 0x555555 } );
+
+	// back horizontal
+	y = -maxSize;
+	while (y < maxSize) {
+		var geometry = new THREE.Geometry();
+		x = 2 * maxSize;
+		y += interval; 
+
+		geometry.vertices.push( new THREE.Vector3( x, y, -maxSize ) );
+		geometry.vertices.push( new THREE.Vector3( x, y, 2 * maxSize ) );
+		
+		var line = new THREE.Line( geometry, material );
+		scene.add(line);
+	}
+
+	// back  & bottom vertical
+	z = -maxSize;
+	while (z < 2 * maxSize) {
+		var geometry = new THREE.Geometry();
+		x = 2 * maxSize;
+		z += interval; 
+
+		geometry.vertices.push( new THREE.Vector3( -maxSize, -maxSize, z))
+		geometry.vertices.push( new THREE.Vector3( x, -maxSize, z ) );
+		geometry.vertices.push( new THREE.Vector3( x, maxSize, z ) );
+		
+		var line = new THREE.Line( geometry, material );
+		scene.add(line);
+	}
+
+
+	// bottom horizontal
+	x = -maxSize;
+	while (x < 2 * maxSize) {
+		var geometry = new THREE.Geometry();
+		y = -maxSize;
+		x += interval; 
+
+		geometry.vertices.push( new THREE.Vector3( x, y, -maxSize ) );
+		geometry.vertices.push( new THREE.Vector3( x, y, 2 * maxSize ) );
+		
+		var line = new THREE.Line( geometry, material );
+		scene.add(line);
+	}
+
+	// bottom vertical
+	// z = -maxSize;
+	// while (z < 2 * maxSize) {
+	// 	var geometry = new THREE.Geometry();
+	// 	x = 2 * maxSize;
+	// 	z += interval; 
+
+	// 	geometry.vertices.push( new THREE.Vector3( x, -maxSize, z ) );
+	// 	geometry.vertices.push( new THREE.Vector3( x, maxSize, z ) );
+		
+	// 	var line = new THREE.Line( geometry, material );
+	// 	scene.add(line);
+	// }
+
+
+
+
+
+
+
+
+
+
+
+};
+
+
+subroutines.Axes = function() {
+	var xLineMaterial = new THREE.LineBasicMaterial( { color: 'yellow'} );
+	var yLineMaterial = new THREE.LineBasicMaterial( { color: 'red'} );
+	var zLineMaterial = new THREE.LineBasicMaterial( { color: 'green'} );
+	
+	var xGeometry = new THREE.Geometry();
+	xGeometry.vertices.push(	new THREE.Vector3( -10000, 0, 0 ) );
+	xGeometry.vertices.push(	new THREE.Vector3( 10000, 0, 0 ) );
+	
+	var yGeometry = new THREE.Geometry();
+	yGeometry.vertices.push(	new THREE.Vector3( 0, -10000, 0 ) );
+	yGeometry.vertices.push(	new THREE.Vector3( 0, 10000, 0 ) );
+	
+	var zGeometry = new THREE.Geometry();
+	zGeometry.vertices.push(	new THREE.Vector3( 0, 0, -10000 ) );
+	zGeometry.vertices.push(	new THREE.Vector3( 0, 0, 10000 ) );
+	
+	var lines = [];
+	lines[0] = new THREE.Line( xGeometry, xLineMaterial );
+	lines[1] = new THREE.Line( yGeometry, yLineMaterial );
+	lines[2] = new THREE.Line( zGeometry, zLineMaterial );
+
+	return lines;
 };
 
 subroutines.Composite = function(data,scopes){

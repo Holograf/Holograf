@@ -21,7 +21,7 @@
 //      controls.target.z = 150;
 // Simple substitute "OrbitControls" and the control should work as-is.
 
-THREE.OrbitControls = function ( object, domElement ) {
+THREE.OrbitControls = function ( object, target, domElement ) {
 
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
@@ -33,7 +33,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	// "target" sets the location of focus, where the control orbits around
 	// and where it pans with respect to.
-	this.target = new THREE.Vector3();
+	// this.target = new THREE.Vector3();
+	// this.target = object.clone().sub(camera.position);
+	this.target = target;
 	// center is old, deprecated; use "target" instead
 	this.center = this.target;
 
