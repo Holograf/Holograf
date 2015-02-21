@@ -12,7 +12,29 @@ var compile = require('../compiler/Compiler')
 var CHANGE_EVENT = 'change';
 var COMPILE_EVENT = 'compile';
 
-var _code, _data, _shareUrl, _compiledStatus, _tabKey;
+var _code;
+var _data;
+var _shareUrl;
+var _currentStep = {};
+var _compiledStatus = false;
+var _tabKey = 1;
+var templateCode = 'var x = 1;x++;';
+
+var updateCode = function(code) {
+  _code = code;
+};
+
+var compileCode = function() {
+  _data = compile(_code);
+  _compiledStatus = true;
+  _tabKey = 2;
+  var timeline = utils.parseTimeline(_data.programSteps, _data.components);
+  displayScene(timeline);
+};
+
+var updateShareUrl = function(shareUrl) {
+  _shareUrl = shareUrl;
+}
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
@@ -35,10 +57,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
   },
 
   updateCode : function(code) {
-    if (code) {
-      _code = code;
+    if (code === null) {
+      _code = templateCode;
     } else {
-      _code = 'var x = 1;x++;';
+      _code = code;
     }
   },
 

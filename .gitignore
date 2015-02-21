@@ -26,6 +26,7 @@ build/
 dist/js
 dist/index.html
 dist/css
+dist/three
 data/
 test/spec/bundle.js
 
