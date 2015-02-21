@@ -16,16 +16,15 @@ var deleteScene=function() {
 
 
 
-var displayScene=function(timeline){	
-	// console.log('scene displayed');
+
+var displayScene=function(allData){	
+	console.log('scene displayed');
 
 	var composite,
 	container, 
 	containerWidth, 
 	containerHeight,
-	// camera,
-	// scene,
-	// renderer,
+	scopes,
 	particle,
 	particleLight,
 	cubes,
@@ -37,8 +36,23 @@ var displayScene=function(timeline){
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	
+	
+	//extract this later
+	
+	scopes={};
+	console.log("---scopes---");
+	console.log(allData);
+	var scopeX=0;
+	for (var key in allData.scopes){
+		scopes[key]=scopeX+500;
+		scopeX+=500;
+	}
+	console.log(scopes);
+	console.log("---end scopes---");
+	//end extraction
+	
 	/////////////////////////////////////////////////
-	var timeline= timeline || utils.parseTimeline(dummyData.programSteps,dummyData.components);
+	var timeline=utils.parseTimeline(allData.programSteps,allData.components);
 	/////////////////////////////////////////////////
 	
 	init(timeline);
@@ -59,7 +73,7 @@ var displayScene=function(timeline){
 		camera.position.y = 0;
 		camera.position.x = -4000;
 		
-		controls = new THREE.OrbitControls( camera );
+		controls = new THREE.OrbitControls( camera, container );
 		controls.addEventListener( 'change', render );
 		
 		scene = new THREE.Scene();
@@ -67,34 +81,16 @@ var displayScene=function(timeline){
 		particleLight = TimeLight();
 		particleLight.tween.start();
 		scene.add( particleLight );
-		
+	
 		composite = Composite(data);
 		scene.add( composite );
+	
+		var visualTimeline = VisualTimeline(data);
+		scene.add(visualTimeline);
 		
-		var dataLine=DataLine();
-		scene.add( dataLine );
-		
-		
-		
-		
-		/*
-		for (var i=0;i<10;i++){
-			var opts={};
-			opts.y=(i-5)*1000;
-			for (var j=0;j<10;j++){
-				opts.x=(j-5)*1000;
-				for (var k=0;k<10;k++){
-					opts.z=(k)*1000;
-					opts.scale=10;
-					scene.add(subroutines.Dflt(opts) );
-				}
-			}
-		}
-		
-		*/
-		
-		
-
+		dotGrid(data,scopes,composite.maxSize);
+			
+			
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		renderer = new THREE.CanvasRenderer();
@@ -104,13 +100,15 @@ var displayScene=function(timeline){
 		window.addEventListener( 'resize', onWindowResize, false );
 	}
 	
-	function DataLine() {
-		
+	function DataLine(x) {
 		var geometry = new THREE.CylinderGeometry( 5, 5, 10000, 3 );
 		var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
 		var dataLine = new THREE.Mesh( geometry, material );
 		dataLine.rotation.x+=Math.PI/2;
 		dataLine.position.z+=5000;
+		dataLine.position.x+=x;
+		
+		
 		
 		return dataLine;
 	}
@@ -187,60 +185,6 @@ var displayScene=function(timeline){
 		return composite;
 	
 	};	
-	
-	/*
-	function Composite(data) {
-		var composite=new THREE.Object3D();
-		composite.maxSize=10000;var interval=composite.maxSize/(data.length+1);
-		var z=composite.maxSize/2;
-		
-		for (var i=0;i<data.length;i++){
-			z+= 10;
-			var shape;
-			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].component.value!=="cycle"){
-				shape = subroutines.Loop( {z:z} );
-			} else {
-				shape = subroutines.Fun( {z:z} );
-			}
-			
-			shape.componentData=data[i].component;
-			shape.collapse=new TWEEN.Tween(shape.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-			shape.expand=new TWEEN.Tween(shape.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-			composite.add( shape );
-			
-			
-			if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].component.value==="cycle"){
-				var steps=60;
-				var planeInterval = 360/steps;
-				var radianInterval = (2*Math.PI)/steps;
-				for (var j=0;j<steps;j++){
-					var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
-					var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
-					var plane = new THREE.Mesh( ticGeometry, material );
-					plane.grayness=1;
-					plane.position.z=z;
-					plane.rotation.z-=radianInterval*j;
-					var coords = geo.getPoint(plane.position.x,plane.position.y,500,planeInterval*j);
-					plane.position.x=coords.x2;
-					plane.position.y=coords.y2;
-					
-					
-					plane.componentData=data[i].component;
-					plane.rotate=new TWEEN.Tween(plane.position).to({})
-					plane.collapse=new TWEEN.Tween(plane.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-					plane.expand=new TWEEN.Tween(plane.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-					composite.add( plane );
-							
-				}
-				
-	
-			}
-			
-			
-		}
-		return composite;
-	}
-	*/
 	
 	function onMouseMove( e ) {
 		var vector = new THREE.Vector3();
@@ -342,5 +286,3 @@ var displayScene=function(timeline){
 	}
 	
 };
-
-

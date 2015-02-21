@@ -22,14 +22,14 @@ var App = React.createClass({
   //the object that is returned form getInitialState is set as the state of the component, accessed through this.state.variableName
   getInitialState: function() {
     AppStore.initialize();
-    Actions.insertCode(this.getParams().id);
+    Actions.fetchCode(this.getParams().id);
     return this.getAppState();
   },
 
   //this will handle transitions between pages within application,
   //because getInitialState will only be called upon the initial GET request
   componentWillReceiveProps: function () {
-    Actions.insertCode(this.getParams().id);
+    Actions.fetchCode(this.getParams().id);
   },
 
   //register an event listener with the store once the component has been successfully rendered/mounted on the page

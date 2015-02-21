@@ -37,26 +37,21 @@ var Actions = {
   },
 
   fetchCode: function(id) {
+    if (!id) {
+      return Actions.updateCode();
+    }
     $.ajax({
       url: 'http://127.0.0.1:5000/api/code/' + id,
       dataType: 'json',
       type: 'GET',
       success: function(data) {
         Actions.updateCode(data[0].rawCode);
-        console.log(JSON.parse(data[0].processedCode)); // TODO: Deal with this
+        console.log(JSON.parse(data[0].processedCode)); // TODO: Deal with this?
       },
       error: function(xhr, status, err) {
-        console.error(xhr, status, err.toString()); // TODO: Handle incorrect IDs
+        console.error(xhr, status, err.toString());
       }.bind(this)
     });
-  },
-
-  insertCode: function (id) {
-    if (id) {
-      Actions.fetchCode(id);
-    } else {
-      Actions.updateCode('var x = 1;x++;'); // TODO: Use appstore?
-    }
   }
 
 };
