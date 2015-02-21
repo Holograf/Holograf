@@ -7,8 +7,8 @@ var wrappedFunctionCount = 0;
 
 var Parser = function (code) {
 
-  var syntaxTree = esprimaParse(code);
-  // console.log(JSON.stringify(syntaxTree, null, 2));
+  var syntaxTree = esprimaParse(code );
+  console.log(JSON.stringify(syntaxTree, null, 2));
 
   var programBody = syntaxTree.body;
 
@@ -103,39 +103,42 @@ var getLastFunction = function () {
 
 var checkVariableDeclarations = function (node, body, index) {
   if (node.type === 'VariableDeclaration') {
-    var declaration = node.declarations[0]
-    if (declaration.init) { var declarationType = declaration.init.type; }
+    for (var i = 0; i < node.declarations.length; i++) {
+      var declaration = node.declarations[i];
 
-    if (declarationType === 'FunctionExpression') { // ie var f = function () { return 1; };
-      traverseFunction(declaration.init);
-      injectAfter(node, body, index, 'variable');
-    } 
-    else if (declarationType === 'ObjectExpression') { // ie var obj = {name: 'andy'};
-      var objectName = declaration.id.name;
-      var properties = declaration.init.properties;
+      if (declaration.init) { var declarationType = declaration.init.type; }
 
-      traverseObjectProperties(properties, objectName);
-      injectAfter(node, body, index, 'variable');
-    }
-    else if (declarationType === 'ArrayExpression') { // ie var arr = [1, 2, 3];
-      var arrayName = declaration.id.name;
-      var elements = declaration.init.elements;
+      if (declarationType === 'FunctionExpression') { // ie var f = function () { return 1; };
+        traverseFunction(declaration.init);
+        injectAfter(declaration, body, index, 'variable');
+      } 
+      else if (declarationType === 'ObjectExpression') { // ie var obj = {name: 'andy'};
+        var objectName = declaration.id.name;
+        var properties = declaration.init.properties;
 
-      traverseArrayElements(elements, arrayName);
-      injectAfter(node, body, index, 'variable');
-    }
-    else if (declarationType === 'MemberExpression') { // ie var x = obj.name;
-      var memberName = inject.traverseMemberExpression(node.declarations[0].init);
+        traverseObjectProperties(properties, objectName);
+        injectAfter(declaration, body, index, 'variable');
+      }
+      else if (declarationType === 'ArrayExpression') { // ie var arr = [1, 2, 3];
+        var arrayName = declaration.id.name;
+        var elements = declaration.init.elements;
 
-      injectAfter(node, body, index, 'variable', memberName);
-    } 
-    else if (declarationType === 'CallExpression') {
-      var callee = declaration.init.callee;
-      traverseArguments(declaration.init.arguments);
-      injectAfter(node, body, index, 'variable');
-    }
-    else { 
-      injectAfter(node, body, index, 'variable'); // ie var x = 12;
+        traverseArrayElements(elements, arrayName);
+        injectAfter(declaration, body, index, 'variable');
+      }
+      else if (declarationType === 'MemberExpression') { // ie var x = obj.name;
+        var memberName = inject.traverseMemberExpression(declaration.init);
+
+        injectAfter(declaration, body, index, 'variable', memberName);
+      } 
+      else if (declarationType === 'CallExpression') {
+        var callee = declaration.init.callee;
+        traverseArguments(declaration.init.arguments);
+        injectAfter(declaration, body, index, 'variable');
+      }
+      else { 
+        injectAfter(declaration, body, index, 'variable'); // ie var x = 12;
+      }
     }
   }
 }
@@ -198,7 +201,7 @@ var traverse = function (body) {
       checkExpressionStatements(node, body, index, advance);
 
       if (node.type === 'ReturnStatement') {
-        if (node.argument.type === 'FunctionExpression') {
+        if (node.argument && node.argument.type === 'FunctionExpression') {
           traverseFunction(node.argument);
         }
         injectBefore(node, body, index, 'returnState');
@@ -299,15 +302,17 @@ var injectObjectWrappers = function (body) {
     if (node) {
 
       if (node.type === 'VariableDeclaration') {
-        var declaration = node.declarations[0];
-        var objectNode = declaration.init;
-        declaration.init = injectObjectWrapper(objectNode);
+        for (var i = 0; i < node.declarations.length; i++) {
+          var declaration = node.declarations[i];
+          var objectNode = declaration.init;
+          declaration.init = injectObjectWrapper(objectNode);
+        }
       } 
       if (node.type === 'ExpressionStatement') {
         if (node.expression.type === 'AssignmentExpression') {
           if (node.expression.right) {
             var objectNode = node.expression.right;
-            // console.log(node.expression.right.type);
+            console.log(node.expression.right.type);
             node.expression.right = injectObjectWrapper(objectNode);
           }
         } else if (node.expression.type === 'CallExpression') {
@@ -386,11 +391,6 @@ var insertFunctionIdentifiers = function (body) {
 
 var wrapFunctionInstantiation = function (functionNode) {
   var wrappedNode = wrapNode(functionNode, '___fn');
-  // wrappedNode.arguments.push({
-  //   "type": "Literal",
-  //   "value": ++wrappedFunctionCount
-  // });
-  // console.log(functionNode);
   insertFunctionIdentifiers(functionNode.body.body);
   return wrappedNode;
 }

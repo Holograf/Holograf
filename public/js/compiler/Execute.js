@@ -1,8 +1,9 @@
 var Program = require('./Program');
 
-module.exports = function (_code) {
+module.exports = function (wrappedCode, rawCode) {
 
   var ___Program = new Program;
+  ___Program.setCode(rawCode);
 
   Object.defineProperty(Object.prototype, '___obj', {
     value: function () {
@@ -84,7 +85,7 @@ module.exports = function (_code) {
   
   // Evaluate the injected and wrapped code
   try {
-    eval(_code);
+    eval(wrappedCode);
   } catch(e) {
     var err = e.constructor('Error in Evaled Script: ' + e.message);
     // +3 because `err` has the line number of the `eval` line plus two.
