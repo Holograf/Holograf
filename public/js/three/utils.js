@@ -51,7 +51,6 @@ utils.tweenify=function(obj,opts){
   if (opts===undefined){var opts={};}
   if (opts.z1===undefined){opts.z1=0;}
   if (opts.z2===undefined){opts.z2=0;}
-  console.log(opts);
   obj.collapse=new TWEEN.Tween(obj.position).to({z:opts.z1},1500).easing(TWEEN.Easing.Quadratic.InOut);
   obj.expand=new TWEEN.Tween(obj.position).to({z:opts.z2},1500).easing(TWEEN.Easing.Quadratic.InOut);
   return obj;

@@ -33,10 +33,12 @@ theatre.display=function(allData){
 		scene.add(visualTimeline);
 		//will add the dotgrid to the scene;
 		subroutines.dotGrid(scene,data,scopes,composite.maxSize);
-		renderer = new THREE.CanvasRenderer();
-		renderer.setClearColor( 0x333333, 1);
-		renderer.setSize( window.innerWidth-20, window.innerHeight-20 );
-		container.appendChild( renderer.domElement );
+		
+		renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x333333, 1);
+			container.appendChild( renderer.domElement );
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		window.addEventListener( 'resize', onWindowResize, false );
