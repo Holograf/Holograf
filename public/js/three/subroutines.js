@@ -166,7 +166,7 @@ subroutines.Composite = function(data,scopes){
 
 subroutines.loopGeometry=new THREE.TorusGeometry(500,20,20,30);
 subroutines.variableGeometry=new THREE.IcosahedronGeometry(100);
-subroutines.dfltMaterial=new THREE.SpriteCanvasMaterial({
+subroutines.dfltMaterial=new THREE.SpriteMaterial({
 	program: function(context){
 		context.beginPath();
 		context.arc( 0, 0, 0.5, 0, 2*Math.PI, true );
