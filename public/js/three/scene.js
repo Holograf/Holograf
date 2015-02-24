@@ -1,7 +1,7 @@
 var theatre={scenePaused:false,expanded:false};
 
 theatre.display=function(allData){	
-	var composite, container, controls, camera, scene, renderer, particleLight, tween;
+	var composite, container, controls, camera, scene, renderer, particleLight, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	var centerPoint = new THREE.Vector3(0,0,5000);
@@ -29,14 +29,14 @@ theatre.display=function(allData){
 		scene.add( particleLight );
 		composite = subroutines.Composite(data,scopes);
 		scene.add( composite );
-		var visualTimeline = subroutines.VisualTimeline(data,scopes);
+		visualTimeline = subroutines.VisualTimeline(data,scopes);
 		scene.add(visualTimeline);
 		//will add the dotgrid to the scene;
 		subroutines.dotGrid(scene,data,scopes,composite.maxSize);
 		
 		renderer = new THREE.WebGLRenderer();
 			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setSize( window.innerWidth, window.innerHeight-$(container).offset().top );
 			renderer.setClearColor( 0x333333, 1);
 			container.appendChild( renderer.domElement );
 		// User interaction
@@ -111,8 +111,14 @@ theatre.display=function(allData){
 	
 	theatre.expand=function(){
 		var action = theatre.expanded ? "collapse" : "expand";
+		console.log(visualTimeline);
 		for (var i=0;i<composite.children.length;i++){
 			composite.children[i][action].start();
+			if (action==='collapse'){
+				visualTimeline.hide.start();
+			} else {
+				visualTimeline.show.start();
+			}
 		}
 		theatre.expanded=!theatre.expanded;
 	};
