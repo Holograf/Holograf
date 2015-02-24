@@ -1,21 +1,79 @@
 var subroutines={};
 
-subroutines.Fun=function(opts){
+subroutines.Fun=function(composite, opts){
 	if (opts===undefined){var opts={};}
-	if (opts.z===undefined){opts.z=0;}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
 	if (opts.x===undefined){opts.x=0;}
-	var z=opts.z;
+	if (opts.componentData===undefined){opts.componentData={};}
 	var x=opts.x;
+	var z1=opts.z1;
+	var z2=opts.z2;
+	var r=opts.r || 300;
 	var geometry = Object.create(subroutines.variableGeometry);
-	var material=new THREE.MeshLambertMaterial();
-	var object = new THREE.Mesh( geometry , material );
-	var grayness = Math.random() * 0.5 + 0.25;
+	var grayness = 0.5;
+	var material=new THREE.MeshLambertMaterial({});
 	material.color.setRGB( grayness, grayness, grayness );
+	var object = new THREE.Mesh(geometry, material );
+
 	object.grayness=grayness;
-	object.position.set( x, 0, z );
-	return object;
+	object.componentData=opts.componentData;
+	object=utils.tweenify(object,{z1: z1, z2:z2} );
+		
+	object.position.set( x, 0, z1 );
+	object.rotation.x=-1*(Math.PI/2);
+	composite.add(object);
 };
 
+subroutines.FunctionInvocation=function(composite, opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x===undefined){opts.x=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	var x=opts.x;
+	var z1=opts.z1;
+	var z2=opts.z2;
+	var r=opts.r || 300;
+	var geometry = Object.create(subroutines.funGeometry);
+	var grayness = 0;
+	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
+	material.color.setRGB( grayness, grayness, grayness );
+	var object = new THREE.Mesh(geometry, material );
+
+	object.grayness=grayness;
+	object.componentData=opts.componentData;
+	object=utils.tweenify(object,{z1: z1, z2:z2} );
+		
+	object.position.set( x, 0, z1 );
+	object.rotation.x=(Math.PI/2);
+	composite.add(object);
+};
+
+subroutines.FunctionReturn=function(composite, opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x===undefined){opts.x=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	var x=opts.x;
+	var z1=opts.z1;
+	var z2=opts.z2;
+	var r=opts.r || 300;
+	var geometry = Object.create(subroutines.funGeometry);
+	var grayness = 0;
+	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
+	material.color.setRGB( grayness, grayness, grayness );
+	var object = new THREE.Mesh(geometry, material );
+
+	object.grayness=grayness;
+	object.componentData=opts.componentData;
+	object=utils.tweenify(object,{z1: z1, z2:z2} );
+		
+	object.position.set( x, 0, z1 );
+	object.rotation.x=-1*(Math.PI/2);
+	composite.add(object);
+};
 
 subroutines.Dflt=function(opts){
 	if (opts===undefined){var opts={};}
@@ -32,25 +90,57 @@ subroutines.Dflt=function(opts){
 	return particle;
 };
 
-
-subroutines.Loop=function(opts){
+subroutines.Loop=function(composite,opts){
 	if (opts===undefined){var opts={};}
-	if (opts.z===undefined){opts.z=0;}
-	if (opts.x===undefined){opts.x=0;};
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x===undefined){opts.x=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
 	var x=opts.x;
-	var z=opts.z;
+	var z1=opts.z1;
+	var z2=opts.z2;
 	var r=opts.r || 300;
 	var geometry = Object.create(subroutines.loopGeometry);
-	var grayness = Math.random() * 0.5 + 0.25;
+	var grayness = 0.5;
 	var material=new THREE.MeshLambertMaterial({});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
 	object.grayness=grayness;
-	object.position.set( x, 0, z );
-	return object;
+	object.componentData=opts.componentData;
+	object=utils.tweenify(object,{z1: z1, z2:z2} );
+		
+	object.position.set( x, 0, z1 );
+	composite.add(object);
 };
 
+subroutines.LoopCycle=function(composite,opts){
+	console.log('entered loop cycle');
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x===undefined){opts.x=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	var steps=60;
+	var planeInterval = 360/steps;
+	var radianInterval = (2*Math.PI)/steps;
+	for (var j=0;j<steps;j++){
+		var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+		var plane = new THREE.Mesh( ticGeometry, material );
+		plane.grayness=1;
+		plane.position.z=opts.z1;
+		plane.position.x=opts.x;
+		plane.rotation.z-=radianInterval*j;
+		var coords = utils.getPoint(plane.position.x,plane.position.y,opts.radius,planeInterval*j);
+		plane.position.x=coords.x2;
+		plane.position.y=coords.y2;
+		
+		plane.componentData=opts.componentData;
+		plane=utils.tweenify(plane,{z1: opts.z1, z2:opts.z2} );
+		composite.add( plane );
+	}
+};
 	
 subroutines.TimeLight=function(start,end) {
 	if (start===undefined){var start=0;}
@@ -62,24 +152,30 @@ subroutines.TimeLight=function(start,end) {
 	return particleLight;
 };
 	
-
 subroutines.VisualTimeline=function (data,scopes){
 	var maxSize=10000;
 	var interval=maxSize/(data.length+1);
 	var z = 0;
 	var x = 0;
-	var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+	var material = new THREE.LineBasicMaterial( { color: 0xffffff, transparent:true, opacity:0 } );
 	var geometry = new THREE.Geometry();
 	for (var i=0;i<data.length;i++){
 		z += interval;
-		if (data[i].component.scope!==undefined){
-			x=scopes[data[i].component.scope];
-			geometry.vertices.push(
-				new THREE.Vector3( x, 0, z )
-			);
+		if (data[i].return!==undefined){
+			x-=500;
+		}
+		geometry.vertices.push(
+			new THREE.Vector3( x, 0, z )
+		);
+		
+		if (data[i].invoke!==undefined){
+			x+=500;
 		}
 	}
 	var line = new THREE.Line( geometry, material );
+	line.show=new TWEEN.Tween(line.material).to({opacity:1},1500).easing(TWEEN.Easing.Exponential.In);
+  line.hide=new TWEEN.Tween(line.material).to({opacity:0},1500).easing(TWEEN.Easing.Exponential.Out);
+  
 	return line;
 };
 
@@ -102,62 +198,45 @@ subroutines.Composite = function(data,scopes){
 	var composite=new THREE.Object3D();
 	composite.maxSize=10000;
 	var interval=composite.maxSize/(data.length+1);
-	var z=composite.maxSize/2;
+	var z1, z2;
 	var scopeStack=[];
 	var x=0;
 	for (var i=0;i<data.length;i++){
-		z+= 10;
-		if (data[i].component.scope!==undefined){
-			var scope=data[i].component.scope;
-			//handle scope stack here
-			x=scopes[data[i].component.scope];
+		z1=(composite.maxSize/2)+(10*i);
+		z2= ((interval)+interval*i);
+		if (data[i].return!==undefined){
+			x-=500;
 		}
+		
+		
 		var radius=500;
 		if (data[i].component.block && data[i].component.block>0){
 			radius=200;
 		}
-		var shape;
+		
+		
+		//all the possible heiroglyphs
+		var opts={z1:z1, z2:z2,x:x,componentData:data[i].component,radius:radius} ;
 		if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for!=="cycle"){
-			shape = subroutines.Loop( {z:z,x:x} );
+			subroutines.Loop(composite, opts);
+		} else if (data[i].invoke!==undefined) {
+			subroutines.FunctionInvocation(composite,opts);
+		} else if (data[i].return !==undefined){
+			subroutines.FunctionReturn(composite,opts);
+		} else if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for==="cycle"){
+			subroutines.LoopCycle(composite,opts);
 		} else {
-			shape = subroutines.Fun( {z:z,x:x} );
+			opts={z1:z1, z2:z2,x:x,componentData:data[i].component,radius:radius};
+			subroutines.Fun(composite, opts);
 		}
 		
-		//don't forget to handle the x coordinate for the tic marks
-		shape.componentData=data[i].component;
-		shape=utils.tweenify(shape,{z1: (composite.maxSize/2)+(10*i), z2:((interval)+interval*i)} );
-		/*
-		shape.collapse=new TWEEN.Tween(shape.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-		shape.expand=new TWEEN.Tween(shape.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-		*/
-		composite.add( shape );
 		
-		if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for==="cycle"){
-			
-			var steps=60;
-			var planeInterval = 360/steps;
-			var radianInterval = (2*Math.PI)/steps;
-			//var ticHalo=new THREE.Geometry();
-			for (var j=0;j<steps;j++){
-				var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
-				var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
-				var plane = new THREE.Mesh( ticGeometry, material );
-				plane.grayness=1;
-				plane.position.z=z;
-				plane.position.x=x;
-				plane.rotation.z-=radianInterval*j;
-				var coords = utils.getPoint(plane.position.x,plane.position.y,radius,planeInterval*j);
-				plane.position.x=coords.x2;
-				plane.position.y=coords.y2;
-				
-				
-				plane.componentData=data[i].component;
-				plane.rotate=new TWEEN.Tween(plane.position).to({})
-				plane.collapse=new TWEEN.Tween(plane.position).to({z:(composite.maxSize/2)+(10*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-				plane.expand=new TWEEN.Tween(plane.position).to({z:((interval)+interval*i)},1500).easing(TWEEN.Easing.Quadratic.InOut);
-				composite.add( plane );
-			}
+		
+		
+		if (data[i].invoke!==undefined){
+			x+=500;
 		}
+		
 	}
 	return composite;
 };	
@@ -165,11 +244,6 @@ subroutines.Composite = function(data,scopes){
 
 
 subroutines.loopGeometry=new THREE.TorusGeometry(500,20,20,30);
-subroutines.variableGeometry=new THREE.IcosahedronGeometry(100);
-subroutines.dfltMaterial=new THREE.SpriteMaterial({
-	program: function(context){
-		context.beginPath();
-		context.arc( 0, 0, 0.5, 0, 2*Math.PI, true );
-		context.fill();
-	}
-});
+subroutines.funGeometry=new THREE.CylinderGeometry(200,50,100,6,1,true);
+subroutines.variableGeometry=new THREE.DodecahedronGeometry(50);
+subroutines.dfltMaterial=new THREE.SpriteMaterial({});
