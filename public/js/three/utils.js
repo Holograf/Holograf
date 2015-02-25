@@ -16,6 +16,10 @@ utils.parseTimeline=function(timeline,components){
   for (var i=0;i<timeline.length;i++){
     //deep clone to avoid altering the glossary
     timeline[i].component={};
+    for (var key in timeline[i]){
+      if (key==='component'){continue;}
+      timeline[i].component[key]=timeline[i][key];
+    }
     for (var key in glossary[timeline[i].id]){
       //if (key==='id'){continue;}
       timeline[i].component[key]=glossary[timeline[i].id][key];
@@ -45,13 +49,48 @@ utils.extractScopes=function(allData){
   return scopes;
 };
 
+utils.displayText=function(obj){
+  var d="";
+  if (obj.componentData.value && obj.componentData.value==='___function code'){
+    d+="<div>function: "+obj.componentData.name+" declaration</div>";
+  } else if (obj.componentData.type==='block' && obj.componentData.name==='if' && obj.componentData.hasOwnProperty('enter') ){
+    d+="<div>if open</div>";
+  } else if (obj.componentData.hasOwnProperty('if') && obj.componentData.if==='close'){
+    d+="<div>if close</div>";
+  } else if (obj.componentData.hasOwnProperty('invoke') ){
+    d+="<div>function: "+obj.componentData.name+" invocation</div>";
+  } else if (obj.componentData.hasOwnProperty('return') ) {
+    d+="<div>function: "+obj.componentData.name+" returns "+obj.componentData.return+"</div>";
+  } else if (obj.componentData.for) {
+    d+="<div>loop "+obj.componentData.for+"</div>";  
+  } else if (obj.componentData.param!==undefined){
+    d+="<div>parameter: "+obj.componentData.name+" = "+obj.componentData.param+"</div>";
+  } else if (obj.componentData.type && obj.componentData.type==='var') {
+    d+="<div>"+obj.componentData.name+" = "+obj.componentData.value+"</div>";
+  } else {
+  	for (var key in obj.componentData){
+  		d+="<div>"+key+": "+obj.componentData[key]+"</div>";
+  	}
+  }
+	return d;
+}
+
 utils.tweenify=function(obj,opts){
   //tweenify is a decorator
   if (obj===undefined){var obj={};}
   if (opts===undefined){var opts={};}
+  if (opts.x1===undefined){opts.x1=0;}
+  if (opts.x2===undefined){opts.x2=0;}
   if (opts.z1===undefined){opts.z1=0;}
   if (opts.z2===undefined){opts.z2=0;}
-  obj.collapse=new TWEEN.Tween(obj.position).to({z:opts.z1},1500).easing(TWEEN.Easing.Quadratic.InOut);
-  obj.expand=new TWEEN.Tween(obj.position).to({z:opts.z2},1500).easing(TWEEN.Easing.Quadratic.InOut);
+  
+  var easingType="Quintic";
+  var tweenDuration=600;
+
+  var xExpand   = new TWEEN.Tween(obj.position).to({x:opts.x2},tweenDuration).easing(TWEEN.Easing[easingType].Out);
+  var zCollapse = new TWEEN.Tween(obj.position).to({z:opts.z1},tweenDuration).easing(TWEEN.Easing[easingType].Out);
+
+  obj.collapse  = new TWEEN.Tween(obj.position).to({x:opts.x1},tweenDuration).chain(zCollapse).easing(TWEEN.Easing[easingType].Out);
+  obj.expand    = new TWEEN.Tween(obj.position).to({z:opts.z2},tweenDuration).chain(xExpand).easing(TWEEN.Easing[easingType].Out);
   return obj;
 };
