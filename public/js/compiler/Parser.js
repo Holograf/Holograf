@@ -209,6 +209,11 @@ var traverse = function (body) {
           advance(1);
         } else if (node.expression.type === 'CallExpression') {
 
+          if (node.expression.callee.property) {
+            injectAfter(node, body, index, 'call');
+            advance(1);
+          }
+
         } else if (node.expression.type === 'AssignmentExpression') {
           var left = node.expression.left;
           var right = node.expression.right;

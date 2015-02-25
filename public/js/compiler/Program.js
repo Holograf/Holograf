@@ -424,63 +424,6 @@ Program.prototype.setObjectProperty = function (object, parent, right) {
 
 }
 
-// Program.prototype.setObjectProperty = function (object, value, right) {
-//   var id = this.getId(object);
-
-//   var parentObject = object.substring(0, object.lastIndexOf('['));
-//   var key = object.substring(object.lastIndexOf('[') + 1, object.length - 1);
-//   var parentId = this.lastIdOfObject( this.getId(parentObject) );
-
-//   // this.monitorArrayLength(parentObject, parentId);
-  
-//    // Check to see if the object property being set is already defined
-//   if (id) {
-//     if (this.components[id].type === 'var') { 
-
-//       this.components[id].type = 'property';
-//       this.components[id].name = key;
-//       this.components[id].parent = parentId;
-
-//     // this.addStep(this.components.length + 1, 'pointer', value);
-//     } else if (typeof value === 'object') {
-//       var rightId = this.getId(right);
-//       var pointerId = this.lastIdOfObject(rightId);
-//       this.addStep(this.components.length + 1, 'pointer', value);
-//     } else {
-//       this.addStep(id, 'value', value);
-//     }
-//   } 
-//   else {
-//     // Object/property was not found, therefor a new property is being defined.
-//     if (this.components[parentId].type === 'array') {
-//       var memberName = 'element';
-//     } else {
-//       var memberName = 'property';
-//     }
-
-//     if (typeof value === 'object') {
-//       var rightId = this.getId(right);
-//       var pointerId = this.lastIdOfObject(rightId);
-
-//       var component = this.instantiate(object, 'pointer', pointerId);
-//       component.name = key;
-//       component.type = memberName;
-//       component.parent = parentId;
-//     } else if (typeof value === 'function') {
-//       var component = this.instantiate(object, 'value', '___function code');
-//       component.name = key;
-//       component.type = memberName === 'property' ? 'method': '___anonymous'
-//       component.parent = parentId;
-//     } else {
-//       var component = this.instantiate(object, 'value', value);
-//       component.name = key;
-//       component.type = memberName;
-//       component.parent = parentId;
-//     }
-
-
-//   }
-// }
 
 Program.prototype.monitorArrayLength = function (parent, parentId) {
   if (Array.isArray(parent)) {
@@ -509,6 +452,51 @@ Program.prototype.resetBlock = function () {
       this.resetBlock();
     }
   }
+}
+
+// Program.prototype.instantiate = function (name, key, value) {
+//   var id = this.components.length;
+  
+//   var component = this.addComponent('var', name);
+//   this.addStep(id, key, value);
+
+//   this.scopes[this.getCurrentScope()][name] = component.id;
+//   return component;
+// }
+
+//----------------------------------------------------------------------------------
+// Special Built-In method handling
+Program.prototype.call = function (methodName, objectName, object) {
+
+  // Arrays handling
+  if (Array.isArray(object)) {
+    var parentId = this.lastIdOfObject( this.getId(objectName) );
+
+    if (methodName === 'push') {
+      var objectIndexName = objectName + '[' + (object.length - 1) + ']';
+
+      var component = this.addComponent('element', object.length - 1);
+      component.createdAt = this.programSteps.length;
+      component.parent = parentId;
+
+      console.log(objectIndexName);
+
+      this.scopes[this.getCurrentScope()][objectIndexName] = component.id;
+
+      this.addStep(parentId, 'call', methodName);
+      this.addStep(component.id, 'value', object[object.length - 1]);
+      this.addStep(parentId, 'length', object.length);
+    }
+
+    if (methodName === 'pop') {
+      this.addStep(parentId, 'call', methodName);
+      this.addStep(parentId, 'length', object.length);
+    }
+
+
+  }
+
+
 }
 
 

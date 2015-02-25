@@ -16,6 +16,27 @@ module.exports = {
     return injectedNode;
   },
 
+  call: function (node, map) {
+
+    console.log(JSON.stringify(node, null, 2));
+
+    if (node.expression.callee.property) {
+      var method = node.expression.callee.property.name;
+      var invocation = this.traverseMemberExpression(node.expression.callee);
+      var callee = this.setParentObject(invocation);
+
+      console.log(method, this.isSpecialMethod(method));
+
+      if (this.isSpecialMethod(method)) {
+        var injectedNode = this.createNode('call', method);
+        this.addArgument(injectedNode, callee);
+        this.addArgument(injectedNode, callee, 'Identifier');
+
+        return injectedNode;
+      }
+    }
+  },
+
   expression: function (node) {
     var expression = node.expression;
     if (expression.type === 'UpdateExpression') {
@@ -307,12 +328,20 @@ module.exports = {
     return injectedNode;
   },
 
-  addArgument: function (node, name) {
-    node.expression.arguments.push({
-      "type": "Literal",
-      "value": name,
-      "raw": JSON.stringify(name)
-    });
+  addArgument: function (node, name, type) {
+    // Optionally set 'Identifier' to change to a literal variable
+    if (type === 'Identifier') {
+      node.expression.arguments.push({
+        "type": 'Identifier',
+        "name": name
+      });
+    } else {
+      node.expression.arguments.push({
+        "type": 'Literal',
+        "value": name,
+        "raw": JSON.stringify(name)
+      });
+    }
   },
 
   isNotInjectedFunction: function (node) {
@@ -326,6 +355,11 @@ module.exports = {
   isNotSpecialIdentifier: function (identifier) {
     var specialIdentifiers = ['undefined', 'null'];
     return specialIdentifiers.indexOf(identifier) === -1;
+  },
+
+  isSpecialMethod: function (method) {
+    var specialMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'slice'];
+    return specialMethods.indexOf(method) !== -1;
   }
 
 }
