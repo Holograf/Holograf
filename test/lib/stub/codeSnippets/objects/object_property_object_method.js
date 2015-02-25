@@ -13,15 +13,15 @@ output: function() {
 var object = {
     nested: {
         f: function () {
-            ___Program.method('object.nested.f');
+            ___Program.method('object[nested][f]');
             ___Program.returnState = true;
-            ___Program.return('object.nested.f');
+            ___Program.return('object[nested][f]');
             return ___Program.returnState;
-            ___Program.return('object.nested.f');
+            ___Program.return('object[nested][f]');
         }
     }
 };
-___Program.object('object', object);
+___Program.object('object', object, '{"nested":{}}');
 var result = object.nested.f();
 ___Program.set('result', result);
 },
@@ -41,7 +41,7 @@ data: {
   },
   {
    "id": 6,
-   "invoke": "object.nested.f"
+   "invoke": "object[nested][f]"
   },
   {
    "id": 6,
@@ -104,7 +104,7 @@ data: {
   {
    "id": 6,
    "type": "invoke",
-   "name": "object.nested.f",
+   "name": "object[nested][f]",
    "block": 0,
    "scope": 0,
    "createdAt": 3,
@@ -122,8 +122,8 @@ data: {
  "scopes": {
   "0": {
    "object": 2,
-   "object.nested": 4,
-   "object.nested.f": 5,
+   "object[nested]": 4,
+   "object[nested][f]": 5,
    "result": 7
   },
   "6": {}

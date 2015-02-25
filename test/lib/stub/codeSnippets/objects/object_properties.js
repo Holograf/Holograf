@@ -10,7 +10,7 @@ var object = {
     a: 'name',
     b: 2
 };
-___Program.object('object', object);
+___Program.object('object', object, '{}');
 },
 data: {
  "programSteps": [
@@ -73,8 +73,8 @@ data: {
  "scopes": {
   "0": {
    "object": 2,
-   "object.a": 3,
-   "object.b": 4
+   "object[a]": 3,
+   "object[b]": 4
   }
  }
 }

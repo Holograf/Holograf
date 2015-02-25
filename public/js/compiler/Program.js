@@ -103,16 +103,18 @@ Program.prototype.instantiate = function (name, key, value) {
 // Get methods
 Program.prototype.getId = function (name) {
   var id;
+
   // Search for the object in a given scope
   var searchScope = function (scope) {
-    if (this.scopes[this.getCurrentScope()][name]) {
-      id = this.scopes[this.getCurrentScope()][name];
+    if (this.scopes[scope][name]) {
+      id = this.scopes[scope][name];
     } else if (scope > 0) {
-      var parentScope = this.components[scope - 1].scope;
+      var parentScope = this.components[scope].scope;
       searchScope(parentScope);
     }
   }.bind(this);
   searchScope(this.getCurrentScope());
+
   return id;
 }
 
@@ -163,12 +165,25 @@ Program.prototype.enterPath = function (value) {
 
 //----------------------------------------------------------------------------------
 // External methods of the ___Program object
-Program.prototype.set = function (name, value) {
-  if ( !this.getId(name) ) {
-    this.instantiate(name, 'value', value);
+Program.prototype.set = function (name, value, right) {
+  if (typeof value === 'object') {
+    var rightId = this.getId(right);
+    var pointerId = this.lastIdOfObject(rightId);
+
+    if ( !this.getId(name) ) {
+      this.instantiate(name, 'pointer', pointerId);
+    } else {
+      this.addStep(name, 'pointer', pointerId);
+    }
+
   } else {
-    this.addStep(name, 'value', value);
+    if ( !this.getId(name) ) {
+      this.instantiate(name, 'value', value);
+    } else {
+      this.addStep(name, 'value', value);
+    }
   }
+
 }
 
 Program.prototype.param = function (name, value) {
@@ -260,8 +275,16 @@ Program.prototype.lastIdOfObject = function (parentId) {
 
 //----------------------------------------------------------------------------------
 // Object comprehension methods
-Program.prototype.object = function(name, obj) {
-  var newObject = this.addComponent('object');
+Program.prototype.array = function(name, arr, arrayMap) {
+  this.object(name, arr, arrayMap);
+}
+
+Program.prototype.object = function(name, obj, map) {
+
+  var type = Array.isArray(obj) ? 'array' : 'object';
+
+  var map = JSON.parse(map);
+  var newObject = this.addComponent(type);
 
   var found = this.getId(name);
   if (!found) {
@@ -270,75 +293,200 @@ Program.prototype.object = function(name, obj) {
     this.addStep(found, 'pointer', newObject.id);
   }
 
-  var traverseKeys = function(name, obj, parent) {
-    for (var key in obj) {
+  var traverseObjectKeys = function(name, obj, parent, map) {
+    var type = Array.isArray(obj) ? 'array' : 'object';
 
-      var propertyName = name + '.' + key;
+    if (type === 'array') {
+      this.addStep(parent.id, 'length', obj.length);
+    }
+
+    for (var key in obj) {
+      var propertyName = name + '[' + key + ']';
+      if (Array.isArray(obj)) {
+        var memberName = 'element';   
+      } else {
+        var memberName = 'property';
+      }  
+
       var property = obj[key];
 
-      if (typeof property === 'object') {
-        var childObject = this.addComponent('object');
+      if ( Array.isArray(property) ) {
 
-        var id = this.components.length - 1;
-        var component = this.instantiate(propertyName, 'pointer', id);
+        var variableId = this.getId(map[key]);
+        if (variableId) {
+          var pointerId = this.lastIdOfObject(variableId);
+        } else {
+          var childArray = this.addComponent('array');
+          var pointerId = this.components.length - 1;
+        }
+
+        var component = this.instantiate(propertyName, 'pointer', pointerId);
         component.name = key;
-        component.type = 'property';
+        component.type = memberName;
         component.parent = parent.id;
+        var nextMap = map[key];
 
-        traverseKeys(propertyName, property, childObject);
+        traverseObjectKeys(propertyName, property, childArray, nextMap);
+      } else if (typeof property === 'object') {
+
+        var variableId = this.getId(map[key]);
+        if (variableId) {
+          var pointerId = this.lastIdOfObject(variableId);
+        } else {
+          var childObject = this.addComponent('object');
+          var pointerId = this.components.length - 1;
+        }
+
+        var component = this.instantiate(propertyName, 'pointer', pointerId);
+        component.name = key;
+        component.type = memberName;
+        component.parent = parent.id;
+        var nextMap = map[key];
+
+        traverseObjectKeys(propertyName, property, childObject, nextMap);
       } else if (typeof property === 'function') {
 
         var component = this.instantiate(propertyName, 'value', '___function code');
         component.name = key;
-        component.type = 'method';
+        component.type = memberName === 'property' ? 'method' : 'element';
         component.parent = parent.id;
       } else {
         var component = this.instantiate(propertyName, 'value', property);
         component.name = key;
-        component.type = 'property';
+        component.type = memberName;
         component.parent = parent.id;
       }
+
+
     }
   }.bind(this);
-  traverseKeys(name, obj, newObject);
+  traverseObjectKeys(name, obj, newObject, map);
 }
 
-Program.prototype.setObjectProperty = function (object, value) {
+
+Program.prototype.setObjectProperty = function (object, parent, right) {
+
+
   var id = this.getId(object);
 
+  var parentObject = object.substring(0, object.lastIndexOf('['));
+  var key = object.substring(object.lastIndexOf('[') + 1, object.length - 1);
+  var parentId = this.lastIdOfObject( this.getId(parentObject) );
+  var value = parent[key];
+  
+   // Check to see if the object property being set is already defined
   if (id) {
-    if (typeof value === 'object') {
+    if (this.components[id].type === 'var') { 
+
+      this.components[id].type = 'property';
+      this.components[id].name = key;
+      this.components[id].parent = parentId;
+
+    // this.addStep(this.components.length + 1, 'pointer', value);
+    } else if (typeof value === 'object') {
+      var rightId = this.getId(right);
+      var pointerId = this.lastIdOfObject(rightId);
       this.addStep(this.components.length + 1, 'pointer', value);
     } else {
       this.addStep(id, 'value', value);
     }
-  } else {
+  } 
+  else {
     // Object/property was not found, therefor a new property is being defined.
-    var parent = object.substring(0, object.lastIndexOf('.'));
-    var key = object.substring(object.lastIndexOf('.') + 1, object.length);
-    var id = this.lastIdOfObject( this.getId(parent) );
+    if (this.components[parentId].type === 'array') {
+      var memberName = 'element';
+    } else {
+      var memberName = 'property';
+    }
 
     if (typeof value === 'object') {
-      var component = this.instantiate(object, 'pointer', id);
+      var rightId = this.getId(right);
+      var pointerId = this.lastIdOfObject(rightId);
+
+      var component = this.instantiate(object, 'pointer', pointerId);
       component.name = key;
-      component.type = 'property';
-      component.parent = id;
+      component.type = memberName;
+      component.parent = parentId;
     } else if (typeof value === 'function') {
       var component = this.instantiate(object, 'value', '___function code');
       component.name = key;
-      component.type = 'method';
-      component.parent = id;
+      component.type = memberName === 'property' ? 'method': '___anonymous'
+      component.parent = parentId;
     } else {
       var component = this.instantiate(object, 'value', value);
       component.name = key;
-      component.type = 'property';
-      component.parent = id;
+      component.type = memberName;
+      component.parent = parentId;
     }
-
   }
+
+  this.monitorArrayLength(parent, parentId);
+
 }
 
+// Program.prototype.setObjectProperty = function (object, value, right) {
+//   var id = this.getId(object);
 
+//   var parentObject = object.substring(0, object.lastIndexOf('['));
+//   var key = object.substring(object.lastIndexOf('[') + 1, object.length - 1);
+//   var parentId = this.lastIdOfObject( this.getId(parentObject) );
+
+//   // this.monitorArrayLength(parentObject, parentId);
+  
+//    // Check to see if the object property being set is already defined
+//   if (id) {
+//     if (this.components[id].type === 'var') { 
+
+//       this.components[id].type = 'property';
+//       this.components[id].name = key;
+//       this.components[id].parent = parentId;
+
+//     // this.addStep(this.components.length + 1, 'pointer', value);
+//     } else if (typeof value === 'object') {
+//       var rightId = this.getId(right);
+//       var pointerId = this.lastIdOfObject(rightId);
+//       this.addStep(this.components.length + 1, 'pointer', value);
+//     } else {
+//       this.addStep(id, 'value', value);
+//     }
+//   } 
+//   else {
+//     // Object/property was not found, therefor a new property is being defined.
+//     if (this.components[parentId].type === 'array') {
+//       var memberName = 'element';
+//     } else {
+//       var memberName = 'property';
+//     }
+
+//     if (typeof value === 'object') {
+//       var rightId = this.getId(right);
+//       var pointerId = this.lastIdOfObject(rightId);
+
+//       var component = this.instantiate(object, 'pointer', pointerId);
+//       component.name = key;
+//       component.type = memberName;
+//       component.parent = parentId;
+//     } else if (typeof value === 'function') {
+//       var component = this.instantiate(object, 'value', '___function code');
+//       component.name = key;
+//       component.type = memberName === 'property' ? 'method': '___anonymous'
+//       component.parent = parentId;
+//     } else {
+//       var component = this.instantiate(object, 'value', value);
+//       component.name = key;
+//       component.type = memberName;
+//       component.parent = parentId;
+//     }
+
+
+//   }
+// }
+
+Program.prototype.monitorArrayLength = function (parent, parentId) {
+  if (Array.isArray(parent)) {
+    this.addStep(parentId, 'length', parent.length);
+  }
+}
 
 //----------------------------------------------------------------------------------
 // Function return methods

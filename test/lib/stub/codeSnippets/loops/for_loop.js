@@ -14,7 +14,7 @@ for (var i = 0; i < 3; i++) {
     ___Program.loop('for', 'cycle');
     ___Program.set('i', i);
     counter += i;
-    ___Program.set('counter', counter);
+    ___Program.set('counter', counter, 'i');
 }
 ___Program.loop('for', 'close');
 ___Program.set('i', i);

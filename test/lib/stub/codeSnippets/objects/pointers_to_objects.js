@@ -1,22 +1,13 @@
 module.exports = {
 input: function() {
-var object = {
-  speak: function () {
-    return 'woof!';
-  }
-};
+var x = {};
+var y = x;
 },
 output: function() {
-var object = {
-    speak: function () {
-        ___Program.method('object[speak]');
-        ___Program.returnState = 'woof!';
-        ___Program.return('object[speak]');
-        return ___Program.returnState;
-        ___Program.return('object[speak]');
-    }
-};
-___Program.object('object', object, '{}');
+var x = {};
+___Program.object('x', x, '{}');
+var y = x;
+___Program.set('y', y, 'x');
 },
 data: {
  "programSteps": [
@@ -26,7 +17,7 @@ data: {
   },
   {
    "id": 3,
-   "value": "___function code"
+   "pointer": 1
   }
  ],
  "components": [
@@ -48,25 +39,24 @@ data: {
   {
    "id": 2,
    "type": "var",
-   "name": "object",
+   "name": "x",
    "block": 0,
    "scope": 0,
    "createdAt": 0
   },
   {
    "id": 3,
-   "type": "method",
-   "name": "speak",
+   "type": "var",
+   "name": "y",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
-   "parent": 1
+   "createdAt": 1
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
-   "object[speak]": 3
+   "x": 2,
+   "y": 3
   }
  }
 }

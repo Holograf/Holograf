@@ -309,15 +309,6 @@ describe("Program Compiler", function() {
       expect( executed ).toBe( stubData );
     });
 
-    it("should handle object method invocations", function() {
-      var test = 'objects/object_method_invocation';
-      var output = codeStubs[test].output;
-      var executed = JSON.stringify( execute(output) );
-      var stubData = JSON.stringify( codeStubs[test].data );
-
-      expect( executed ).toBe( stubData );
-    });
-
     it("should handle object properties that are objects", function() {
       var test = 'objects/object_property_object';
       var output = codeStubs[test].output;
@@ -380,6 +371,88 @@ describe("Program Compiler", function() {
 
       expect( executed ).toBe( stubData );
     });
+
+    it("should create pointers to objects", function() {
+      var test = 'objects/pointers_to_objects';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should have a pointer to an object as a property", function() {
+      var test = 'objects/pointer_to_object_as_property';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should assign a pointer to an object outside of the current scope", function() {
+      var test = 'objects/pointer_to_object_outside_scope';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should assign a pointer to a new object assigned to a property", function() {
+      var test = 'objects/object_property_new_object';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should assign a pointer to a defined object assigned to a property", function() {
+      var test = 'objects/pointer_to_object_as_property';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
   });
 
+  describe("Array", function() {
+    it("should handle array declarations", function() {
+      var test = 'arrays/array_declaration';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle arrays with objects", function() {
+      var test = 'arrays/array_with_objects';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle nested arrays", function() {
+      var test = 'arrays/nested_arrays';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should set values at existing array indices", function() {
+      var test = 'arrays/change_array_index';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+  });
 });
