@@ -1,20 +1,14 @@
 module.exports = {
 input: function() {
-var object = {
-  stuff: {
-    name: 'andy',
-    quest: 'to test'
-  }
-};
+var x = [1,2,{name: 'andy'}];
 },
 output: function() {
-var object = {
-    stuff: {
-        name: 'andy',
-        quest: 'to test'
-    }
-};
-___Program.object('object', object, '{"stuff":{}}');
+var x = [
+    1,
+    2,
+    { name: 'andy' }
+];
+___Program.array('x', x, '{"2":{}}');
 },
 data: {
  "programSteps": [
@@ -23,16 +17,24 @@ data: {
    "pointer": 1
   },
   {
-   "id": 4,
-   "pointer": 3
+   "id": 1,
+   "length": 3
   },
   {
-   "id": 5,
-   "value": "andy"
+   "id": 3,
+   "value": 1
+  },
+  {
+   "id": 4,
+   "value": 2
   },
   {
    "id": 6,
-   "value": "to test"
+   "pointer": 5
+  },
+  {
+   "id": 7,
+   "value": "andy"
   }
  ],
  "components": [
@@ -46,7 +48,7 @@ data: {
   },
   {
    "id": 1,
-   "type": "object",
+   "type": "array",
    "block": 0,
    "scope": 0,
    "createdAt": 0
@@ -54,52 +56,62 @@ data: {
   {
    "id": 2,
    "type": "var",
-   "name": "object",
+   "name": "x",
    "block": 0,
    "scope": 0,
    "createdAt": 0
   },
   {
    "id": 3,
-   "type": "object",
+   "type": "element",
+   "name": "0",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2,
+   "parent": 1
   },
   {
    "id": 4,
-   "type": "property",
-   "name": "stuff",
+   "type": "element",
+   "name": "1",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
+   "createdAt": 3,
    "parent": 1
   },
   {
    "id": 5,
+   "type": "object",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 4
+  },
+  {
+   "id": 6,
+   "type": "element",
+   "name": "2",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 4,
+   "parent": 1
+  },
+  {
+   "id": 7,
    "type": "property",
    "name": "name",
    "block": 0,
    "scope": 0,
-   "createdAt": 2,
-   "parent": 3
-  },
-  {
-   "id": 6,
-   "type": "property",
-   "name": "quest",
-   "block": 0,
-   "scope": 0,
-   "createdAt": 3,
-   "parent": 3
+   "createdAt": 5,
+   "parent": 5
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
-   "object[stuff]": 4,
-   "object[stuff][name]": 5,
-   "object[stuff][quest]": 6
+   "x": 2,
+   "x[0]": 3,
+   "x[1]": 4,
+   "x[2]": 6,
+   "x[2][name]": 7
   }
  }
 }

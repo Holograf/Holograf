@@ -1,8 +1,40 @@
 module.exports = {
 
-  variable: function (node) {
+  //----------------------------------------------------------------------------------
+  // Explicit Injection point methods
+  variable: function (node, map) {
     var name = node.declarations[0].id.name;
-    return this.createNode('set', name);
+    var injectedNode = this.createNode('set', name);
+
+    var right = node.declarations[0].init;
+    this.handleRightExpression(right, injectedNode);
+
+    if (map) {
+      this.addArgument(injectedNode, map);
+    }
+
+    return injectedNode;
+  },
+
+  call: function (node, map) {
+
+    console.log(JSON.stringify(node, null, 2));
+
+    if (node.expression.callee.property) {
+      var method = node.expression.callee.property.name;
+      var invocation = this.traverseMemberExpression(node.expression.callee);
+      var callee = this.setParentObject(invocation);
+
+      console.log(method, this.isSpecialMethod(method));
+
+      if (this.isSpecialMethod(method)) {
+        var injectedNode = this.createNode('call', method);
+        this.addArgument(injectedNode, callee);
+        this.addArgument(injectedNode, callee, 'Identifier');
+
+        return injectedNode;
+      }
+    }
   },
 
   expression: function (node) {
@@ -13,7 +45,11 @@ module.exports = {
 
     } else if (expression.type === 'AssignmentExpression') {
       var name = expression.left.name;
-      return this.createNode('set', name);
+      var injectedNode = this.createNode('set', name);
+      var right = expression.right;
+
+      this.handleRightExpression(right, injectedNode);
+      return injectedNode;
     }
   },
 
@@ -26,7 +62,26 @@ module.exports = {
     return this.createNode('function', name);    
   },
 
-  object: function (node) {
+  array: function (node, arrayMap) {
+    if (node.type === 'VariableDeclaration') {
+      var name = node.declarations[0].id.name;
+    } else if (node.type ==='ExpressionStatement') {
+      if (node.expression.left.type === 'Identifier') {
+        var name = node.expression.left.name;
+      } else if (node.expression.left.type === 'MemberExpression') {
+        var name = this.traverseMemberExpression(node.expression.left);
+        console.log('NAME', name);
+      }
+    }
+
+    var injectedNode = this.createNode('array', name);  
+    if (arrayMap) {
+      this.addArgument(injectedNode, JSON.stringify(arrayMap));
+    }
+    return injectedNode;  
+  },
+
+  object: function (node, objectMap) {
     if (node.type === 'VariableDeclaration') {
       var name = node.declarations[0].id.name;
     } else if (node.type ==='ExpressionStatement') {
@@ -37,14 +92,25 @@ module.exports = {
       }
     }
 
-    return this.createNode('object', name);    
+
+    var injectedNode = this.createNode('object', name);  
+    if (objectMap) {
+      this.addArgument(injectedNode, JSON.stringify(objectMap));
+    }
+    return injectedNode;  
   },
 
+  //----------------------------------------------------------------------------------
+  // Object injection
   traverseMemberExpression: function (object) {
     var string = '';
     var traverse = function (object) {
       if (object.property) {
-        string = '.' + object.property.name + string;
+        if (object.property.type === 'Literal') {
+          string = '[' + object.property.value + ']' + string;
+        } else {
+          string = '[' + object.property.name + ']' + string;
+        }
       }
       if (object.object) {
         traverse(object.object);
@@ -60,9 +126,29 @@ module.exports = {
   memberExpression: function (node) {
     var object = node.expression.left;
     var string = this.traverseMemberExpression(object);
-    return this.createNode('setObjectProperty', string);
+
+    var injectedNode = this.createNode('setObjectProperty', string);
+
+    var right = node.expression.right;
+    this.handleRightExpression(right, injectedNode);
+
+
+    return injectedNode;
   },
 
+  setObjectAccessor: function (string) {
+    string = string.replace(/\[/g, '[\'');
+    string = string.replace(/\]/g, '\']');
+    return string;
+  },
+
+  setParentObject: function (objectString) {
+    var parentObject = objectString.substring(0, objectString.lastIndexOf('['));
+    return this.setObjectAccessor(parentObject);
+  },
+
+  //----------------------------------------------------------------------------------
+  // Loop Injection helper functions
   loopInit: function (node, type) {
     var name = node.init.declarations[0].id.name;
     var value = node.init.declarations[0].init.value;
@@ -105,7 +191,8 @@ module.exports = {
     return injectedNode;
   },
 
-
+  //----------------------------------------------------------------------------------
+  // Conditional injection
   ifOpen: function (node) { // Inject ___Program.block('if', 'open')
     var paths = 0;
 
@@ -127,6 +214,8 @@ module.exports = {
     return this.createNode('block', 'if', 'close');
   },
 
+  //----------------------------------------------------------------------------------
+  // function and method internal injection
   invoke: function (node, name, params, term) {
     term = term || 'invoke';
     var injectionPoint = node.body;
@@ -172,7 +261,10 @@ module.exports = {
     return injectedNode;
   },
 
-  createNode: function (method, name, value) {
+  
+  //----------------------------------------------------------------------------------
+  // Injection helper functions
+  createNode: function (key, name, value) {
     var args = Array.prototype.slice.call(arguments, 1);
 
     var injectedNode = {
@@ -188,7 +280,7 @@ module.exports = {
           },
           "property": {
             "type": "Identifier",
-            "name": method
+            "name": key
           }
         },
         "arguments": args.map(function (arg) {
@@ -202,18 +294,54 @@ module.exports = {
     }
     // Set second argument to be the variable itself
     if (args.length === 1) {
-      if (method === 'set' || 
-          method === 'function' || 
-          method === 'param' || 
-          method === 'object' || 
-          method === 'setObjectProperty') {
+      if (key === 'set' || 
+          key === 'function') {
         injectedNode.expression.arguments.push({
           "type": "Identifier",
           "name": args[0]
         })
+      } else if (key === 'set' || 
+          key === 'function' ||
+          key === 'param' || 
+          key === 'object' || 
+          key === 'array') {
+        injectedNode.expression.arguments.push({
+          "type": "Identifier",
+          "name": this.setObjectAccessor(args[0])
+        })
+      } else if (key === 'setObjectProperty') {
+        injectedNode.expression.arguments.push({
+          "type": "Identifier",
+          "name": this.setParentObject(args[0])
+        })
       }
     }
     return injectedNode;
+  },
+
+  handleRightExpression: function (right, injectedNode) {
+
+    if (right.type === 'Identifier' && this.isNotSpecialIdentifier(right.name) ) {
+      var name = this.traverseMemberExpression(right);
+      this.addArgument(injectedNode, name); 
+    }
+    return injectedNode;
+  },
+
+  addArgument: function (node, name, type) {
+    // Optionally set 'Identifier' to change to a literal variable
+    if (type === 'Identifier') {
+      node.expression.arguments.push({
+        "type": 'Identifier',
+        "name": name
+      });
+    } else {
+      node.expression.arguments.push({
+        "type": 'Literal',
+        "value": name,
+        "raw": JSON.stringify(name)
+      });
+    }
   },
 
   isNotInjectedFunction: function (node) {
@@ -222,8 +350,20 @@ module.exports = {
     } else {
       return true;
     }
+  },
+
+  isNotSpecialIdentifier: function (identifier) {
+    var specialIdentifiers = ['undefined', 'null'];
+    return specialIdentifiers.indexOf(identifier) === -1;
+  },
+
+  isSpecialMethod: function (method) {
+    var specialMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'slice'];
+    return specialMethods.indexOf(method) !== -1;
   }
 
 }
+
+
 
 

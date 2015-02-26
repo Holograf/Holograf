@@ -1,20 +1,13 @@
 module.exports = {
 input: function() {
-var object = {
-  stuff: {
-    name: 'andy',
-    quest: 'to test'
-  }
-};
+var x = {stats: {height: 'tall'}};
+var y = x.stats;
 },
 output: function() {
-var object = {
-    stuff: {
-        name: 'andy',
-        quest: 'to test'
-    }
-};
-___Program.object('object', object, '{"stuff":{}}');
+var x = { stats: { height: 'tall' } };
+___Program.object('x', x, '{"stats":{}}');
+var y = x.stats;
+___Program.set('y', y, 'x.stats');
 },
 data: {
  "programSteps": [
@@ -28,11 +21,11 @@ data: {
   },
   {
    "id": 5,
-   "value": "andy"
+   "value": "tall"
   },
   {
    "id": 6,
-   "value": "to test"
+   "pointer": 3
   }
  ],
  "components": [
@@ -54,7 +47,7 @@ data: {
   {
    "id": 2,
    "type": "var",
-   "name": "object",
+   "name": "x",
    "block": 0,
    "scope": 0,
    "createdAt": 0
@@ -69,7 +62,7 @@ data: {
   {
    "id": 4,
    "type": "property",
-   "name": "stuff",
+   "name": "stats",
    "block": 0,
    "scope": 0,
    "createdAt": 1,
@@ -78,7 +71,7 @@ data: {
   {
    "id": 5,
    "type": "property",
-   "name": "name",
+   "name": "height",
    "block": 0,
    "scope": 0,
    "createdAt": 2,
@@ -86,20 +79,19 @@ data: {
   },
   {
    "id": 6,
-   "type": "property",
-   "name": "quest",
+   "type": "var",
+   "name": "y",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
-   "parent": 3
+   "createdAt": 3
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
-   "object[stuff]": 4,
-   "object[stuff][name]": 5,
-   "object[stuff][quest]": 6
+   "x": 2,
+   "x.stats": 4,
+   "x.stats.height": 5,
+   "y": 6
   }
  }
 }

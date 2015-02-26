@@ -1,15 +1,14 @@
 module.exports = {
 input: function() {
-var object = {
-  stuff: {}
-}
-object.stuff.name = 'andy';
+var x = [1,2,3];
 },
 output: function() {
-var object = { stuff: {} };
-___Program.object('object', object, '{"stuff":{}}');
-object.stuff.name = 'andy';
-___Program.setObjectProperty('object[stuff][name]', object['stuff']);
+var x = [
+    1,
+    2,
+    3
+];
+___Program.array('x', x, '{}');
 },
 data: {
  "programSteps": [
@@ -18,12 +17,20 @@ data: {
    "pointer": 1
   },
   {
+   "id": 1,
+   "length": 3
+  },
+  {
+   "id": 3,
+   "value": 1
+  },
+  {
    "id": 4,
-   "pointer": 3
+   "value": 2
   },
   {
    "id": 5,
-   "value": "andy"
+   "value": 3
   }
  ],
  "components": [
@@ -37,7 +44,7 @@ data: {
   },
   {
    "id": 1,
-   "type": "object",
+   "type": "array",
    "block": 0,
    "scope": 0,
    "createdAt": 0
@@ -45,42 +52,45 @@ data: {
   {
    "id": 2,
    "type": "var",
-   "name": "object",
+   "name": "x",
    "block": 0,
    "scope": 0,
    "createdAt": 0
   },
   {
    "id": 3,
-   "type": "object",
+   "type": "element",
+   "name": "0",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2,
+   "parent": 1
   },
   {
    "id": 4,
-   "type": "property",
-   "name": "stuff",
+   "type": "element",
+   "name": "1",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
+   "createdAt": 3,
    "parent": 1
   },
   {
    "id": 5,
-   "type": "property",
-   "name": "name",
+   "type": "element",
+   "name": "2",
    "block": 0,
    "scope": 0,
-   "createdAt": 2,
-   "parent": 3
+   "createdAt": 4,
+   "parent": 1
   }
  ],
  "scopes": {
   "0": {
-   "object": 2,
-   "object[stuff]": 4,
-   "object[stuff][name]": 5
+   "x": 2,
+   "x[0]": 3,
+   "x[1]": 4,
+   "x[2]": 5
   }
  }
 }
