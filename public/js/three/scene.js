@@ -1,4 +1,9 @@
-var theatre = {scenePaused:false, expanded:false, controlsEnabled:true};
+var theatre = {
+	scenePaused: false, 
+	expanded: false, 
+	controlsEnabled: true, 
+	nodeView: false
+};
 
 theatre.display = function(allData){	
 	var composite, container, controls, camera, scene, renderer, particleLight, tween, visualTimeline;
@@ -123,6 +128,14 @@ theatre.display = function(allData){
 
 	function onMouseDown () {
 		var cameraSpeed = 1500;
+
+		if (theatre.nodeView) {
+
+			new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).start();
+			new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).start();
+			theatre.nodeView = false;
+		}
+
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
 		var dir = new THREE.Vector3();
@@ -142,9 +155,13 @@ theatre.display = function(allData){
 	    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
 		}
 		
-		if (composite){
+		if (composite && !theatre.nodeView){
 			var intersects = raycaster.intersectObjects( composite.children, true );	
 			if (intersects.length > 0) { 
+
+				// save initial camera position for return
+				theatre.lastPosition = new THREE.Vector3().copy( camera.position );
+				theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
 				// final camera position
 				var newX = intersects[0].point.x - 600;
 				var newY = intersects[0].point.y + 600;
@@ -165,6 +182,7 @@ theatre.display = function(allData){
 				new TWEEN.Tween(camera.position).to(targetPosition, cameraSpeed).start();
 				new TWEEN.Tween( camera.rotation ).to(endRotation, cameraSpeed).start();
 				nextCamera = null;
+				theatre.nodeView = true;
 			}
 		}
 	}
