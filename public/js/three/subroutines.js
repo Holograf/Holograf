@@ -23,8 +23,138 @@ subroutines.Fun=function(composite, opts){
 	object.position.set( x, 0, z1 );
 	object.rotation.x=-1*(Math.PI/2);
 	composite.add(object);
+	
+	if (opts.componentData.type==='property'){
+		subroutines.propertize(composite,opts);
+	} else if (opts.componentData.type==='element'){
+		subroutines.elementize(composite,opts);
+	}
+	
+	if (opts.componentData.value!==undefined){
+		subroutines.labelize(composite,opts);
+	}
+	
 };
 
+subroutines.ArrayDeclaration=function(composite, opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x1===undefined){opts.x1=0;}
+	if (opts.x2===undefined){opts.x2=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	var geometry = Object.create(subroutines.functionDeclarationGeometry);
+	var grayness = 0;
+	var material=new THREE.MeshBasicMaterial({});
+	material.color.setRGB( grayness, grayness, grayness );
+	var object = new THREE.Mesh(geometry, material );
+
+	object.grayness=grayness;
+	object.componentData=opts.componentData;
+	object=utils.tweenify(object,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+		
+	object.position.set( opts.x1, 0, opts.z1 );
+	composite.add(object);
+	
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		100, 100,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 4 ) );
+	var geometry = path.createPointsGeometry( 4 );
+	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	
+	// Create the final Object3d to add to the scene
+	var ellipse = new THREE.Line( geometry, material );
+	ellipse.componentData=opts.componentData;
+	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	
+	ellipse.position.set( opts.x1, 0, opts.z1 );
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},6000).repeat(Infinity).start();
+	
+	composite.add(ellipse);
+			
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		75, 75,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 4 ) );
+	var geometry = path.createPointsGeometry( 4 );
+	var ellipse = new THREE.Line( geometry, material );
+	ellipse.componentData=opts.componentData;
+	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	ellipse.position.set( opts.x1, 0, opts.z1 );
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
+	
+	composite.add(ellipse);
+};
+
+subroutines.ObjectDeclaration=function(composite, opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x1===undefined){opts.x1=0;}
+	if (opts.x2===undefined){opts.x2=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	var geometry = Object.create(subroutines.objectDeclarationGeometry);
+	var grayness = 0.1;
+	var material=new THREE.MeshBasicMaterial({});
+	material.color.setRGB( grayness, grayness, grayness );
+	var object = new THREE.Mesh(geometry, material );
+
+	object.grayness=grayness;
+	object.componentData=opts.componentData;
+	object=utils.tweenify(object,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+		
+	object.position.set( opts.x1, 0, opts.z1 );
+	composite.add(object);
+	
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		100, 100,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 50 ) );
+	var geometry = path.createPointsGeometry( 50 );
+	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	
+	// Create the final Object3d to add to the scene
+	var ellipse = new THREE.Line( geometry, material );
+	ellipse.componentData=opts.componentData;
+	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	
+	ellipse.position.set( opts.x1, 0, opts.z1 );
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({x:2*Math.PI},6000).repeat(Infinity).start();
+	
+	composite.add(ellipse);
+			
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		75, 75,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 50 ) );
+	var geometry = path.createPointsGeometry( 50 );
+	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	
+	var ellipse = new THREE.Line( geometry, material );
+	ellipse.componentData=opts.componentData;
+	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	ellipse.position.set( opts.x1, 0, opts.z1 );
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
+	
+	composite.add(ellipse);
+};
 
 subroutines.FunctionDeclaration=function(composite, opts){
 	if (opts===undefined){var opts={};}
@@ -49,7 +179,6 @@ subroutines.FunctionDeclaration=function(composite, opts){
 	object.position.set( x, 0, z1 );
 	composite.add(object);
 };
-
 
 subroutines.FunctionInvocation=function(composite, opts){
 	if (opts===undefined){var opts={};}
@@ -116,7 +245,6 @@ subroutines.Dflt=function(opts){
 	return particle;
 };
 
-
 subroutines.Conditional=function(composite,opts){
 	if (opts===undefined){var opts={};}
 	if (opts.z1===undefined){opts.z1=0;}
@@ -145,7 +273,6 @@ subroutines.Conditional=function(composite,opts){
 	object.position.set( x, 0, z1 );
 	composite.add(object);
 };
-
 
 subroutines.Loop=function(composite,opts){
 	if (opts===undefined){var opts={};}
@@ -237,6 +364,7 @@ subroutines.VisualTimeline=function (data,scopes){
 
 
 subroutines.dotGrid = function(scene,data,scopes,maxSize) {
+
 	var dotSteps=maxSize/data.length;
 	for (var key in scopes){
 		var dotX=scopes[key];
@@ -313,16 +441,6 @@ subroutines.skybox = function(scene, maxSize) {
 	// 	scene.add(line);
 	// }
 
-
-
-
-
-
-
-
-
-
-
 };
 
 
@@ -351,7 +469,109 @@ subroutines.Axes = function() {
 	return lines;
 };
 
+
+subroutines.elementize=function(composite,opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x1===undefined){opts.x1=0;}
+	if (opts.x2===undefined){opts.x2=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		50, 50,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 4 ) );
+	var geometry = path.createPointsGeometry( 4 );
+	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	
+	// Create the final Object3d to add to the scene
+	var ellipse = new THREE.Line( geometry, material );
+	ellipse.componentData=opts.componentData;
+	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	
+	ellipse.position.set( opts.x1, 0, opts.z1 );
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
+	
+	composite.add(ellipse);
+};
+
+subroutines.propertize=function(composite,opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x1===undefined){opts.x1=0;}
+	if (opts.x2===undefined){opts.x2=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		50, 50,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 50 ) );
+	var geometry = path.createPointsGeometry( 50 );
+	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	
+	// Create the final Object3d to add to the scene
+	var ellipse = new THREE.Line( geometry, material );
+	ellipse.componentData=opts.componentData;
+	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	
+	ellipse.position.set( opts.x1, 0, opts.z1 );
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({x:2*Math.PI},6000).repeat(Infinity).start();
+	
+	composite.add(ellipse);
+};
+
+subroutines.labelize=function(composite,opts){
+	
+	
+	///canvas madness starts here
+	var message=opts.componentData.hasOwnProperty('value') ? opts.componentData.value : "Yo!";
+	var canvas = document.createElement('canvas');
+	var context = canvas.getContext('2d');
+	context.font = "120px Courier";
+  context.textAlign = 'left';
+  context.textBaseline = 'middle';
+	// get size data (height depends only on font size)
+	var metrics = context.measureText( message );
+	var textWidth = metrics.width;
+	
+	// background color
+	context.fillStyle   = "rgba(255,255,255,1)";
+
+
+	context.fillText( message, 50, 50);
+	
+	// canvas contents will be used for a texture
+	var texture = new THREE.Texture(canvas) 
+	texture.needsUpdate = true;
+
+	var spriteMaterial = new THREE.SpriteMaterial( 
+		{ map: texture, useScreenCoordinates: false, transparent:true, opacity:0} );
+	var sprite = new THREE.Sprite( spriteMaterial );
+	sprite.scale.set(100,100,1.0);
+	sprite.rotation.x=Math.PI/2;
+	sprite.position.set(0,50,opts.z1);
+	sprite.grayness=0.2;
+	
+	sprite.componentData=opts.componentData;
+	sprite=utils.tweenify(sprite,{z1: opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	
+	composite.add( sprite );
+	
+};
+
 subroutines.Composite = function(data,scopes){
+	console.log(data);
+	
 	var composite=new THREE.Object3D();
 	composite.maxSize=100*data.length;
 	var buffer=10;
@@ -366,17 +586,23 @@ subroutines.Composite = function(data,scopes){
 		if (data[i].return!==undefined){
 			x-=500;
 		}
-		
-		
+		//i know i know, single letter variables are lame
+		//but i need to type this a lot, so c is just the current element
+		var c=data[i].component;
 		var radius=500;
 		if (data[i].component.block && data[i].component.block>0){
 			radius=200;
 		}
 		
 		
+		
 		//all the possible heiroglyphs
 		var opts={z1:z1, z2:z2, x1:0, x2:x, componentData:data[i].component, radius:radius} ;
-		if (data[i].component.value && data[i].component.value==='___function code'){
+		if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='array') {
+			subroutines.ArrayDeclaration(composite, opts);
+		} else if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='object') {
+			subroutines.ObjectDeclaration(composite, opts);
+		} else if (data[i].component.value && data[i].component.value==='___function code'){
 			subroutines.FunctionDeclaration(composite,opts);
 		} else if (data[i].component.type==="block" && data[i].component.name==="if"){
 			subroutines.Conditional(composite, opts);
@@ -403,19 +629,9 @@ subroutines.Composite = function(data,scopes){
 	return composite;
 };	
 
-/*
-
-TorusGeometry(radius, tube, radialSegments, tubularSegments, arc)
-
-radius — Default is 100. 
-tube — Diameter of the tube. Default is 40. 
-radialSegments — Default is 8 
-tubularSegments — Default is 6. 
-arc — Central angle. Default is Math.PI * 2.
-
-*/
 subroutines.hexagonGeometry=new THREE.TorusGeometry(50,10,3,3);
 subroutines.functionDeclarationGeometry=new THREE.OctahedronGeometry(50);
+subroutines.objectDeclarationGeometry=new THREE.IcosahedronGeometry(50);
 subroutines.triangleGeometry=new THREE.RingGeometry(100,5,3,3);
 subroutines.loopGeometry=new THREE.TorusGeometry(500,20,20,30);
 subroutines.funGeometry=new THREE.CylinderGeometry(100,50,80,6,1,true);
