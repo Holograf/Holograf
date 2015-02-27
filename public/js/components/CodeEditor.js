@@ -53,28 +53,13 @@ module.exports = React.createClass({
       'codeButton': true,
       'hidden': !this.props.compiledStatus
     });
-    // var shareClasses = addons.classSet({
-    //   'disabled': !this.props.compiledStatus
-    // });
-    // className={shareClasses}
+    var shareClasses = cx({
+      'disabled': !this.props.compiledStatus
+    });
     // var editorClasses = cx({
     //   // 'textAreaClassName': 'form-control',
     //   'disabled': !this.props.compiledStatus
     // });
-    var shareClasses = cx({
-      'disabled': !this.props.compiledStatus
-    });
-
-    //   var classString = 'message';
-    //   if (this.props.isImportant) {
-    //     classString += ' message-important';
-    //   }
-    //   if (this.props.isRead) {
-    //     classString += ' message-read';
-    //   }
-    //   // 'message message-important message-read'
-    //   return <div className={classString}>Great, I'll be there.</div>;
-    // }
 
     // Coordinate the status of the code displayed with what is in the Store
     this.options.value = this.props.code;

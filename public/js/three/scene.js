@@ -11,14 +11,20 @@ theatre.display=function(allData){
 	init(timeline);
 	animate();
 	
+
 	function init(data) {
 		container = document.getElementById('three-scene');
+
+		// PerspectiveCamera method args: (field of view angle, aspectRatio, near, far)
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
 		camera.position.z = 5000;
 		camera.position.y = 0;
 		camera.position.x = -4000;
 		controls = new THREE.OrbitControls(camera, container);
 		controls.addEventListener( 'change', render );
+		// controls = makeControls(camera, container);
+		// controls = new THREE.OrbitControls(camera, container);
+
 		scene = new THREE.Scene();
 		particleLight = subroutines.TimeLight();
 		particleLight.tween.start();
@@ -51,6 +57,7 @@ theatre.display=function(allData){
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	}
+
 
 	function onMouseMove( e ) {
 		var vector = new THREE.Vector3();
@@ -100,7 +107,12 @@ theatre.display=function(allData){
 	
 	function animate() {
 		requestAnimationFrame( animate );
-		controls.update();
+		if (killControls) 
+		  controls.enabled = false;
+		else 
+		  controls.update(controlsObj.delta);
+		// controls.update();
+
 		render();
 	}
 	
@@ -124,10 +136,12 @@ theatre.display=function(allData){
 	};
 	
 	function render() {
+		// lookAt might be preventing panning
 		camera.lookAt(centerPoint);
+
 		TWEEN.update();
 		renderer.render( scene, camera );
-		sceneRendered = true;
+		// effect.render( scene, camera );			// This is used for stereoEffect
 	}
-	
 };
+
