@@ -19,12 +19,12 @@ var Actions = {
 
   updateUrl: function (data) {
     $.ajax({
-      url: 'http://127.0.0.1:5000/api/code',
+      url: 'http://holograf.elasticbeanstalk.com/api/code',
       dataType: 'json',
       type: 'POST',
       data: data,
       success: function(data) {
-        var shareUrl = 'http://127.0.0.1:5000/#/code/' + data.code;
+        var shareUrl = 'http://holograf.elasticbeanstalk.com/#/code/' + data.code;
         AppDispatcher.handleViewAction({
           actionType: AppConstants.UPDATE_SHAREURL,
           shareUrl: shareUrl
@@ -41,12 +41,12 @@ var Actions = {
       return Actions.updateCode(null);
     }
     $.ajax({
-      url: 'http://127.0.0.1:5000/api/code/' + id,
+      url: 'http://holograf.elasticbeanstalk.com/api/code/' + id,
       dataType: 'json',
       type: 'GET',
       success: function(data) {
         Actions.updateCode(data[0].rawCode);
-        // console.log(JSON.parse(data[0].processedCode)); // TODO: Deal with this?
+        // console.log(JSON.parse(data[0].processedCode));
       },
       error: function(xhr, status, err) {
         console.error(xhr, status, err.toString());

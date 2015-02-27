@@ -26,10 +26,8 @@ coverage
 
 # Compiled Dirs (http://nodejs.org/api/addons.html)
 build/
-dist/js
-dist/index.html
-dist/css
-dist/three
+dist/*
+!dist/threeLib
 data/
 test/spec/bundle.js
 
@@ -37,9 +35,12 @@ test/spec/bundle.js
 # Deployed apps should consider commenting these lines out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules/
-bower_components/
-dist/bower_components/
 
 # Server Keys/Certificates
 server/*.pem
 server/*.secret
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

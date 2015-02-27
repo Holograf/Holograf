@@ -31,7 +31,8 @@ module.exports = React.createClass({
   },
 
   save: function () {
-    var data = {rawCode: this.props.code, processedCode: JSON.stringify(this.props.data)};
+    // To add processed code use: processedCode: JSON.stringify(this.props.data)};
+    var data = {rawCode: this.props.code, processedCode: 'processedCode'};
     Actions.updateUrl(data);
   },
 
