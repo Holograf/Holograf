@@ -4,7 +4,7 @@ theatre.display=function(allData){
 	var composite, container, controls, camera, scene, renderer, particleLight, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
-	var centerPoint = new THREE.Vector3(0,0,5000);
+	var centerPoint;
 	var scopes=utils.extractScopes(allData);
 	var timeline=utils.parseTimeline(allData.programSteps,allData.components);
 	
@@ -13,22 +13,30 @@ theatre.display=function(allData){
 	
 	function init(data) {
 		container = document.getElementById('three-scene');
-		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
-		camera.position.z = 5000;
-		camera.position.y = 0;
-		camera.position.x = -4000;
-		controls = new THREE.OrbitControls(camera, container);
-		controls.addEventListener( 'change', render );
+
 		scene = new THREE.Scene();
-		particleLight = subroutines.TimeLight();
+		
+		composite = subroutines.Composite(data,scopes);
+		centerPoint = new THREE.Vector3(0,0,composite.maxSize/2);
+		scene.add( composite );
+		
+		particleLight = subroutines.TimeLight(0,composite.maxSize);
 		particleLight.tween.start();
 		particleLight.tween.onComplete(function(){
 			particleLight.position.z=0;
 			particleLight.tween.start();
 		});
 		scene.add( particleLight );
-		composite = subroutines.Composite(data,scopes);
-		scene.add( composite );
+		
+		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, Math.max(100000,composite.maxSize) );
+		camera.position.z = composite.maxSize/2;
+		camera.position.y = 0;
+		camera.position.x = Math.min(-2000,-1*(composite.maxSize/3) );
+		
+		
+		controls = new THREE.OrbitControls(camera, container);
+		controls.addEventListener( 'change', render );
+		
 		visualTimeline = subroutines.VisualTimeline(data,scopes);
 		scene.add(visualTimeline);
 		//will add the dotgrid to the scene;
@@ -53,6 +61,8 @@ theatre.display=function(allData){
 	}
 
 	function onMouseMove( e ) {
+		
+		
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
 		var dir = new THREE.Vector3();
@@ -80,13 +90,11 @@ theatre.display=function(allData){
 					shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
 				});
 			} else {
-				var d="";
 				var selectedId=intersects[0].object.componentData.id;
-				for (var key in intersects[0].object.componentData){
-					d+="<div>"+key+": "+intersects[0].object.componentData[key]+"</div>";
+				$("#three-modal").html( utils.displayText(intersects[0].object) );
+				if (!$("#three-modal").is(":visible") ){
+					$("#three-modal").fadeIn();
 				}
-				$("#three-modal").html(d);
-				$("#three-modal").fadeIn();
 				intersects[0].object.material.color.setRGB( 1, 1, 0 );
 				composite.children.forEach(function( shape ) {
 					if (shape.componentData.id===selectedId){
@@ -95,6 +103,8 @@ theatre.display=function(allData){
 				});
 			}
 		}
+		
+		
 	}
 
 	
@@ -111,7 +121,6 @@ theatre.display=function(allData){
 	
 	theatre.expand=function(){
 		var action = theatre.expanded ? "collapse" : "expand";
-		console.log(visualTimeline);
 		for (var i=0;i<composite.children.length;i++){
 			composite.children[i][action].start();
 			if (action==='collapse'){
