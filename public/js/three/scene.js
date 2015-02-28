@@ -146,7 +146,6 @@ theatre.display=function(allData){
 		
 	}
 
-<<<<<<< HEAD
 	function onMouseDown () {
 		var cameraSpeed = 1500;
 
@@ -209,9 +208,6 @@ theatre.display=function(allData){
 	}
 
 
-=======
-
-
 	function createModal(){
 		
 	  var canvas=document.createElement("DIV");
@@ -228,7 +224,6 @@ theatre.display=function(allData){
 	  return c;
 	}
 	
->>>>>>> first approximation of the updated modal using a Raphael overlay
 	function animate() {
 		requestAnimationFrame( animate );
 		// controls.update();
