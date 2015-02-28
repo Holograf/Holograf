@@ -5,12 +5,13 @@ var theatre = {
 	nodeView: false
 };
 
-theatre.display = function(allData){	
-	var composite, container, controls, camera, scene, renderer, particleLight, tween, visualTimeline;
+theatre.display=function(allData){	
+	var camera, composite, container, controls, modalCanvas, particleLight, renderer, scene, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	var scopes = utils.extractScopes(allData);
 	var timeline = utils.parseTimeline(allData.programSteps, allData.components);
+	
 	
 	init(timeline);
 	animate();
@@ -58,7 +59,6 @@ theatre.display = function(allData){
 
 
 		// renderer
-		
 		renderer = new THREE.WebGLRenderer({antialias:true});
 		renderer.setClearColor( 0x333333, 1);
 		renderer.setPixelRatio( window.devicePixelRatio );
@@ -68,6 +68,8 @@ theatre.display = function(allData){
 		container = document.getElementById('three-scene');
 		container.appendChild(renderer.domElement);
 
+		//modal
+		modal=createModal();
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		window.addEventListener( 'resize', onWindowResize, false );
@@ -84,8 +86,6 @@ theatre.display = function(allData){
 	}
 
 	function onMouseMove( e ) {
-		
-		
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
 		var dir = new THREE.Vector3();
@@ -108,9 +108,13 @@ theatre.display = function(allData){
 		if (composite){
 			var intersects = raycaster.intersectObjects( composite.children, true );	
 			if (intersects.length<1){
-				$("#three-modal").fadeOut();
+				if (document.getElementById("modal-canvas")){
+					document.body.removeChild(document.getElementById("modal-canvas"));
+				}
+				$("#three-modal").hide();
 				composite.children.forEach(function( shape ) {
 					shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
+					shape.material.opacity = 0;
 				});
 			} else {
 				var selectedId=intersects[0].object.componentData.id;
@@ -120,16 +124,29 @@ theatre.display = function(allData){
 				}
 				intersects[0].object.material.color.setRGB( 1, 1, 0 );
 				composite.children.forEach(function( shape ) {
+					if (shape.material.hasOwnProperty('opacity') ){
+						shape.material.opacity = 1;
+					}
 					if (shape.componentData.id===selectedId){
 						shape.material.color.setRGB( 1, 1, 0 );
 					}
 				});
+				
+				//raphael code here?
+				if ($("#modal-canvas").length===0){
+					modal = createModal();
+					utils.modal.donut(modal,event.clientX,event.clientY,intersects[0]);
+					utils.modal.headline(modal,intersects[0]);
+				} 
+				///
+				
 			}
 		}
 		
 		
 	}
 
+<<<<<<< HEAD
 	function onMouseDown () {
 		var cameraSpeed = 1500;
 
@@ -192,6 +209,26 @@ theatre.display = function(allData){
 	}
 
 
+=======
+
+
+	function createModal(){
+		
+	  var canvas=document.createElement("DIV");
+	  canvas.id="modal-canvas";
+	  canvas.style.position="fixed";
+	  canvas.style.top="0px";
+	  canvas.style.left="0px";
+	  canvas.style.width=$(window).innerWidth()+"px";
+	  canvas.style.height=$(window).innerHeight()+"px";
+	
+	  document.body.appendChild(canvas);
+	  
+	  var c = new Raphael('modal-canvas');
+	  return c;
+	}
+	
+>>>>>>> first approximation of the updated modal using a Raphael overlay
 	function animate() {
 		requestAnimationFrame( animate );
 		// controls.update();
