@@ -39,6 +39,7 @@ node_modules/
 # Server Keys/Certificates
 server/*.pem
 server/*.secret
+server/config/config.js
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
