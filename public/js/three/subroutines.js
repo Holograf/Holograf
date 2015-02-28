@@ -382,9 +382,9 @@ subroutines.skybox = function(scene, maxSize) {
 	var x, y, z;
 	var interval = maxSize / 10;
 	var material = new THREE.LineBasicMaterial( { color: 0x555555 } );
-
+	var yMod = 500;
 	// back horizontal
-	y = -maxSize;
+	y = -maxSize+yMod;
 	while (y < maxSize) {
 		var geometry = new THREE.Geometry();
 		x = 2 * maxSize;
@@ -404,9 +404,9 @@ subroutines.skybox = function(scene, maxSize) {
 		x = 2 * maxSize;
 		z += interval; 
 
-		geometry.vertices.push( new THREE.Vector3( -maxSize, -maxSize, z))
-		geometry.vertices.push( new THREE.Vector3( x, -maxSize, z ) );
-		geometry.vertices.push( new THREE.Vector3( x, maxSize, z ) );
+		geometry.vertices.push( new THREE.Vector3( -maxSize, -maxSize+yMod, z))
+		geometry.vertices.push( new THREE.Vector3( x, -maxSize+yMod, z ) );
+		geometry.vertices.push( new THREE.Vector3( x, maxSize+yMod, z ) );
 		
 		var line = new THREE.Line( geometry, material );
 		scene.add(line);
@@ -417,7 +417,7 @@ subroutines.skybox = function(scene, maxSize) {
 	x = -maxSize - interval;
 	while (x < 2 * maxSize) {
 		var geometry = new THREE.Geometry();
-		y = -maxSize;
+		y = -maxSize+yMod;
 		x += interval; 
 
 		geometry.vertices.push( new THREE.Vector3( x, y, -maxSize ) );
@@ -487,6 +487,39 @@ subroutines.elementize=function(composite,opts){
 	
 	composite.add(ellipse);
 };
+
+
+subroutines.SelectHalo=function(scene,opts){
+	if (opts===undefined){var opts={};}
+	if (opts.z1===undefined){opts.z1=0;}
+	if (opts.z2===undefined){opts.z2=0;}
+	if (opts.x1===undefined){opts.x1=0;}
+	if (opts.x2===undefined){opts.x2=0;}
+	if (opts.componentData===undefined){opts.componentData={};}
+	
+	var curve = new THREE.EllipseCurve(
+		opts.x1,  0,            // ax, aY
+		100, 100,           // xRadius, yRadius
+		0,  2 * Math.PI,  // aStartAngle, aEndAngle
+		false             // aClockwise
+	);
+	
+	var path = new THREE.Path( curve.getPoints( 6 ) );
+	var geometry = path.createPointsGeometry( 6 );
+	var material = new THREE.LineBasicMaterial( { color : 0xffff00 } );
+	
+	// Create the final Object3d to add to the scene
+	var halo = new THREE.Line( geometry, material );
+	halo.componentData=opts.componentData;
+
+	halo.position.set( opts.x1, 0, opts.z1 );
+	halo.rotation.x=Math.PI/2;
+	halo.rotate = new TWEEN.Tween(halo.rotation).to({z:2*Math.PI},3000).repeat(Infinity).start();
+
+	return halo;
+};
+
+
 
 subroutines.propertize=function(composite,opts){
 	if (opts===undefined){var opts={};}
@@ -558,8 +591,6 @@ subroutines.labelize=function(composite,opts){
 };
 
 subroutines.Composite = function(data,scopes){
-	console.log(data);
-	
 	var composite=new THREE.Object3D();
 	composite.maxSize=100*data.length;
 	var buffer=10;
