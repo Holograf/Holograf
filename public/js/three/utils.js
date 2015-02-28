@@ -16,6 +16,7 @@ utils.parseTimeline=function(timeline,components){
   for (var i=0;i<timeline.length;i++){
     //deep clone to avoid altering the glossary
     timeline[i].component={};
+    //timeline[i].component.timelineIndex=i;
     for (var key in timeline[i]){
       if (key==='component'){continue;}
       timeline[i].component[key]=timeline[i][key];
@@ -81,15 +82,33 @@ utils.modal.headline=function(canvas,obj){
   var c=canvas;
   var cData=obj.object.componentData;
   
-  var text=c.text(0,100,JSON.stringify(cData))
-    .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"});
+  var text=c.text(-1000,100,utils.modalizeText(obj.object))
+    .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
+    .animate({x:10},600,"<>");
   var bbox=text.getBBox();
-  console.log(bbox);
-  var backboard=c.rect(0,bbox.y,bbox.width,bbox.height)
-    .attr({"fill":"#000",opacity:0})
-    .animate({opacity:0.7},1000);
+  var backboard=c.rect(-1000,bbox.y,Math.max(bbox.width,300),bbox.height)
+    .attr({"fill":"#000",opacity:0.8})
+    .animate({x:0},600,"<>");
   text.toFront();
 }
+
+
+utils.rippleList=function(canvas,collection){
+  var x=-300;
+  var y=120;
+  var anim=new Raphael.animation({x:10},300,"<>");
+  var barAnim=new Raphael.animation({x:0},300,"<>");
+  for (var i=0;i<collection.length;i++){
+    y+=30;
+    var backBar=canvas.rect(x,y,300,29)
+      .attr({"fill":"#000","opacity":0.8})
+      .animate(barAnim.delay( 600+(i*50) ));
+    var text=canvas.text(x,y+13,i+1+": "+collection[i])
+      .attr({fill:"#fff","font-size":"20px","text-anchor":"start"})
+      .animate(anim.delay( 600+(i*50) ));
+  }
+};
+
 
 utils.arcPath=function(x,y,r,theta1,theta2,w){
 	var f1=0;
@@ -149,7 +168,50 @@ utils.donut=function(opts){
    return s;
 };
     
+utils.allValues=function(timeline,target){
+  var r=[];
+  
+  for (var i=0;i<timeline.length;i++){
+    if (target===timeline[i].id && timeline[i].value!==undefined){
+      r.push( JSON.stringify(timeline[i].value) );
+    }
+  }
+  
+  return r;
+};   
+    
 
+utils.modalizeText=function(obj){
+  var d="";
+  if (obj.componentData.pointsTo!==undefined && obj.componentData.pointsTo.type  && obj.componentData.pointsTo.type==='object'){
+    d+=""+obj.componentData.name+" = { } ";
+  } else if (obj.componentData.pointsTo!==undefined && obj.componentData.pointsTo.type && obj.componentData.pointsTo.type==='array'){
+    d+=""+obj.componentData.name+" = [ ] ";
+  } else if (obj.componentData.hasOwnProperty("type") && obj.componentData.type==='element'){
+    d+="["+obj.componentData.name+"] = "+obj.componentData.value+"";
+  } else if (obj.componentData.value && obj.componentData.value==='___function code'){
+    d+="function: "+obj.componentData.name+" declaration";
+  } else if (obj.componentData.type==='block' && obj.componentData.name==='if' && obj.componentData.hasOwnProperty('enter') ){
+    d+="if open";
+  } else if (obj.componentData.hasOwnProperty('if') && obj.componentData.if==='close'){
+    d+="if close";
+  } else if (obj.componentData.hasOwnProperty('invoke') ){
+    d+="function: "+obj.componentData.name+" invocation";
+  } else if (obj.componentData.hasOwnProperty('return') ) {
+    d+="function: "+obj.componentData.name+" returns "+obj.componentData.return+"";
+  } else if (obj.componentData.for) {
+    d+="loop "+obj.componentData.for+"";  
+  } else if (obj.componentData.param!==undefined){
+    d+="parameter: "+obj.componentData.name+" = "+obj.componentData.param+"";
+  } else if (obj.componentData.type && obj.componentData.type==='var') {
+    d+=""+obj.componentData.name+" = "+obj.componentData.value+"";
+  } else {
+  	for (var key in obj.componentData){
+  		d+=""+key+": "+obj.componentData[key]+"\n";
+  	}
+  }
+	return d;
+};
 
 utils.displayText=function(obj){
   var d="";
@@ -181,7 +243,7 @@ utils.displayText=function(obj){
   	}
   }
 	return d;
-}
+};
 
 utils.tweenify=function(obj,opts){
   //tweenify is a decorator
