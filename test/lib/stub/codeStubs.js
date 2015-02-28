@@ -179,6 +179,12 @@ stub.input  = stringify( snippet.input );
 stub.output = stringify( snippet.output );
 stub.data = snippet.data;
 
+stub = codeStubs['functions/pass_anonymous_functions'] = {};
+snippet = require('./codeSnippets/functions/pass_anonymous_functions')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
 // Objects
 stub = codeStubs['objects/object_declaration'] = {};
 snippet = require('./codeSnippets/objects/object_declaration')
@@ -302,7 +308,53 @@ stub.input  = stringify( snippet.input );
 stub.output = stringify( snippet.output );
 stub.data = snippet.data;
 
+stub = codeStubs['arrays/object_with_array'] = {};
+snippet = require('./codeSnippets/arrays/object_with_array')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
 
+stub = codeStubs['arrays/array_push'] = {};
+snippet = require('./codeSnippets/arrays/array_push')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
+stub = codeStubs['arrays/array_pop'] = {};
+snippet = require('./codeSnippets/arrays/array_pop')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
+stub = codeStubs['arrays/array_shift'] = {};
+snippet = require('./codeSnippets/arrays/array_shift')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
+stub = codeStubs['arrays/array_unshift'] = {};
+snippet = require('./codeSnippets/arrays/array_unshift')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
+stub = codeStubs['arrays/array_slice'] = {};
+snippet = require('./codeSnippets/arrays/array_slice')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
+stub = codeStubs['arrays/array_splice'] = {};
+snippet = require('./codeSnippets/arrays/array_splice')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
+
+stub = codeStubs['arrays/array_splice_out'] = {};
+snippet = require('./codeSnippets/arrays/array_splice_out')
+stub.input  = stringify( snippet.input );
+stub.output = stringify( snippet.output );
+stub.data = snippet.data;
 
 
 module.exports = codeStubs;

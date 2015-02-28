@@ -1,40 +1,14 @@
+var esprimaParse = require('esprima').parse;
+
 module.exports = {
 
   //----------------------------------------------------------------------------------
   // Explicit Injection point methods
-  variable: function (node, map) {
+  variable: function (node) {
     var name = node.declarations[0].id.name;
-    var injectedNode = this.createNode('set', name);
-
-    var right = node.declarations[0].init;
-    this.handleRightExpression(right, injectedNode);
-
-    if (map) {
-      this.addArgument(injectedNode, map);
-    }
-
-    return injectedNode;
-  },
-
-  call: function (node, map) {
-
-    console.log(JSON.stringify(node, null, 2));
-
-    if (node.expression.callee.property) {
-      var method = node.expression.callee.property.name;
-      var invocation = this.traverseMemberExpression(node.expression.callee);
-      var callee = this.setParentObject(invocation);
-
-      console.log(method, this.isSpecialMethod(method));
-
-      if (this.isSpecialMethod(method)) {
-        var injectedNode = this.createNode('call', method);
-        this.addArgument(injectedNode, callee);
-        this.addArgument(injectedNode, callee, 'Identifier');
-
-        return injectedNode;
-      }
-    }
+    if (name !== '___functionId') {
+      return this.createNode('set', name);
+    } 
   },
 
   expression: function (node) {
@@ -42,62 +16,10 @@ module.exports = {
     if (expression.type === 'UpdateExpression') {
       var name = expression.argument.name;
       return this.createNode('set', name);
-
     } else if (expression.type === 'AssignmentExpression') {
       var name = expression.left.name;
-      var injectedNode = this.createNode('set', name);
-      var right = expression.right;
-
-      this.handleRightExpression(right, injectedNode);
-      return injectedNode;
+      return this.createNode('set', name);
     }
-  },
-
-  function: function (node) {
-    if (node.declarations) {
-      var name = node.declarations[0].id.name
-    } else if (node.expression) {
-      var name = node.expression.left.name; 
-    }
-    return this.createNode('function', name);    
-  },
-
-  array: function (node, arrayMap) {
-    if (node.type === 'VariableDeclaration') {
-      var name = node.declarations[0].id.name;
-    } else if (node.type ==='ExpressionStatement') {
-      if (node.expression.left.type === 'Identifier') {
-        var name = node.expression.left.name;
-      } else if (node.expression.left.type === 'MemberExpression') {
-        var name = this.traverseMemberExpression(node.expression.left);
-        console.log('NAME', name);
-      }
-    }
-
-    var injectedNode = this.createNode('array', name);  
-    if (arrayMap) {
-      this.addArgument(injectedNode, JSON.stringify(arrayMap));
-    }
-    return injectedNode;  
-  },
-
-  object: function (node, objectMap) {
-    if (node.type === 'VariableDeclaration') {
-      var name = node.declarations[0].id.name;
-    } else if (node.type ==='ExpressionStatement') {
-      if (node.expression.left.type === 'Identifier') {
-        var name = node.expression.left.name;
-      } else if (node.expression.left.type === 'MemberExpression') {
-        var name = this.traverseMemberExpression(node.expression.left);
-      }
-    }
-
-
-    var injectedNode = this.createNode('object', name);  
-    if (objectMap) {
-      this.addArgument(injectedNode, JSON.stringify(objectMap));
-    }
-    return injectedNode;  
   },
 
   //----------------------------------------------------------------------------------
@@ -128,10 +50,6 @@ module.exports = {
     var string = this.traverseMemberExpression(object);
 
     var injectedNode = this.createNode('setObjectProperty', string);
-
-    var right = node.expression.right;
-    this.handleRightExpression(right, injectedNode);
-
 
     return injectedNode;
   },
@@ -216,7 +134,7 @@ module.exports = {
 
   //----------------------------------------------------------------------------------
   // function and method internal injection
-  invoke: function (node, name, params, term) {
+  invoke: function (node, params, term) {
     term = term || 'invoke';
     var injectionPoint = node.body;
 
@@ -226,19 +144,33 @@ module.exports = {
       injectionPoint.unshift(injectedNode);
     }
     // Inject the ___Program.invoke('fn name')
-    var injectedNode = this.createNode(term, name);
+    var injectedNode = this.createNode(term);
+    this.addArgument(injectedNode, '___functionId', 'Identifier');
     injectionPoint.unshift(injectedNode);
+
+    var calleeNode = this.createFunctionCalleeNode();
+    console.log(calleeNode);
+    injectionPoint.unshift(calleeNode)
+
     // Inject teh implicit ___Program.return('fn name')
-    var injectedNode = this.createNode('return', name);
+    var injectedNode = this.createNode('return');
+    this.addArgument(injectedNode, '___functionId', 'Identifier');
     injectionPoint.push(injectedNode);
   },
 
-  method: function (node, name, params) {
-    this.invoke(node, name, params, 'method');
+  createFunctionCalleeNode: function () {
+    var injectedNode = esprimaParse("var ___functionId = arguments.callee.___id");
+    return injectedNode.body[0];
   },
 
-  return: function (node, name) {
-    return this.createNode('return', name);
+  method: function (node, name, params) {
+    this.invoke(node, params, 'method');
+  },
+
+  return: function (node) {
+    var injectedNode = this.createNode('return');
+    this.addArgument(injectedNode, '___functionId', 'Identifier');
+    return injectedNode;
   },
 
   returnState: function (node) {
@@ -292,41 +224,21 @@ module.exports = {
         })
       }
     }
+
     // Set second argument to be the variable itself
     if (args.length === 1) {
-      if (key === 'set' || 
-          key === 'function') {
-        injectedNode.expression.arguments.push({
-          "type": "Identifier",
-          "name": args[0]
-        })
-      } else if (key === 'set' || 
-          key === 'function' ||
-          key === 'param' || 
-          key === 'object' || 
-          key === 'array') {
-        injectedNode.expression.arguments.push({
-          "type": "Identifier",
-          "name": this.setObjectAccessor(args[0])
-        })
+      if (key === 'set') {
+        var name = args[0];
+      } else if (key === 'param') {
+        var name = this.setObjectAccessor(args[0]);
       } else if (key === 'setObjectProperty') {
-        injectedNode.expression.arguments.push({
-          "type": "Identifier",
-          "name": this.setParentObject(args[0])
-        })
+        var name = this.setParentObject(args[0]);
       }
+      this.addArgument(injectedNode, name, 'Identifier');
     }
     return injectedNode;
   },
 
-  handleRightExpression: function (right, injectedNode) {
-
-    if (right.type === 'Identifier' && this.isNotSpecialIdentifier(right.name) ) {
-      var name = this.traverseMemberExpression(right);
-      this.addArgument(injectedNode, name); 
-    }
-    return injectedNode;
-  },
 
   addArgument: function (node, name, type) {
     // Optionally set 'Identifier' to change to a literal variable

@@ -4,16 +4,20 @@ var x = {};
 var y = x;
 },
 output: function() {
-var x = {};
-___Program.object('x', x, '{}');
+var x = {}.___obj();
+___Program.set('x', x);
 var y = x;
-___Program.set('y', y, 'x');
+___Program.set('y', y);
 },
 data: {
  "programSteps": [
   {
    "id": 2,
    "pointer": 1
+  },
+  {
+   "id": 1,
+   "snapshot": "{}"
   },
   {
    "id": 3,
@@ -50,7 +54,7 @@ data: {
    "name": "y",
    "block": 0,
    "scope": 0,
-   "createdAt": 1
+   "createdAt": 2
   }
  ],
  "scopes": {

@@ -4,8 +4,8 @@ var object = {};
 object.name = 'andy';
 },
 output: function() {
-var object = {};
-___Program.object('object', object, '{}');
+var object = {}.___obj();
+___Program.set('object', object);
 object.name = 'andy';
 ___Program.setObjectProperty('object[name]', object);
 },
@@ -16,8 +16,16 @@ data: {
    "pointer": 1
   },
   {
+   "id": 1,
+   "snapshot": "{}"
+  },
+  {
    "id": 3,
    "value": "andy"
+  },
+  {
+   "id": 1,
+   "snapshot": "{\"name\":\"andy\"}"
   }
  ],
  "components": [
@@ -50,7 +58,7 @@ data: {
    "name": "name",
    "block": 0,
    "scope": 0,
-   "createdAt": 1,
+   "createdAt": 2,
    "parent": 1
   }
  ],

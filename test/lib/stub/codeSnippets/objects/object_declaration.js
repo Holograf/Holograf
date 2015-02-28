@@ -3,14 +3,18 @@ input: function() {
 var object = {};
 },
 output: function() {
-var object = {};
-___Program.object('object', object, '{}');
+var object = {}.___obj();
+___Program.set('object', object);
 },
 data: {
  "programSteps": [
   {
    "id": 2,
    "pointer": 1
+  },
+  {
+   "id": 1,
+   "snapshot": "{}"
   }
  ],
  "components": [

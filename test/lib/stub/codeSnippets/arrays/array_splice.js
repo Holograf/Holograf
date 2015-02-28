@@ -1,6 +1,7 @@
 module.exports = {
 input: function() {
 var x = [1,2,3];
+x.splice(1,0,'new');
 },
 output: function() {
 var x = [
@@ -9,6 +10,7 @@ var x = [
     3
 ].___obj();
 ___Program.set('x', x);
+x.splice(1, 0, 'new');
 },
 data: {
  "programSteps": [
@@ -32,6 +34,27 @@ data: {
    "id": 1,
    "length": 3,
    "snapshot": "[1,2,3]"
+  },
+  {
+   "id": 3,
+   "value": 1
+  },
+  {
+   "id": 4,
+   "value": "new"
+  },
+  {
+   "id": 5,
+   "value": 2
+  },
+  {
+   "id": 6,
+   "value": 3
+  },
+  {
+   "id": 1,
+   "length": 4,
+   "snapshot": "[1,\"new\",2,3]"
   }
  ],
  "components": [
@@ -84,6 +107,22 @@ data: {
    "scope": 0,
    "createdAt": 3,
    "parent": 1
+  },
+  {
+   "id": 6,
+   "type": "element",
+   "name": 3,
+   "block": 0,
+   "scope": 0,
+   "createdAt": 8,
+   "parent": 1
+  },
+  {
+   "id": 7,
+   "type": "array",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 10
   }
  ],
  "scopes": {
@@ -91,7 +130,8 @@ data: {
    "x": 2,
    "x[0]": 3,
    "x[1]": 4,
-   "x[2]": 5
+   "x[2]": 5,
+   "x[3]": 6
   }
  }
 }

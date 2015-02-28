@@ -6,8 +6,8 @@ var object = {
 object.name = 'luke';
 },
 output: function() {
-var object = { name: 'andy' };
-___Program.object('object', object, '{}');
+var object = { name: 'andy' }.___obj();
+___Program.set('object', object);
 object.name = 'luke';
 ___Program.setObjectProperty('object[name]', object);
 },
@@ -22,8 +22,16 @@ data: {
    "value": "andy"
   },
   {
+   "id": 1,
+   "snapshot": "{\"name\":\"andy\"}"
+  },
+  {
    "id": 3,
    "value": "luke"
+  },
+  {
+   "id": 1,
+   "snapshot": "{\"name\":\"luke\"}"
   }
  ],
  "components": [

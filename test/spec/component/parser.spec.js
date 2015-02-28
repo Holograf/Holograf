@@ -328,5 +328,12 @@ describe("Parser", function() {
       var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
       expect(code).toBe(output);
     });
+
+    it("should nest an array inside of an object", function() {
+      var test = 'arrays/object_with_array';
+      var output = codeStubs[test].output;
+      var code = generateCode( Parser( codeStubs[test].input ) ).replace('\n', '');
+      expect(code).toBe(output);
+    });
   });
 });

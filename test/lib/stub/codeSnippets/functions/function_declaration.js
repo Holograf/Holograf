@@ -4,16 +4,17 @@ var f = function () {};
 },
 output: function() {
 var f = function () {
-    ___Program.invoke('f');
-    ___Program.return('f');
-};
-___Program.function('f', f);
+    var ___functionId = arguments.callee.___id;
+    ___Program.invoke(___functionId);
+    ___Program.return(___functionId);
+}.___fn();
+___Program.set('f', f);
 },
 data: {
  "programSteps": [
   {
-   "id": 1,
-   "value": "___function code"
+   "id": 2,
+   "pointer": 1
   }
  ],
  "components": [
@@ -27,6 +28,13 @@ data: {
   },
   {
    "id": 1,
+   "type": "function",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 0
+  },
+  {
+   "id": 2,
    "type": "var",
    "name": "f",
    "block": 0,
@@ -36,7 +44,7 @@ data: {
  ],
  "scopes": {
   "0": {
-   "f": 1
+   "f": 2
   }
  }
 }

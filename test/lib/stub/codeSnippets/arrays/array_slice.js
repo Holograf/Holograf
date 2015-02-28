@@ -1,6 +1,7 @@
 module.exports = {
 input: function() {
 var x = [1,2,3];
+var y = x.slice(1);
 },
 output: function() {
 var x = [
@@ -9,6 +10,8 @@ var x = [
     3
 ].___obj();
 ___Program.set('x', x);
+var y = x.slice(1);
+___Program.set('y', y);
 },
 data: {
  "programSteps": [
@@ -32,6 +35,23 @@ data: {
    "id": 1,
    "length": 3,
    "snapshot": "[1,2,3]"
+  },
+  {
+   "id": 7,
+   "pointer": 6
+  },
+  {
+   "id": 8,
+   "value": 2
+  },
+  {
+   "id": 9,
+   "value": 3
+  },
+  {
+   "id": 6,
+   "length": 2,
+   "snapshot": "[2,3]"
   }
  ],
  "components": [
@@ -84,6 +104,39 @@ data: {
    "scope": 0,
    "createdAt": 3,
    "parent": 1
+  },
+  {
+   "id": 6,
+   "type": "array",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 5
+  },
+  {
+   "id": 7,
+   "type": "var",
+   "name": "y",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 5
+  },
+  {
+   "id": 8,
+   "type": "element",
+   "name": "0",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 6,
+   "parent": 6
+  },
+  {
+   "id": 9,
+   "type": "element",
+   "name": "1",
+   "block": 0,
+   "scope": 0,
+   "createdAt": 7,
+   "parent": 6
   }
  ],
  "scopes": {
@@ -91,7 +144,10 @@ data: {
    "x": 2,
    "x[0]": 3,
    "x[1]": 4,
-   "x[2]": 5
+   "x[2]": 5,
+   "y": 7,
+   "y[0]": 8,
+   "y[1]": 9
   }
  }
 }

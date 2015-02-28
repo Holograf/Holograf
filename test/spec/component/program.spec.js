@@ -278,6 +278,15 @@ describe("Program Compiler", function() {
 
       expect( executed ).toBe( stubData );
     });
+
+    it("should pass anonymous functions", function() {
+      var test = 'functions/pass_anonymous_functions';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
   });
 
 
@@ -448,6 +457,78 @@ describe("Program Compiler", function() {
 
     it("should set values at existing array indices", function() {
       var test = 'arrays/change_array_index';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should nest an array within an object", function() {
+      var test = 'arrays/object_with_array';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle array.push", function() {
+      var test = 'arrays/array_push';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle array.pop", function() {
+      var test = 'arrays/array_pop';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle array.shift", function() {
+      var test = 'arrays/array_shift';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle array.unshift", function() {
+      var test = 'arrays/array_unshift';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle array.slice", function() {
+      var test = 'arrays/array_slice';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle simple array.splice insertion", function() {
+      var test = 'arrays/array_splice';
+      var output = codeStubs[test].output;
+      var executed = JSON.stringify( execute(output) );
+      var stubData = JSON.stringify( codeStubs[test].data );
+
+      expect( executed ).toBe( stubData );
+    });
+
+    it("should handle splice out values", function() {
+      var test = 'arrays/array_splice_out';
       var output = codeStubs[test].output;
       var executed = JSON.stringify( execute(output) );
       var stubData = JSON.stringify( codeStubs[test].data );

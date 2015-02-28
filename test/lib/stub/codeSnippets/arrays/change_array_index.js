@@ -8,8 +8,8 @@ var y = [
     1,
     2,
     3
-];
-___Program.array('y', y, '{}');
+].___obj();
+___Program.set('y', y);
 y[0] = 'new';
 ___Program.setObjectProperty('y[0]', y);
 },
@@ -18,10 +18,6 @@ data: {
   {
    "id": 2,
    "pointer": 1
-  },
-  {
-   "id": 1,
-   "length": 3
   },
   {
    "id": 3,
@@ -36,12 +32,18 @@ data: {
    "value": 3
   },
   {
+   "id": 1,
+   "length": 3,
+   "snapshot": "[1,2,3]"
+  },
+  {
    "id": 3,
    "value": "new"
   },
   {
    "id": 1,
-   "length": 3
+   "length": 3,
+   "snapshot": "[\"new\",2,3]"
   }
  ],
  "components": [
@@ -74,7 +76,7 @@ data: {
    "name": "0",
    "block": 0,
    "scope": 0,
-   "createdAt": 2,
+   "createdAt": 1,
    "parent": 1
   },
   {
@@ -83,7 +85,7 @@ data: {
    "name": "1",
    "block": 0,
    "scope": 0,
-   "createdAt": 3,
+   "createdAt": 2,
    "parent": 1
   },
   {
@@ -92,7 +94,7 @@ data: {
    "name": "2",
    "block": 0,
    "scope": 0,
-   "createdAt": 4,
+   "createdAt": 3,
    "parent": 1
   }
  ],
