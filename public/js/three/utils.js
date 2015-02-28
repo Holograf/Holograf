@@ -16,7 +16,7 @@ utils.parseTimeline=function(timeline,components){
   for (var i=0;i<timeline.length;i++){
     //deep clone to avoid altering the glossary
     timeline[i].component={};
-    //timeline[i].component.timelineIndex=i;
+    timeline[i].component.timelineIndex = i;
     for (var key in timeline[i]){
       if (key==='component'){continue;}
       timeline[i].component[key]=timeline[i][key];

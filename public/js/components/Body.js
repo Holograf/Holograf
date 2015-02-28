@@ -23,14 +23,25 @@ module.exports = React.createClass({
     // });
     // className={visualClasses}
 
+
+
+    // Naked Bootstrap with some React stuffs
+    // <div className="navbar-brand">Holograf</div>
+    // <ul className="nav nav-tabs" defaultActiveKey={1}>
+    //   <li role="presentation" eventKey={1} className="active"><a href="#">Code</a></li>
+    //   <li role="presentation" eventKey={2}><a href="#">3D Visualization</a></li>
+    // </ul>
+
+
     return (
       <div className="appContainer">
-        <div className="navbar-brand">SuspiciousPi</div>
+        
+        <div className="navbar-brand">Holograf</div>
         <TabbedArea defaultActiveKey={1}>
-          <TabPane eventKey={1} tab="Code">
+          <TabPane className="tab1" eventKey={1} tab="Code">
             <CodeEditor {...this.props} />
           </TabPane>
-          <TabPane eventKey={2} tab="3D Visualization">
+          <TabPane className="tab2" eventKey={2} tab="3D Visualization">
             <Visual3D data={this.props.data} compiledStatus={this.props.compiledStatus} />
           </TabPane>
         </TabbedArea>

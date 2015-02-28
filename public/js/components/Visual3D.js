@@ -42,6 +42,15 @@ module.exports = React.createClass({
   expandScene: function() {
     theatre.expand();
   },
+  returnCamera: function() {
+    theatre.returnCamera();
+  },
+  nextNode: function() {
+    theatre.nextNode();
+  },
+  prevNode: function() {
+    theatre.prevNode();
+  },
 
   render: function() {
     // if (this.props.data.programSteps) {
@@ -52,8 +61,11 @@ module.exports = React.createClass({
     return (
       <div>
         <div id="three-scene" data={this.props.data} >
-        <Button className="visualButton" bsStyle="primary" onClick={this.pauseScene} >Pause</Button>
-        <Button className="visualButton" bsStyle="primary" onClick={this.expandScene} >Expand</Button>
+          <Button className="visualButton" bsStyle="primary" onClick={this.pauseScene} >Pause</Button>
+          <Button className="visualButton" bsStyle="primary" onClick={this.expandScene} >Expand</Button>
+          <Button className="visualButton" bsStyle="primary" onClick={this.prevNode} >Previous</Button>
+          <Button className="visualButton" bsStyle="primary" onClick={this.nextNode} >Next</Button>
+          <Button className="visualButton" bsStyle="primary" onClick={this.returnCamera} >Return</Button>
         </ div>
         <div id="three-modal"></div>
       </div>

@@ -28,6 +28,7 @@ module.exports = React.createClass({
   compile: function (e) {
     // console.log('this.props:',this.props);
     Actions.compile();
+    
   },
 
   save: function () {
