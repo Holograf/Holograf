@@ -325,13 +325,10 @@ subroutines.LoopCycle=function(composite,opts){
 	}
 };
 	
-subroutines.TimeLight=function(start,end) {
-	if (start===undefined){var start=0;}
-	if (end===undefined){var end=10000;}
-	var particleLight = new THREE.Mesh( new THREE.SphereGeometry( 0, 0, 0 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
+subroutines.TimeLight=function(composite) {
+	var particleLight = new THREE.Mesh( new THREE.SphereGeometry( 0, 0, 0 ), new THREE.MeshBasicMaterial( { color: 0xffffff, transparent:true, opacity:0 } ) );
 	var pointLight = new THREE.PointLight( 0xffffff, 2 );
 	particleLight.add( pointLight );
-	particleLight.tween=new TWEEN.Tween(particleLight.position).to({z:end},5000).easing(TWEEN.Easing.Quadratic.InOut);
 	return particleLight;
 };
 	
@@ -506,7 +503,7 @@ subroutines.SelectHalo=function(scene,opts){
 	
 	var path = new THREE.Path( curve.getPoints( 6 ) );
 	var geometry = path.createPointsGeometry( 6 );
-	var material = new THREE.LineBasicMaterial( { color : 0xffff00 } );
+	var material = new THREE.LineBasicMaterial( { color : 0xffff00 , transparent: true, opacity: 0} );
 	
 	// Create the final Object3d to add to the scene
 	var halo = new THREE.Line( geometry, material );
@@ -590,7 +587,7 @@ subroutines.labelize=function(composite,opts){
 	
 };
 
-subroutines.Composite = function(data,scopes){
+subroutines.Composite = function(data,scopes,particleLight){
 	var composite=new THREE.Object3D();
 	composite.maxSize=100*data.length;
 	var buffer=10;
@@ -599,6 +596,16 @@ subroutines.Composite = function(data,scopes){
 	var z1, z2;
 	var scopeStack=[];
 	var x=0;
+	
+	var cycleTime=6000;
+	var cycleStep=cycleTime/data.length;
+	var animations = [];
+	
+	animations.push(new TWEEN.Tween(particleLight.position).to({x:x}, cycleStep) );
+	//var nextTween = animations.push(new TWEEN.Tween(particleLight.material).to({opacity:1},300) );
+
+	//animations[0].chain(nextTween);
+
 	for (var i=0;i<data.length;i++){
 		z1 = leftMargin + (buffer*i);
 		z2 = ((interval)+interval*i);
@@ -617,6 +624,16 @@ subroutines.Composite = function(data,scopes){
 		
 		//all the possible heiroglyphs
 		var opts={z1:z1, z2:z2, x1:0, x2:x, componentData:data[i].component, radius:radius} ;
+		
+		
+		
+		nextTween=new TWEEN.Tween(particleLight.position).to({x:x, z:z2}, cycleStep);
+		animations.push(nextTween);
+		animations[i].chain(animations[i+1]);
+
+		
+		
+		
 		if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='array') {
 			subroutines.ArrayDeclaration(composite, opts);
 		} else if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='object') {
@@ -645,6 +662,13 @@ subroutines.Composite = function(data,scopes){
 		}
 		
 	}
+	//nextTween = new TWEEN.Tween(particleLight.material).to({opacity:0},300); 
+	//animations.push(nextTween);
+	
+	animations[animations.length-1].chain(animations[0]);
+	particleLight.tween=animations[0];
+	
+	console.log(animations);
 	return composite;
 };	
 

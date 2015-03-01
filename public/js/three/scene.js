@@ -1,5 +1,5 @@
 var theatre = {
-	scenePaused: false, 
+	scenePaused: true, 
 	expanded: false, 
 	controlsEnabled: true, 
 	nodeView: false
@@ -24,16 +24,10 @@ theatre.display=function(allData){
 		// timeline elements
 
 		particleLight = subroutines.TimeLight();
-		particleLight.tween.start();
-		particleLight.tween.onComplete(function(){
-			particleLight.position.z=0;
-			particleLight.tween.start();
-		});
 		scene.add( particleLight );
-
-		composite = subroutines.Composite(data,scopes);
+		composite = subroutines.Composite(data,scopes,particleLight);
 		scene.add( composite );
-
+		//particleLight.tween.start();
 
 		visualTimeline = subroutines.VisualTimeline(data, scopes);
 		scene.add(visualTimeline);
@@ -59,6 +53,7 @@ theatre.display=function(allData){
 		// scene.add(subroutines.Axes()[2]);
 		selectHalo = subroutines.SelectHalo(scene);
 		scene.add(selectHalo);
+		selectHalo.material.opacity = 0;
 
 		// renderer
 		renderer = new THREE.WebGLRenderer({antialias:true});
@@ -145,11 +140,13 @@ theatre.display=function(allData){
 					modal = createModal();
 					//utils.modal.donut(modal,event.clientX,event.clientY,intersects[0]);
 					utils.modal.headline(modal,intersects[0]);
-					
+					selectHalo.material.opacity=0;
 					selectHalo.position.x=intersects[0].object.position.x;
-					selectHalo.position.y=intersects[0].object.position.y-150;
+					selectHalo.position.y=intersects[0].object.position.y-250;
 					selectHalo.position.z=intersects[0].object.position.z;
-
+					new TWEEN.Tween(selectHalo.position).to({y:intersects[0].object.position.y-150}, 300).start();
+					new TWEEN.Tween(selectHalo.material).to({opacity:1},300).start();
+					
 					utils.rippleList(modal,utils.allValues(timeline,selectedId));
 				} 
 				///
@@ -258,11 +255,17 @@ theatre.display=function(allData){
 		var action = theatre.expanded ? "collapse" : "expand";
 		for (var i=0;i<composite.children.length;i++){
 			composite.children[i][action].start();
-			if (action==='collapse'){
-				visualTimeline.hide.start();
-			} else {
-				visualTimeline.show.start();
-			}
+		}
+		if (action==='collapse'){
+			visualTimeline.hide.start();
+			theatre.pause();
+			particleLight.material.opacity = 0;
+			selectHalo.material.opacity = 0;
+		} else {
+			visualTimeline.show.start();
+			theatre.pause();
+			particleLight.material.opacity=1;
+			selectHalo.material.opacity = 0;
 		}
 		theatre.expanded=!theatre.expanded;
 	};
