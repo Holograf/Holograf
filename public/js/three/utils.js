@@ -189,7 +189,7 @@ utils.modalizeText=function(obj){
     d+=""+obj.componentData.name+" = [ ] ";
   } else if (obj.componentData.hasOwnProperty("type") && obj.componentData.type==='element'){
     d+="["+obj.componentData.name+"] = "+obj.componentData.value+"";
-  } else if (obj.componentData.value && obj.componentData.value==='___function code'){
+  } else if (obj.componentData.hasOwnProperty('pointsTo') && obj.componentData.pointsTo.type==='function'){
     d+="function: "+obj.componentData.name+" declaration";
   } else if (obj.componentData.type==='block' && obj.componentData.name==='if' && obj.componentData.hasOwnProperty('enter') ){
     d+="if open";
@@ -197,12 +197,12 @@ utils.modalizeText=function(obj){
     d+="if close";
   } else if (obj.componentData.hasOwnProperty('invoke') ){
     d+="function: "+obj.componentData.name+" invocation";
-  } else if (obj.componentData.hasOwnProperty('return') ) {
-    d+="function: "+obj.componentData.name+" returns "+obj.componentData.return+"";
+  } else if (obj.componentData.hasOwnProperty('return') && obj.componentData.return.hasOwnProperty('value') ) {
+    d+="function: "+obj.componentData.name+" returns "+obj.componentData.return.value+"";
   } else if (obj.componentData.for) {
     d+="loop "+obj.componentData.for+"";  
-  } else if (obj.componentData.param!==undefined){
-    d+="parameter: "+obj.componentData.name+" = "+obj.componentData.param+"";
+  } else if (obj.componentData.type==='param'){
+    d+="parameter: "+obj.componentData.name+" = "+obj.componentData.value+"";
   } else if (obj.componentData.type && obj.componentData.type==='var') {
     d+=""+obj.componentData.name+" = "+obj.componentData.value+"";
   } else {
