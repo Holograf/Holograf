@@ -86,7 +86,7 @@ utils.modal.headline=function(canvas,obj){
     .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
     .animate({x:10},600,"<>");
   var bbox=text.getBBox();
-  var backboard=c.rect(-1000,bbox.y,Math.max(bbox.width,300),bbox.height)
+  var backboard=c.rect(-1000,bbox.y,Math.max(bbox.width+20,300),bbox.height)
     .attr({"fill":"#000",opacity:0.8})
     .animate({x:0},600,"<>");
   text.toFront();
