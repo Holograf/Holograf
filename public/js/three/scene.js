@@ -135,22 +135,6 @@ theatre.display=function(allData){
 					}
 				});
 				
-				//raphael code here?
-				if ($("#modal-canvas").length===0){
-					modal = createModal();
-					//utils.modal.donut(modal,event.clientX,event.clientY,intersects[0]);
-					utils.modal.headline(modal,intersects[0]);
-					selectHalo.material.opacity=0;
-					selectHalo.position.x=intersects[0].object.position.x;
-					selectHalo.position.y=intersects[0].object.position.y-250;
-					selectHalo.position.z=intersects[0].object.position.z;
-					new TWEEN.Tween(selectHalo.position).to({y:intersects[0].object.position.y-150}, 300).start();
-					new TWEEN.Tween(selectHalo.material).to({opacity:1},300).start();
-					
-					utils.rippleList(modal,utils.allValues(timeline,selectedId));
-				} 
-				///
-				
 			}
 		}
 		
@@ -184,8 +168,8 @@ theatre.display=function(allData){
 
 			//  if object is not clicked and not in nodeView, return to prior position
 			if (intersects.length < 1 && theatre.nodeView) {  
-				new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).start();
-				new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).start();
+				new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
+				new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 				theatre.nodeView = false;
 
 			// if an object is clicked, enter nodeView and zoom in
@@ -196,6 +180,10 @@ theatre.display=function(allData){
 					theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
 
 				}
+
+				var selectedId=intersects[0].object.componentData.id || -1;
+
+
 
 				// final camera position
 				var newX = intersects[0].object.position.x - 800;			
@@ -213,11 +201,29 @@ theatre.display=function(allData){
 				var endRotation = new THREE.Quaternion().copy( nextCamera.rotation );
 
 				// camera motion on click - position & rotation
-				new TWEEN.Tween(camera.position).to(targetPosition, cameraSpeed).start();
-				new TWEEN.Tween( camera.rotation ).to(endRotation, cameraSpeed).start();
+				new TWEEN.Tween(camera.position).to(targetPosition, cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
+				new TWEEN.Tween( camera.rotation ).to(endRotation, cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 				nextCamera = null;
 				theatre.nodeView = true;
 				// console.log('theatre.lastPosition:', theatre.lastPosition);
+
+				
+				//raphael code here?
+				if ($("#modal-canvas").length===0){
+					modal = createModal();
+					//utils.modal.donut(modal,event.clientX,event.clientY,intersects[0]);
+					utils.modal.headline(modal,intersects[0]);
+					selectHalo.material.opacity=0;
+					selectHalo.position.x=intersects[0].object.position.x;
+					selectHalo.position.y=intersects[0].object.position.y-250;
+					selectHalo.position.z=intersects[0].object.position.z;
+					new TWEEN.Tween(selectHalo.position).to({y:intersects[0].object.position.y-150}, 300).start();
+					new TWEEN.Tween(selectHalo.material).to({opacity:1},300).start();
+					
+					utils.rippleList(modal,utils.allValues(timeline,selectedId));
+				} 
+				///
+				
 
 			}
 		}

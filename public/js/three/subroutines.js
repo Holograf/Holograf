@@ -638,7 +638,7 @@ subroutines.Composite = function(data,scopes,particleLight){
 			subroutines.ArrayDeclaration(composite, opts);
 		} else if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='object') {
 			subroutines.ObjectDeclaration(composite, opts);
-		} else if (data[i].component.value && data[i].component.value==='___function code'){
+		} else if (data[i].component.hasOwnProperty('pointsTo') && data[i].component.pointsTo.type==='function'){
 			subroutines.FunctionDeclaration(composite,opts);
 		} else if (data[i].component.type==="block" && data[i].component.name==="if"){
 			subroutines.Conditional(composite, opts);
@@ -668,7 +668,7 @@ subroutines.Composite = function(data,scopes,particleLight){
 	animations[animations.length-1].chain(animations[0]);
 	particleLight.tween=animations[0];
 	
-	console.log(animations);
+	console.log(data);
 	return composite;
 };	
 
