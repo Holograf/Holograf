@@ -1,6 +1,9 @@
 $input-height: 500px;
 $input-margin: 20px;
-// var sceneHeight: 
+// var sceneHeight: window.innerHeight - 88;
+// $window-height: window.innerHeight;
+$window-height: 700px;
+
 
 @import "../../dist/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "codeMirror";
@@ -41,7 +44,7 @@ body {
 }
 #three-scene {
   background-color: #333333;
-  // max-height: 
+  height: $window-height - 88px;
 }
 
 #three-modal{
