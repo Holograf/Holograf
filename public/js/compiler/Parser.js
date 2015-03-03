@@ -7,14 +7,10 @@ var wrappedFunctionCount = 0;
 
 var Parser = function (code) {
 
-  var syntaxTree = esprimaParse(code);
-  console.log(JSON.stringify(syntaxTree, null, 2));
-
+  var syntaxTree = esprimaParse(code, {loc: true});
   var programBody = syntaxTree.body;
 
   traverse(programBody);  // Traverse the syntax tree to inject watchpoints
-
-  // console.log(JSON.stringify(syntaxTree, null, 2));
 
   injectObjectWrappers(programBody); // inject object registration methods onto all objects
   return syntaxTree;
@@ -86,14 +82,24 @@ var injectBefore = function (node, body, index, type, param) {
   var injectedNode = inject[type](node, param);
   if (injectedNode) {
     body.splice(index, 0, injectedNode);
+    if (node.loc && injectedNode.expression.arguments) {
+      var line = node.loc.start.line;
+      inject.addArgument(injectedNode, line);
+    }
   }
+  return injectedNode;
 }
 
 var injectAfter = function (node, body, index, type, param) {
   var injectedNode = inject[type](node, param);
   if (injectedNode) {
     body.splice(index + 1, 0, injectedNode);
+    if (node.loc && injectedNode.expression.arguments) {
+      var line = node.loc.start.line;
+      inject.addArgument(injectedNode, line);
+    }
   }
+  return injectedNode;
 }
 
 var getLastFunction = function () {
@@ -109,9 +115,6 @@ var checkVariableDeclarations = function (node, body, index) {
 
       if (declaration.init) { 
         var declarationType = declaration.init.type; 
-      }
-      if (declaration.loc) {
-        var line = declaration.loc.start.line;
       }
 
       if (declarationType === 'FunctionExpression') { // ie var f = function () { return 1; };
@@ -212,26 +215,34 @@ var traverse = function (body) {
         }
         injectBefore(node, body, index, 'returnState');
         injectAfter(node, body, index, 'return');
+
         advance(2);
       }
 
       if (node.type === 'ForStatement') {
         injectBefore(node, body, index, 'loopInit', 'for');
         injectAfter(node, body, index, 'loopOpen', 'for');
-        injectAfter(node, body, index + 2, 'loopClose', 'for');
-        injectAfter(node, body, index + 3, 'loopPost', 'for');
+        var loopCloseNode = injectAfter(node, body, index + 2, 'loopClose', 'for');
+        inject.changeLineArgument(loopCloseNode, node.loc.end.line);
+
+        var loopPostNode = injectAfter(node, body, index + 3, 'loopPost', 'for');
+        inject.changeLineArgument(loopPostNode, node.loc.end.line);
+
         advance(4);
       }
 
       if (node.type === 'WhileStatement') {
         injectBefore(node, body, index, 'loopOpen', 'while');
-        injectAfter(node, body, index + 1, 'loopClose', 'while');
+        var loopCloseNode = injectAfter(node, body, index + 1, 'loopClose', 'while');
+        inject.changeLineArgument(loopCloseNode, node.loc.end.line);
         advance(2);
       }
 
       if (node.type === 'DoWhileStatement') {
         injectBefore(node, body, index, 'loopOpen', 'do');
-        injectAfter(node, body, index + 1, 'loopClose', 'do');
+        var loopCloseNode = injectAfter(node, body, index + 1, 'loopClose', 'do');
+        inject.changeLineArgument(loopCloseNode, node.loc.end.line);
+
         advance(2)
       }
 
@@ -243,7 +254,10 @@ var traverse = function (body) {
 
       if (node.type === 'IfStatement') { 
         injectBefore(node, body, index, 'ifOpen', 'do');
-        injectAfter(node, body, index + 1, 'ifClose', 'do');
+    
+        var ifCloseNode = injectAfter(node, body, index + 1, 'ifClose', 'do');
+        inject.changeLineArgument(ifCloseNode, node.loc.end.line);
+        
         advance(2);
 
         // Traverse if statement tree
@@ -318,7 +332,6 @@ var injectObjectWrappers = function (body) {
         if (node.expression.type === 'AssignmentExpression') {
           if (node.expression.right) {
             var objectNode = node.expression.right;
-            console.log(node.expression.right.type);
             node.expression.right = injectObjectWrapper(objectNode);
           }
         } else if (node.expression.type === 'CallExpression') {
@@ -372,32 +385,9 @@ var injectObjectWrapper = function (node) {
   return node;
 }
 
-var insertFunctionIdentifiers = function (body) {
-  // for (var i = 0; i < body.length; i++) {
-  //   var node = body[i];
-  //   if (node.type === 'ExpressionStatement') {
-  //     if (node.expression && node.expression.arguments) {
-  //       if (node.expression.arguments[0].name === '___functionCode') {
-  //         node.expression.arguments[0] = {
-  //           "value": wrappedFunctionCount,
-  //           "type": "Literal"
-  //         }
-  //       }
-  //     }
-  //   }
-  //   if (node.type === 'IfStatement') {
-  //     if (node.alternate && node.alternate.body) insertFunctionIdentifiers (node.alternate.body);
-  //     if (node.consequent && node.consequent.body) insertFunctionIdentifiers (node.consequent.body);
-  //   }
-  //   if (node.body && node.type !== 'FunctionExpression') {
-  //     insertFunctionIdentifiers(node.body.body);
-  //   }
-  // }
-}
 
 var wrapFunctionInstantiation = function (functionNode) {
   var wrappedNode = wrapNode(functionNode, '___fn');
-  insertFunctionIdentifiers(functionNode.body.body);
   return wrappedNode;
 }
 

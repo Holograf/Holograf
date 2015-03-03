@@ -9,9 +9,9 @@ var y = [
     2,
     3
 ].___obj();
-___Program.set('y', y);
+___Program.set('y', y, 1);
 y[0] = 'new';
-___Program.setObjectProperty('y[0]', y);
+___Program.setObjectProperty('y[0]', y, 2);
 },
 data: {
  "programSteps": [

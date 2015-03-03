@@ -5,12 +5,12 @@ var next = {};
 next.o = obj;
 },
 output: function() {
-var obj = { name: 'andy' };
-___Program.object('obj', obj, '{}');
-var next = {};
-___Program.object('next', next, '{}');
+var obj = { name: 'andy' }.___obj();
+___Program.set('obj', obj, 1);
+var next = {}.___obj();
+___Program.set('next', next, 2);
 next.o = obj;
-___Program.setObjectProperty('next.o', next.o, 'obj');
+___Program.setObjectProperty('next[o]', next, 3);
 },
 data: {
  "programSteps": [

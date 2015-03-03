@@ -8,7 +8,7 @@ var x = [
     2,
     3
 ].___obj();
-___Program.set('x', x);
+___Program.set('x', x, 1);
 },
 data: {
  "programSteps": [

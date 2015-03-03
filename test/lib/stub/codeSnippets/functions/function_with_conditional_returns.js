@@ -12,26 +12,26 @@ var result = f(12);
 output: function() {
 var f = function (x) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('x', x);
-    ___Program.block('if', 2);
+    ___Program.invoke(___functionId, 1);
+    ___Program.param('x', x, 1);
+    ___Program.block('if', 2, 2);
     if (x > 10) {
-        ___Program.enter('if', 0);
+        ___Program.enter('if', 0, 2);
         ___Program.returnState = 'large';
-        ___Program.return(___functionId);
+        ___Program.return(___functionId, 3);
         return ___Program.returnState;
     } else {
-        ___Program.enter('if', 1);
+        ___Program.enter('if', 1, 4);
         ___Program.returnState = 'small';
-        ___Program.return(___functionId);
+        ___Program.return(___functionId, 5);
         return ___Program.returnState;
     }
-    ___Program.block('if', 'close');
-    ___Program.return(___functionId);
+    ___Program.block('if', 'close', 6);
+    ___Program.return(___functionId, 7);
 }.___fn();
-___Program.set('f', f);
+___Program.set('f', f, 1);
 var result = f(12);
-___Program.set('result', result);
+___Program.set('result', result, 8);
 },
 data: {
  "programSteps": [

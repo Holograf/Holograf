@@ -9,25 +9,25 @@ for (var i = 0; i < 2; i++) {
 },
 output: function() {
 var counter = 0;
-___Program.set('counter', counter);
-___Program.set('i', 0);
-___Program.loop('for', 'open');
+___Program.set('counter', counter, 1);
+___Program.set('i', 0, 2);
+___Program.loop('for', 'open', 2);
 for (var i = 0; i < 2; i++) {
-    ___Program.loop('for', 'cycle');
-    ___Program.set('i', i);
-    ___Program.set('j', 0);
-    ___Program.loop('for', 'open');
+    ___Program.loop('for', 'cycle', 2);
+    ___Program.set('i', i, 2);
+    ___Program.set('j', 0, 3);
+    ___Program.loop('for', 'open', 3);
     for (var j = 0; j < 2; j++) {
-        ___Program.loop('for', 'cycle');
-        ___Program.set('j', j);
+        ___Program.loop('for', 'cycle', 3);
+        ___Program.set('j', j, 3);
         counter++;
-        ___Program.set('counter', counter);
+        ___Program.set('counter', counter, 4);
     }
-    ___Program.loop('for', 'close');
-    ___Program.set('j', j);
+    ___Program.loop('for', 'close', 5);
+    ___Program.set('j', j, 5);
 }
-___Program.loop('for', 'close');
-___Program.set('i', i);
+___Program.loop('for', 'close', 6);
+___Program.set('i', i, 6);
 },
 data: {
  "programSteps": [

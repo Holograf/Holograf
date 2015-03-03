@@ -8,24 +8,24 @@ var y = outer(function(n) { return n + 1; })
 output: function() {
 var outer = function (fn) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('fn', fn);
+    ___Program.invoke(___functionId, 1);
+    ___Program.param('fn', fn, 1);
     ___Program.returnState = fn(3);
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 2);
     return ___Program.returnState;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 3);
 }.___fn();
-___Program.set('outer', outer);
+___Program.set('outer', outer, 1);
 var y = outer(function (n) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('n', n);
+    ___Program.invoke(___functionId, 4);
+    ___Program.param('n', n, 4);
     ___Program.returnState = n + 1;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 4);
     return ___Program.returnState;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 4);
 }.___fn());
-___Program.set('y', y);
+___Program.set('y', y, 4);
 },
 data: {
  "programSteps": [

@@ -5,9 +5,9 @@ var next = {prop: obj};
 },
 output: function() {
 var obj = {}.___obj();
-___Program.set('obj', obj);
+___Program.set('obj', obj, 1);
 var next = { prop: obj }.___obj();
-___Program.set('next', next);
+___Program.set('next', next, 2);
 },
 data: {
  "programSteps": [

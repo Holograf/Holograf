@@ -9,21 +9,21 @@ var result = f('eat');
 },
 output: function() {
 var x = { name: 'charlie' }.___obj();
-___Program.set('x', x);
+___Program.set('x', x, 1);
 var f = function (verb) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('verb', verb);
+    ___Program.invoke(___functionId, 2);
+    ___Program.param('verb', verb, 2);
     var y = x;
-    ___Program.set('y', y);
+    ___Program.set('y', y, 3);
     ___Program.returnState = 'I want to ' + verb + ' ' + y.name;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 4);
     return ___Program.returnState;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 5);
 }.___fn();
-___Program.set('f', f);
+___Program.set('f', f, 2);
 var result = f('eat');
-___Program.set('result', result);
+___Program.set('result', result, 6);
 },
 data: {
  "programSteps": [

@@ -7,16 +7,16 @@ object.f = function () {
 },
 output: function() {
 var object = {}.___obj();
-___Program.set('object', object);
+___Program.set('object', object, 1);
 object.f = function () {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
+    ___Program.invoke(___functionId, 2);
     ___Program.returnState = 1;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 3);
     return ___Program.returnState;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 4);
 }.___fn();
-___Program.setObjectProperty('object[f]', object);
+___Program.setObjectProperty('object[f]', object, 2);
 },
 data: {
  "programSteps": [

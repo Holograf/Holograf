@@ -12,24 +12,24 @@ fibonacci(3);
 output: function() {
 var fibonacci = function (n) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('n', n);
-    ___Program.block('if', 2);
+    ___Program.invoke(___functionId, 1);
+    ___Program.param('n', n, 1);
+    ___Program.block('if', 2, 2);
     if (n < 2) {
-        ___Program.enter('if', 0);
+        ___Program.enter('if', 0, 2);
         ___Program.returnState = 1;
-        ___Program.return(___functionId);
+        ___Program.return(___functionId, 3);
         return ___Program.returnState;
     } else {
-        ___Program.enter('if', 1);
+        ___Program.enter('if', 1, 4);
         ___Program.returnState = fibonacci(n - 2) + fibonacci(n - 1);
-        ___Program.return(___functionId);
+        ___Program.return(___functionId, 5);
         return ___Program.returnState;
     }
-    ___Program.block('if', 'close');
-    ___Program.return(___functionId);
+    ___Program.block('if', 'close', 6);
+    ___Program.return(___functionId, 7);
 }.___fn();
-___Program.set('fibonacci', fibonacci);
+___Program.set('fibonacci', fibonacci, 1);
 fibonacci(3);
 },
 data: {

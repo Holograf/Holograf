@@ -8,13 +8,13 @@ f(3);
 output: function() {
 var f = function (n) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('n', n);
+    ___Program.invoke(___functionId, 1);
+    ___Program.param('n', n, 1);
     n++;
-    ___Program.set('n', n);
-    ___Program.return(___functionId);
+    ___Program.set('n', n, 2);
+    ___Program.return(___functionId, 3);
 }.___fn();
-___Program.set('f', f);
+___Program.set('f', f, 1);
 f(3);
 },
 data: {

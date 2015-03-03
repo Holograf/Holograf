@@ -8,16 +8,16 @@ var result = f(3);
 output: function() {
 var f = function (x) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.param('x', x);
+    ___Program.invoke(___functionId, 1);
+    ___Program.param('x', x, 1);
     ___Program.returnState = x * 2;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 2);
     return ___Program.returnState;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 3);
 }.___fn();
-___Program.set('f', f);
+___Program.set('f', f, 1);
 var result = f(3);
-___Program.set('result', result);
+___Program.set('result', result, 4);
 },
 data: {
  "programSteps": [

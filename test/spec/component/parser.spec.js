@@ -14,7 +14,7 @@ describe("Parser", function() {
     var output = codeStubs[test].output;
 
     expect(input).toBe('var x = 1;');
-    expect(output).toBe("var x = 1;___Program.set('x', x);");
+    expect(output).toBe("var x = 1;___Program.set('x', x, 1);");
   });
 
   describe("Variable Declarations", function() {

@@ -10,6 +10,9 @@ var Program = function () {
   this._blockStack = [0];
   this._scopeStack = [0];
   this._code = '';
+  this.stepLines = [];
+
+  this._baseTime = performance.now();
 
   this.initialize();
 }
@@ -25,7 +28,6 @@ Program.prototype.registerObject = function (object) {
   Object.defineProperty(object, '___id', { enumerable: false, value: id });
   Object.defineProperty(object, '___parsed', { enumerable: false, value: false, writable: true });
   Object.defineProperty(object, '___accessor', { enumerable: false, value: undefined, writable: true });
-  Object.defineProperty(object, '___name', { enumerable: false, value: undefined, writable: true });
 
 
   if (Array.isArray(object)) {
@@ -45,14 +47,13 @@ Program.prototype.registerFunction = function (fn) {
 
   Object.defineProperty(fn, '___id', { enumerable: false, value: id });
   Object.defineProperty(fn, '___accessor', { enumerable: false, value: undefined, writable: true });
-  Object.defineProperty(fn, '___name', { enumerable: false, value: undefined, writable: true });
 
   this.addComponent('function');
 
   return id;
 }
 
-Program.prototype.setObjectProperties = function (object, name) {
+Program.prototype.registerObjectProperties = function (object, name) {
   var type = Array.isArray(object) ? 'element' : 'property';
   for (var key in object) {
     var value = object[key];
@@ -63,12 +64,12 @@ Program.prototype.setObjectProperties = function (object, name) {
     this.scopes[this.getCurrentScope()][accessor] = component.id;  
 
     if (typeof value === 'object') {
-      this.addStep(component.id, 'pointer', value.___id);
-      this.setObjectProperties(value, accessor);
+      this.addStep(component.id, 'pointer', value.___id, line);
+      this.registerObjectProperties(value, accessor);
     } else if (typeof value === 'function') {
-      this.addStep(component.id, 'pointer', value.___id);
+      this.addStep(component.id, 'pointer', value.___id, line);
     } else {
-      this.addStep(component.id, 'value', value);
+      this.addStep(component.id, 'value', value, line);
     }
   }
 
@@ -116,7 +117,7 @@ Program.prototype.registerFunction = function (fn) {
   return id;
 }
 
-Program.prototype.setObjectProperties = function (object, name) {
+Program.prototype.registerObjectProperties = function (object, name, line) {
   var type = Array.isArray(object) ? 'element' : 'property';
   for (var key in object) {
     var value = object[key];
@@ -127,12 +128,12 @@ Program.prototype.setObjectProperties = function (object, name) {
     this.scopes[this.getCurrentScope()][accessor] = component.id;  
 
     if (typeof value === 'object') {
-      this.addStep(component.id, 'pointer', value.___id);
-      this.setObjectProperties(value, accessor);
+      this.addStep(component.id, 'pointer', value.___id, line);
+      this.registerObjectProperties(value, accessor);
     } else if (typeof value === 'function') {
-      this.addStep(component.id, 'pointer', value.___id);
+      this.addStep(component.id, 'pointer', value.___id, line);
     } else {
-      this.addStep(component.id, 'value', value);
+      this.addStep(component.id, 'value', value, line);
     }
   }
 
@@ -156,7 +157,8 @@ Program.prototype.getData = function () {
   return {
     programSteps: this.programSteps,
     components: this.components,
-    scopes: this.scopes
+    scopes: this.scopes,
+    lines: this.stepLines
   }
 }
 
@@ -190,13 +192,19 @@ Program.prototype.makeStep = function (id, key, value) {
   return step;
 }
 
-Program.prototype.addStep = function (name, key, value) {
+Program.prototype.addStep = function (name, key, value, line) {
 
   if (typeof name === 'number') { var id = name; } 
   else { var id = this.getId(name); }
 
   var step = this.makeStep(id, key, value);
   this.programSteps.push(step);
+
+  this.stepLines.push({
+    id: id,
+    line: line,
+    time: performance.now() - this._baseTime
+  });
 
   return step;
 }
@@ -224,11 +232,11 @@ Program.prototype.addComponent = function (type, name) {
   return component;
 }
 
-Program.prototype.instantiate = function (name, key, value) {
+Program.prototype.instantiate = function (name, key, value, line) {
   
   var component = this.addComponent('var', name);
   var id = component.id;
-  this.addStep(id, key, value);
+  this.addStep(id, key, value, line);
 
   this.scopes[this.getCurrentScope()][name] = component.id;
   return component;
@@ -262,7 +270,7 @@ Program.prototype.getComponent = function (id) {
 
 //----------------------------------------------------------------------------------
 // Loop / if block operators
-Program.prototype.openBlock = function (type, value) {
+Program.prototype.openBlock = function (type, value, line) {
   var id = this.components.length;
   var component = this.makeComponent('block', type);
 
@@ -271,29 +279,29 @@ Program.prototype.openBlock = function (type, value) {
     component.paths = value;
   }
   this.components.push(component);
-  this.addStep(id, type, value);
+  this.addStep(id, type, value, line);
 
   this._blockStack.push(id);
 }
 
-Program.prototype.cycleBlock = function () {
+Program.prototype.cycleBlock = function (line) {
   var id = this.getCurrentBlock();
   var type = this.getComponent(id).name;
-  this.addStep(id, type, 'cycle');
+  this.addStep(id, type, 'cycle', line);
 }
 
-Program.prototype.closeBlock = function () {
+Program.prototype.closeBlock = function (line) {
   var id = this.getCurrentBlock();
   var type = this.getComponent(id).name;
-  this.addStep(id, type, 'close');
+  this.addStep(id, type, 'close', line);
 
   this._blockStack.pop();  
 }
 
-Program.prototype.enterPath = function (value) {
+Program.prototype.enterPath = function (value, line) {
   var id = this.getCurrentBlock();
   var type = this.getComponent(id).name;
-  this.addStep(id, 'enter', value);
+  this.addStep(id, 'enter', value, line);
 }
 
 
@@ -302,7 +310,7 @@ Program.prototype.enterPath = function (value) {
 
 //----------------------------------------------------------------------------------
 // External methods of the ___Program object
-Program.prototype.set = function (name, value, param) {
+Program.prototype.set = function (name, value, line, param) {
   if (value && typeof value === 'object') {
     var objectId = value.___id;
     if ( !this.getId(name) ) {
@@ -310,10 +318,10 @@ Program.prototype.set = function (name, value, param) {
       component.type = param || 'var';
       this.setObjectAcessor(value, component.id, name);
     } else {
-      this.addStep(name, 'pointer', objectId);
+      this.addStep(name, 'pointer', objectId, line);
     }
     if (!value.___parsed) {
-      this.setObjectProperties(value, name);
+      this.registerObjectProperties(value, name);
     }
 
   } else if (typeof value === 'function') {
@@ -323,7 +331,7 @@ Program.prototype.set = function (name, value, param) {
       component.type = param || 'var';
       this.setObjectAcessor(value, component.id, name);
     } else {
-      this.addStep(name, 'pointer', functionId);
+      this.addStep(name, 'pointer', functionId, line);
     }
   } else {
     if (param) {
@@ -332,58 +340,58 @@ Program.prototype.set = function (name, value, param) {
     } else if ( !this.getId(name) ) {
       this.instantiate(name, 'value', value);
     } else {
-      this.addStep(name, 'value', value);
+      this.addStep(name, 'value', value, line);
     }
   }
 
 }
 
-Program.prototype.param = function (name, value) {
-  this.set(name, value, 'param');
+Program.prototype.param = function (name, value, line) {
+  this.set(name, value, line, 'param');
 }
 
-Program.prototype.loop = function (type, state) {
+Program.prototype.loop = function (type, state, line) {
   this.setScope();
   if (state === 'open') {
-    this.openBlock(type, state);
+    this.openBlock(type, state, line);
   } else if (state === 'cycle') {
-    this.cycleBlock();
+    this.cycleBlock(line);
   } else if (state === 'close') {
-    this.closeBlock();
+    this.closeBlock(line);
   }
 }
 
-Program.prototype.block = function (type, state) {
+Program.prototype.block = function (type, state, line) {
   this.setScope();
   if (type === 'if') {
     if (state === 'close') {
-      this.closeBlock();
+      this.closeBlock(line);
     } else {
-      this.openBlock(type, state);
+      this.openBlock(type, state, line);
     }
   }
 }
 
-Program.prototype.enter = function (type, value) {
+Program.prototype.enter = function (type, value, line) {
   if (type === 'if') {
-    this.enterPath(value);
+    this.enterPath(value, line);
   }
 }
 
-Program.prototype.invoke = function (functionId) {
+Program.prototype.invoke = function (functionId, line) {
   var component = this.makeComponent('invoke', this.getFunctionName(functionId));
   component.function = functionId;
   this.components.push(component);
 
-  this.addStep(component.id, 'invoke', functionId);
+  this.addStep(component.id, 'invoke', functionId, line);
 
   this._scopeStack.push(component.id);
   this._currentScope = component.id;;
   this.scopes[component.id] = {};
 }
 
-Program.prototype.method = function(name) {
-  this.invoke(name);
+Program.prototype.method = function(name, line) {
+  this.invoke(name, line);
 }
 
 Program.prototype.getFunctionName = function (functionId) {
@@ -429,13 +437,13 @@ Program.prototype.lastIdOfObject = function (parentId) {
 
 //----------------------------------------------------------------------------------
 // Object comprehension methods
-Program.prototype.setObjectProperty = function (object, parent, right) {
-  var id = this.getId(object);
+Program.prototype.setObjectProperty = function (fullObjectString, parent, key, line) {
+  var id = this.getId(fullObjectString);
 
 
 
-  var parentObjectString = object.substring(0, object.lastIndexOf('['));
-  var key = object.substring(object.lastIndexOf('[') + 1, object.length - 1);
+  var parentObjectString = fullObjectString.substring(0, fullObjectString.lastIndexOf('['));
+  var key = fullObjectString.substring(fullObjectString.lastIndexOf('[') + 1, fullObjectString.length - 1);
   
   var value = parent[key];
   var parentId = parent.___id;
@@ -449,41 +457,41 @@ Program.prototype.setObjectProperty = function (object, parent, right) {
       this.components[id].name = key;
       this.components[id].parent = parentId;
     } else if (typeof value === 'object') {
-      this.addStep(this.components.length + 1, 'pointer', pointerId);
+      this.addStep(this.components.length + 1, 'pointer', pointerId, line);
     } else {
-      this.addStep(id, 'value', value);
+      this.addStep(id, 'value', value, line);
     }
   } 
   else { // Object/property was not found, therefor a new property is being defined.
     var memberName = this.components[parentId].type === 'array' ? 'element' : 'property';
 
     if (value && typeof value === 'object') {
-      var component = this.instantiate(object, 'pointer', pointerId);
+      var component = this.instantiate(fullObjectString, 'pointer', pointerId);
       component.name = key;
       component.type = memberName;
       component.parent = parentId;
     } else if (typeof value === 'function') {
-      var component = this.instantiate(object, 'pointer', pointerId);
+      var component = this.instantiate(fullObjectString, 'pointer', pointerId);
       component.name = key;
       component.type = memberName === 'property' ? 'method': 'function'
       component.parent = parentId;
     } else {
-      var component = this.instantiate(object, 'value', value);
+      var component = this.instantiate(fullObjectString, 'value', value);
       component.name = key;
       component.type = memberName;
       component.parent = parentId;
     }
   }
 
-  this.objectSnapshot(parent);
+  this.objectSnapshot(parent, line);
 }
 
-Program.prototype.objectSnapshot = function (object) {
+Program.prototype.objectSnapshot = function (object, line) {
   if (Array.isArray(object)) {
-    var step  = this.addStep(object.___id, 'length', object.length);
+    var step  = this.addStep(object.___id, 'length', object.length, line);
     step.snapshot = JSON.stringify(object);
   } else if (object && typeof object === 'object') {
-    var step  = this.addStep(object.___id, 'snapshot', JSON.stringify(object) );
+    var step  = this.addStep(object.___id, 'snapshot', JSON.stringify(object), line);
   }
 }
 
@@ -491,10 +499,10 @@ Program.prototype.objectSnapshot = function (object) {
 
 //----------------------------------------------------------------------------------
 // Function return methods
-Program.prototype.return = function (name) {
+Program.prototype.return = function (name, line) {
   var id = this.getCurrentScope();
 
-  var step = this.addStep(id, 'return', this.returnState);
+  var step = this.addStep(id, 'return', this.returnState, line);
   if (this.returnState && typeof this.returnState === 'object') {
     step.return = { 
       pointer: this.returnState.___id,
@@ -603,11 +611,11 @@ Program.prototype.addArrayElementComponent = function (array, elementNumber) {
   return element;
 }
 
-Program.prototype.addArrayElementStep = function (element, value) {
+Program.prototype.addArrayElementStep = function (element, value, line) {
   if (value && (typeof value === 'object' || typeof value === 'function')) {
-    this.addStep(element.id, 'pointer', value.___id);
+    this.addStep(element.id, 'pointer', value.___id, line);
   } else {
-    this.addStep(element.id, 'value', value);
+    this.addStep(element.id, 'value', value, line);
   } 
 }
 
