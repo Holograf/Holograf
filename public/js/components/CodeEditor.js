@@ -19,6 +19,7 @@ module.exports = React.createClass({
     textAreaStyle: {minHeight: '10em'},
     value: '',
     mode: 'javascript',
+    theme: 'blackboard',
     lineNumbers: true,
     onChange: function (e) {
       Actions.updateCode(e.target.value);
@@ -28,7 +29,6 @@ module.exports = React.createClass({
   compile: function (e) {
     // console.log('this.props:',this.props);
     Actions.compile();
-    
   },
 
   save: function () {
@@ -77,9 +77,12 @@ module.exports = React.createClass({
     return (
       <div className="codeContainer">
         <CodeMirror {...this.options} className="codeBox"/>
-        <Col xs={6} md={4}><Input readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} className={shareClasses}>Share</Button>} /></Col>
-        <Button bsStyle="primary" onClick={this.compile} className={compileClasses} >Compile</Button>
-        <Button bsStyle="danger" onClick={this.refresh} className={resetClasses} >Reset Code</Button>
+
+        <Panel>
+          <Col xs={6} md={4}><Input readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} className={shareClasses}>Share</Button>} /></Col>
+          <Button bsStyle="primary" onClick={this.compile} className={compileClasses} >Compile</Button>
+          <Button bsStyle="danger" onClick={this.refresh} className={resetClasses} >Reset Code</Button>
+        </Panel>
       </div>
     );
   }

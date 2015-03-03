@@ -11,6 +11,13 @@ var Actions = {
     })
   },
 
+  selectTab: function(tab) {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.SELECT_TAB,
+      tab: tab
+    })
+  },
+
   compile: function() {
     AppDispatcher.handleViewAction({
       actionType: AppConstants.COMPILE

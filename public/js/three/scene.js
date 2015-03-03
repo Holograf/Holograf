@@ -6,7 +6,7 @@ var theatre = {
 	cameraSpeed: 1500
 };
 
-theatre.display=function(allData){	
+theatre.display=function(allData, onRendered){	
 	var camera, composite, container, controls, modalCanvas, particleLight, renderer, scene, selectHalo, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
@@ -16,6 +16,7 @@ theatre.display=function(allData){
 	theatre.timeline = timeline;
 	
 	init(timeline);
+	onRendered();
 	animate();
 	
 	function init(data) {

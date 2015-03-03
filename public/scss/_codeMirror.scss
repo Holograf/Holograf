@@ -3,7 +3,7 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
-  font-size: 16px;
+  font-size: 1.75rem;
   height: $input-height;
   padding-top: $input-margin;
 }
@@ -22,7 +22,6 @@
 }
 
 /* GUTTER */
-
 .CodeMirror-gutters {
   border-right: 1px solid #ddd;
   border-left: 1px solid #ddd;
