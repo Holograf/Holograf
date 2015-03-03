@@ -18,6 +18,13 @@ utils.parseTimeline=function(allData){
   
   for (var i=0;i<timeline.length;i++){
     //deep clone to avoid altering the glossary
+    if (timeline[i].hasOwnProperty('snapshot') && i>0){
+      timeline[i-1].component.snapshot=timeline[i].snapshot;
+      timeline.splice(i,1);
+      i--;
+      continue;
+    }
+    
     timeline[i].component={};
     timeline[i].component.timelineIndex = i;
     for (var key in timeline[i]){
@@ -89,7 +96,7 @@ utils.modal.headline=function(canvas, obj){
   } 
   var cData = obj.componentData;
   
-  var text=c.text(-1000,110,utils.modalizeText(obj))
+  var text=c.text(-1000,30,utils.modalizeText(obj))
     .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
     .animate({x:10},600,"<>");
   var bbox=text.getBBox();
@@ -104,7 +111,7 @@ utils.rippleList=function(canvas,collection,selectedLine){
   if (selectedLine===undefined){selectedLine=-1;}
   
   var x=-40;
-  var y=120;
+  var y=30;
   var anim=new Raphael.animation({x:10,"opacity":1},400,"<>");
   var barAnim=new Raphael.animation({x:0},300,"<>");
   for (var i=0;i<collection.length;i++){

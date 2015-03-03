@@ -48,13 +48,14 @@ subroutines.ArrayDeclaration=function(composite, opts){
 	if (opts.x2===undefined){opts.x2=0;}
 	if (opts.componentData===undefined){opts.componentData={};}
 	var geometry = Object.create(subroutines.functionDeclarationGeometry);
-	var grayness = 0;
+	var grayness = 0.5;
 	var material=new THREE.MeshBasicMaterial({});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( opts.x1, 0, opts.z1 );
@@ -74,6 +75,7 @@ subroutines.ArrayDeclaration=function(composite, opts){
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
 	ellipse.componentData=opts.componentData;
+	ellipse.grayness = grayness;
 	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	
 	ellipse.position.set( opts.x1, 0, opts.z1 );
@@ -92,6 +94,7 @@ subroutines.ArrayDeclaration=function(composite, opts){
 	var geometry = path.createPointsGeometry( 4 );
 	var ellipse = new THREE.Line( geometry, material );
 	ellipse.componentData=opts.componentData;
+	ellipse.grayness = grayness;
 	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	ellipse.position.set( opts.x1, 0, opts.z1 );
 	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
@@ -107,13 +110,14 @@ subroutines.ObjectDeclaration=function(composite, opts){
 	if (opts.x2===undefined){opts.x2=0;}
 	if (opts.componentData===undefined){opts.componentData={};}
 	var geometry = Object.create(subroutines.objectDeclarationGeometry);
-	var grayness = 0.1;
+	var grayness = 0.9;
 	var material=new THREE.MeshBasicMaterial({});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( opts.x1, 0, opts.z1 );
@@ -128,11 +132,12 @@ subroutines.ObjectDeclaration=function(composite, opts){
 	
 	var path = new THREE.Path( curve.getPoints( 50 ) );
 	var geometry = path.createPointsGeometry( 50 );
-	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	var material = new THREE.LineBasicMaterial( { color : 0xffffff } );
 	
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
 	ellipse.componentData=opts.componentData;
+	ellipse.grayness = grayness;
 	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	
 	ellipse.position.set( opts.x1, 0, opts.z1 );
@@ -149,10 +154,11 @@ subroutines.ObjectDeclaration=function(composite, opts){
 	
 	var path = new THREE.Path( curve.getPoints( 50 ) );
 	var geometry = path.createPointsGeometry( 50 );
-	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	var material = new THREE.LineBasicMaterial( { color : 0xffffff } );
 	
 	var ellipse = new THREE.Line( geometry, material );
 	ellipse.componentData=opts.componentData;
+	ellipse.grayness = grayness;
 	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	ellipse.position.set( opts.x1, 0, opts.z1 );
 	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
@@ -496,6 +502,7 @@ subroutines.elementize=function(composite,opts){
 	
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
+	ellipse.grayness = 0.8;
 	ellipse.componentData=opts.componentData;
 	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	
@@ -565,6 +572,7 @@ subroutines.propertize=function(composite,opts){
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
 	ellipse.componentData=opts.componentData;
+	ellipse.grayness = 0.8;
 	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	
 	ellipse.position.set( opts.x1, 0, opts.z1 );
@@ -617,7 +625,7 @@ subroutines.labelize=function(composite,opts){
 
 subroutines.Composite = function(data,scopes,particleLight){
 	
-	//console.log(data);
+	console.log(data);
 	
 	var composite=new THREE.Object3D();
 	composite.maxSize=100*data.length;

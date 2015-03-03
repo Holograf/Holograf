@@ -69,7 +69,7 @@ theatre.display = function(allData, onRendered) {
 		theatre.renderer = renderer;
 		renderer.setClearColor( 0x333333, 1);
 		renderer.setPixelRatio( window.devicePixelRatio );
-		renderer.setSize( window.innerWidth, window.innerHeight - 88);  // hard-coded top offset
+		renderer.setSize( window.innerWidth-20, window.innerHeight - 90);  // hard-coded top offset
 		// renderer.setSize( window.innerWidth, window.innerHeight-$(container).offset().top );
 	
 		container = document.getElementById('three-scene');
@@ -88,7 +88,7 @@ theatre.display = function(allData, onRendered) {
 		windowHalfY = window.innerHeight / 2;
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
-		renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.setSize( (window.innerWidth-20), (window.innerHeight-90) );
 		// render();
 	}
 
@@ -191,6 +191,7 @@ theatre.display = function(allData, onRendered) {
 
 				theatre.nodeView = true;
 
+
 				//raphael code here?
 				if ($("#modal-canvas").length===0){
 					modal = createModal();
@@ -224,10 +225,10 @@ theatre.display = function(allData, onRendered) {
 	  // TODO refactor these into CSS
 	  canvas.id="modal-canvas";
 	  canvas.style.position="fixed";
-	  canvas.style.top="0px";
+	  canvas.style.top="90px";
 	  canvas.style.left="0px";
 	  canvas.style.width=$(window).innerWidth()+"px";
-	  canvas.style.height=$(window).innerHeight()+"px";
+	  canvas.style.height=$(window).innerHeight()+90+"px";
 	
 	  document.body.appendChild(canvas);
 	  
