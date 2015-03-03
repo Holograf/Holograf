@@ -8,6 +8,8 @@ var TabbedArea = require('react-bootstrap/TabbedArea');
 var TabPane = require('react-bootstrap/TabPane');
 var CodeEditor = require('./CodeEditor');
 var Visual3D = require('./Visual3D.js');
+var Instructions = require('./Instructions.js');
+var Team = require('./Team.js');
 var addons = require('react-addons');
 
 module.exports = React.createClass({
@@ -44,6 +46,13 @@ module.exports = React.createClass({
           <TabPane className="tab2" eventKey={2} tab="3D Visualization">
             <Visual3D data={this.props.data} compiledStatus={this.props.compiledStatus} />
           </TabPane>
+          <TabPane className="tab3" eventKey={3} tab="Instructions">
+            <Instructions />
+          </TabPane>
+          <TabPane className="tab4" eventKey={4} tab="Team">
+            <Team />
+          </TabPane>
+
         </TabbedArea>
       </div>
     );

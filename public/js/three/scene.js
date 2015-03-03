@@ -66,14 +66,11 @@ theatre.display=function(allData){
 		renderer = new THREE.WebGLRenderer({antialias:true});
 		renderer.setClearColor( 0x333333, 1);
 		renderer.setPixelRatio( window.devicePixelRatio );
-		renderer.setSize( window.innerWidth, window.innerHeight - 86);  // hard-coded top offset
+		renderer.setSize( window.innerWidth, window.innerHeight - 88);  // hard-coded top offset
 		// renderer.setSize( window.innerWidth, window.innerHeight-$(container).offset().top );
 	
 		container = document.getElementById('three-scene');
 		container.appendChild(renderer.domElement);
-
-		//modal 
-		// modal = createModal();
 
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
@@ -120,7 +117,7 @@ theatre.display=function(allData){
 			if (intersects.length<1){
 
 			  // Remove modal only appears on mouseover
-			  if (document.getElementById("modal-canvas")){
+			  if (document.getElementById("modal-canvas") && !theatre.nodeView){
 			    document.body.removeChild(document.getElementById("modal-canvas"));
 			  }
 				// $("#three-modal").hide();
@@ -135,6 +132,8 @@ theatre.display=function(allData){
 				// If not expanded, do nothing
 				if (!theatre.expanded) return;
 
+
+				theatre.highlightNode = intersects[0].object;
 				var selectedId = intersects[0].object.componentData.id;
 				/*
 				$("#three-modal").html( utils.displayText(intersects[0].object) );
@@ -143,7 +142,6 @@ theatre.display=function(allData){
 				}
 				*/
 
-				// theatre.highlightNode = intersects[0];
 
 				intersects[0].object.material.color.setRGB( 1, 1, 0 );
 				composite.children.forEach(function( shape ) {
@@ -158,13 +156,10 @@ theatre.display=function(allData){
 				//raphael code here?
 				if ($("#modal-canvas").length===0){
 					modal = createModal();
-					//utils.modal.donut(modal,event.clientX,event.clientY,intersects[0]);
-					utils.modal.headline(modal,intersects[0]);
-					
-					placeHalo(intersects[0].object.position);
-					
-					utils.rippleList(modal,utils.allValues(timeline,selectedId));
-				} 
+				}
+				utils.modal.headline(modal, theatre.highlightNode);
+				placeHalo(theatre.highlightNode.position);
+				utils.rippleList(modal, utils.allValues(timeline, selectedId));
 			}
 		}
 	}
@@ -196,17 +191,12 @@ theatre.display=function(allData){
 		if (composite){
 			var intersects = raycaster.intersectObjects( composite.children, true );	
 
-			//  if object is not clicked and in nodeView, return to prior position
+			//  if object is not clicked, remove Raphael modals
 			if (intersects.length < 1 && theatre.nodeView) {  
-
-			// REMOVE THIS TO A 'RETURN' BUTTON
-				// new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
-				// new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 
 				if (document.getElementById("modal-canvas")){
 					document.body.removeChild(document.getElementById("modal-canvas"));
 				}
-				// theatre.nodeView = false;
 
 			// if an object is clicked, enter nodeView and zoom in
 			} else if (intersects.length > 0) { 
@@ -230,13 +220,10 @@ theatre.display=function(allData){
 				//raphael code here?
 				if ($("#modal-canvas").length===0){
 					modal = createModal();
-					//utils.modal.donut(modal,event.clientX,event.clientY,intersects[0]);
-					utils.modal.headline(modal,intersects[0]);
-
-					placeHalo(intersects[0].object.position);
-					
-					utils.rippleList(modal,utils.allValues(timeline,selectedId));
-				} 
+				}
+				utils.modal.headline(modal,intersects[0]);
+				placeHalo(intersects[0].object.position);
+				utils.rippleList(modal,utils.allValues(timeline,selectedId));
 			}
 		}
 	}
@@ -266,6 +253,13 @@ theatre.display=function(allData){
 	  var c = new Raphael('modal-canvas');
 	  return c;
 	}
+
+	function updateModal(modal, node) {
+		utils.modal.headline(modal, node);
+		placeHalo(node.position);
+		utils.rippleList(modal, utils.allValues(theatre.timeline, node.componentData.id));
+
+	}
 	
 	function animate() {
 		requestAnimationFrame( animate );
@@ -274,32 +268,44 @@ theatre.display=function(allData){
 	}
 
 	theatre.nextNode = function() {
+		if (!theatre.expanded) return;
 		var foundNext = false;
 		var i = 0;
 		// console.log('theatre.nextNode called!');
 		// console.log('theatre.viewIndex:', theatre.viewIndex);
 		console.log('theatre.currentNode:', theatre.currentNode);
 
+		// var findNext = function (index) {}  // DRY refactor
 		while (!foundNext && i < composite.children.length) {
 			// Get this to move on to the next one that's primary, even if it's not the NEXT index
-			if ( theatre.viewIndex < composite.children[i].componentData.timelineIndex && composite.children[i].componentData.primary ) {
-				console.log('the next one!', 'index:', i, composite.children[i].position);
-				
+			if ( theatre.viewIndex < composite.children[i].componentData.timelineIndex && composite.children[i].componentData.primary ) {				
 				theatre.currentNode = composite.children[i];
-				placeHalo(theatre.currentNode.position);
 				theatre.viewIndex = i;
-				console.log('new theatre.currentNode:', theatre.currentNode);
-				// theatre.viewNode(theatre.currentNode.position);
-				theatre.viewNode(theatre.currentNode.position);
 				foundNext = true;
 			}
 			i++;
 		}
+		// loop back beginning if none found after
+		if (!foundNext) {
+			i = 0;
+			while (!foundNext && i < composite.children.length) {
+				// Get this to move on to the next one that's primary, even if it's not the NEXT index
+				if (composite.children[i].componentData.primary ) {				
+					theatre.currentNode = composite.children[i];
+					theatre.viewIndex = i;
+					foundNext = true;
+				}
+				i++;
+			}
+		}
+		placeHalo(theatre.currentNode.position);
+		theatre.viewNode(theatre.currentNode.position);
 	};
 
 	theatre.prevNode = function() {
+		if (!theatre.expanded) return;
 		var foundPrev = false;
-		var i = composite.children.length - 1;  // -1
+		var i = composite.children.length - 1;  
 		console.log('theatre.prevNode called!');
 		console.log('theatre.viewIndex:', theatre.viewIndex);
 		console.log('theatre.currentNode:', theatre.currentNode);
@@ -309,19 +315,32 @@ theatre.display=function(allData){
 				console.log('the previous one!', 'index:', i, composite.children[i].position);
 				
 				theatre.currentNode = composite.children[i];
-				placeHalo(theatre.currentNode.position);
 				theatre.viewIndex = i;
 				console.log('new theatre.currentNode:', theatre.currentNode);
-				// theatre.viewNode(theatre.currentNode.position);
-				theatre.viewNode(theatre.currentNode.position);
 				foundPrev = true;
 			}
 			i--;
 		}
+		// loop back beginning if none found after
+		if (!foundPrev) {
+			i = composite.children.length - 1;
+			while (!foundPrev && i >= 0) {
+				if (composite.children[i].componentData.primary ) {				
+					theatre.currentNode = composite.children[i];
+					theatre.viewIndex = i;
+					foundPrev = true;
+				}
+				i--;
+			}
+		}
+		placeHalo(theatre.currentNode.position);
+		theatre.viewNode(theatre.currentNode.position);
+
 
 	};
 
 	theatre.viewNode = function(nodePosition) {
+		if (!theatre.expanded) return;
 		console.log('viewNode called', nodePosition);
 		// final camera position
 		var newX = nodePosition.x - 800;			
@@ -345,6 +364,11 @@ theatre.display=function(allData){
 		nextCamera = null;
 
 		theatre.viewIndex = theatre.currentNode.componentData.timelineIndex;
+		if (document.getElementById("modal-canvas")){
+			document.body.removeChild(document.getElementById("modal-canvas"));
+		}
+		modal = createModal();
+		updateModal(modal, theatre.currentNode)
 		theatre.nodeView = true;
 	};
 

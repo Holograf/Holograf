@@ -78,11 +78,14 @@ utils.modal.donut=function(canvas,x,y,obj){
 };
 
 
-utils.modal.headline=function(canvas,obj){
+utils.modal.headline=function(canvas, obj){
   var c=canvas;
-  var cData=obj.object.componentData;
+  if (obj.object) {
+    obj = obj.object;
+  } 
+  var cData = obj.componentData;
   
-  var text=c.text(-1000,100,utils.modalizeText(obj.object))
+  var text=c.text(-1000,100,utils.modalizeText(obj))
     .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
     .animate({x:10},600,"<>");
   var bbox=text.getBBox();
@@ -90,7 +93,7 @@ utils.modal.headline=function(canvas,obj){
     .attr({"fill":"#000",opacity:0.8})
     .animate({x:0},600,"<>");
   text.toFront();
-}
+};
 
 
 utils.rippleList=function(canvas,collection){
