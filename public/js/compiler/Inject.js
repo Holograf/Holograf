@@ -5,26 +5,44 @@ module.exports = {
   //----------------------------------------------------------------------------------
   // Explicit Injection point methods
   variable: function (node) {
-    var name = node.declarations[0].id.name;
+    // var lineNumber = this.getLineNumber(node);
+    var name = node.id.name;
     if (name !== '___functionId') {
-      return this.createNode('set', name);
+      var injectedNode = this.createNode('set', name);
+      return injectedNode;
+      // return this.addArgument(injectedNode, lineNumber);
     } 
   },
 
   expression: function (node) {
+    // var lineNumber = this.getLineNumber(node);
     var expression = node.expression;
     if (expression.type === 'UpdateExpression') {
-      var name = expression.argument.name;
-      return this.createNode('set', name);
+
+      if (expression.argument.type === 'MemberExpression') {
+        var name = this.traverseMemberExpression(expression.argument);
+
+        var injectedNode = this.createNode('setObjectProperty', name);  // ????????????????????????????
+        return injectedNode;
+      } else {
+        var name = expression.argument.name;
+        var injectedNode = this.createNode('set', name);
+        return injectedNode;       
+      }
+
     } else if (expression.type === 'AssignmentExpression') {
       var name = expression.left.name;
       return this.createNode('set', name);
     }
   },
 
+  // var object = node.expression.left;
+  // var string = this.traverseMemberExpression(object);
+
+
   //----------------------------------------------------------------------------------
   // Object injection
-  traverseMemberExpression: function (object) {
+  traverseMemberExpression: function (object) { // Make a string of accessors from an object node?
     var string = '';
     var traverse = function (object) {
       if (object.property) {
@@ -149,7 +167,7 @@ module.exports = {
     injectionPoint.unshift(injectedNode);
 
     var calleeNode = this.createFunctionCalleeNode();
-    // console.log(calleeNode);
+    console.log(calleeNode);
     injectionPoint.unshift(calleeNode)
 
     // Inject teh implicit ___Program.return('fn name')
@@ -182,10 +200,18 @@ module.exports = {
         "left": {
           "type": "Identifier",
           "name": "___Program.returnState"
-        },
-        "right": node.argument
+        }
       }
     }
+    if (node.argument) {
+      injectedNode.expression.right = node.argument;
+    } else {
+      injectedNode.expression.right = {
+        "type": "Identifier",
+        "name": "undefined"
+      }
+    }
+
     node.argument = {
       "type": "Identifier",
       "name": "___Program.returnState"
@@ -254,6 +280,7 @@ module.exports = {
         "raw": JSON.stringify(name)
       });
     }
+    return node;
   },
 
   isNotInjectedFunction: function (node) {
@@ -272,6 +299,11 @@ module.exports = {
   isSpecialMethod: function (method) {
     var specialMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'slice'];
     return specialMethods.indexOf(method) !== -1;
+  },
+
+  getLineNumber: function (node) {
+    // var lineNumber = node.loc.start.line;
+    // return lineNumber;
   }
 
 }

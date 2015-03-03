@@ -9,8 +9,77 @@ var Program = function () {
   this._currentScope = 0;
   this._blockStack = [0];
   this._scopeStack = [0];
+  this._code = '';
 
   this.initialize();
+}
+
+Program.prototype.setCode = function (rawCode) {
+  this._code = rawCode;
+}
+
+//----------------------------------------------------------------------------------
+// Object tracking methods
+Program.prototype.registerObject = function (object) {
+  var id = this.components.length;
+  Object.defineProperty(object, '___id', { enumerable: false, value: id });
+  Object.defineProperty(object, '___parsed', { enumerable: false, value: false, writable: true });
+  Object.defineProperty(object, '___accessor', { enumerable: false, value: undefined, writable: true });
+  Object.defineProperty(object, '___name', { enumerable: false, value: undefined, writable: true });
+
+
+  if (Array.isArray(object)) {
+    this.addComponent('array');
+  } else  {
+    this.addComponent('object');
+  }
+  this._objects[id] = object;
+}
+
+Program.prototype.newFunctionId = function () {
+  return this.components.length;
+}
+
+Program.prototype.registerFunction = function (fn) {
+  var id = this.components.length;
+
+  Object.defineProperty(fn, '___id', { enumerable: false, value: id });
+  Object.defineProperty(fn, '___accessor', { enumerable: false, value: undefined, writable: true });
+  Object.defineProperty(fn, '___name', { enumerable: false, value: undefined, writable: true });
+
+  this.addComponent('function');
+
+  return id;
+}
+
+Program.prototype.setObjectProperties = function (object, name) {
+  var type = Array.isArray(object) ? 'element' : 'property';
+  for (var key in object) {
+    var value = object[key];
+    var accessor = name + '[' + key + ']';
+
+    var component = this.addComponent(type, key);
+    component.parent = object.___id;
+    this.scopes[this.getCurrentScope()][accessor] = component.id;  
+
+    if (typeof value === 'object') {
+      this.addStep(component.id, 'pointer', value.___id);
+      this.setObjectProperties(value, accessor);
+    } else if (typeof value === 'function') {
+      this.addStep(component.id, 'pointer', value.___id);
+    } else {
+      this.addStep(component.id, 'value', value);
+    }
+  }
+
+  this.objectSnapshot(object);
+
+  object.___parsed = true;
+}
+
+Program.prototype.setObjectAcessor = function (object, accessor, name) {
+  object.___accessor = accessor;
+  object.___name = name;
 }
 
 //----------------------------------------------------------------------------------
