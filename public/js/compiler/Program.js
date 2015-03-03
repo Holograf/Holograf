@@ -14,6 +14,7 @@ var Program = function () {
 
   this._baseTime = performance.now();
 
+  this._baseTime = performance.now();
   this.initialize();
 }
 
@@ -158,7 +159,8 @@ Program.prototype.getData = function () {
     programSteps: this.programSteps,
     components: this.components,
     scopes: this.scopes,
-    lines: this.stepLines
+    lines: this.stepLines,
+    code: this._code
   }
 }
 
