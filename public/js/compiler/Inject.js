@@ -149,7 +149,7 @@ module.exports = {
     injectionPoint.unshift(injectedNode);
 
     var calleeNode = this.createFunctionCalleeNode();
-    console.log(calleeNode);
+    // console.log(calleeNode);
     injectionPoint.unshift(calleeNode)
 
     // Inject teh implicit ___Program.return('fn name')

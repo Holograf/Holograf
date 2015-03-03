@@ -45,7 +45,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   // Limits to how far you can dolly in and out
   this.minDistance = 0;
-  this.maxDistance = Infinity;
+  this.maxDistance = theatre.maxSize;    // Infinity;  // 
 
   // Set to true to disable this control
   this.noRotate = false;
@@ -132,27 +132,17 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   var endEvent = { type: 'end'};
 
   this.rotateLeft = function ( angle ) {
-
     if ( angle === undefined ) {
-
       angle = getAutoRotationAngle();
-
     }
-
     thetaDelta -= angle;
-
   };
 
   this.rotateUp = function ( angle ) {
-
     if ( angle === undefined ) {
-
       angle = getAutoRotationAngle();
-
     }
-
     phiDelta -= angle;
-
   };
 
   // pass in distance in world space to move left
@@ -279,6 +269,10 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
     // restrict radius to be between desired limits
     radius = Math.max( this.minDistance, Math.min( this.maxDistance, radius ) );
+    // console.log('radius:',radius, 
+    //   'this.minDistance:', this.minDistance, 
+    //   'Math.min( this.maxDistance, radius:',Math.min( this.maxDistance, radius), 'this.maxDistance:', this.maxDistance
+    // );
 
     // move target to panned location
     this.target.add( pan );
@@ -328,25 +322,18 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   };
 
   this.getPolarAngle = function () {
-
     return phi;
-
   };
 
   this.getAzimuthalAngle = function () {
-
     return theta
-
   };
 
   function getAutoRotationAngle() {
-
     return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-
   }
 
   function getZoomScale() {
-
     return Math.pow( 0.95, scope.zoomSpeed );
 
   }
@@ -446,16 +433,91 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   }
 
-  function onMouseUp( /* event */ ) {
+  function onMouseUp( event ) {
 
     if ( scope.enabled === false ) return;
+    event.preventDefault();
 
     document.removeEventListener( 'mousemove', onMouseMove, false );
     document.removeEventListener( 'mouseup', onMouseUp, false );
     scope.dispatchEvent( endEvent );
     state = STATE.NONE;
-
   }
+    // The following is inside scene.js - if this action is the problem, might refactor to go here in order to allow highlighting of ShareURL 
+  //   if (theatre.expanded === false) return;
+
+  //   var cameraSpeed = 1500;
+
+  //   var vector = new THREE.Vector3();
+  //   var raycaster = new THREE.Raycaster();
+  //   var dir = new THREE.Vector3();
+
+  //   //check the type of camera
+  //   //extract that offset into an external variable that doesn't have to be recalculated every time... later
+  //   var x =  ( event.clientX / window.innerWidth ) * 2 - 1;
+  //   var y = - ( (event.clientY-$(this.domElement).offset().top ) / window.innerHeight ) * 2 + 1;
+  //   if ( camera instanceof THREE.OrthographicCamera ) {
+  //     vector.set( x, y, - 1 ); // z = - 1 important!
+  //     vector.unproject( camera );
+  //     dir.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
+  //     raycaster.set( vector, dir );
+  //   } else if ( camera instanceof THREE.PerspectiveCamera ) {
+  //     vector.set( x, y, 0.5 ); // z = 0.5 important!
+  //     vector.unproject( camera );
+  //     raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+  //   }
+
+  //   if (composite){
+
+  //     var intersects = raycaster.intersectObjects( composite.children, true );  
+
+  //     //  if object is not clicked and in nodeView, return to prior position
+  //     if (intersects.length < 1 && theatre.nodeView) {  
+
+  //     // REMOVE THIS TO A 'RETURN' BUTTON
+  //       new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).start();
+  //       new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).start();
+
+  //       if (document.getElementById("modal-canvas")){
+  //         document.body.removeChild(document.getElementById("modal-canvas"));
+  //       }
+  //       theatre.nodeView = false;
+
+  //     // if an object is clicked, enter nodeView and zoom in
+  //     } else if (intersects.length > 0) { 
+  //       // save the prior position before entering nodeView
+  //       if (!theatre.nodeView) {
+  //         theatre.lastPosition = new THREE.Vector3().copy( camera.position );
+  //         theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
+  //       }
+
+  //       theatre.currentNode = intersects[0];
+  //       console.log('theatre.currentNode:', theatre.currentNode);
+  //       // final camera position
+  //       var newX = intersects[0].object.position.x - 800;     
+  //       var newY = intersects[0].object.position.y + 800;
+  //       var newZ = intersects[0].object.position.z - 300;
+  //       var targetPosition = new THREE.Vector3(newX, newY, newZ);
+
+  //       // camera rotation
+  //         // use extra camera to find rotation at target location
+  //       var nextCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
+  //       nextCamera.position.x = targetPosition.x;
+  //       nextCamera.position.y = targetPosition.y;
+  //       nextCamera.position.z = targetPosition.z;
+  //       nextCamera.lookAt(intersects[0].object.position);
+  //       var endRotation = new THREE.Quaternion().copy( nextCamera.rotation );
+
+  //       // camera motion on click - position & rotation
+  //       new TWEEN.Tween(camera.position).to(targetPosition, cameraSpeed).start();
+  //       new TWEEN.Tween( camera.rotation ).to(endRotation, cameraSpeed).start();
+  //       nextCamera = null;
+
+  //       // raphael code here???
+
+  //       theatre.nodeView = true;
+  //     }
+  //   }
 
   function onMouseWheel( event ) {
 
@@ -495,6 +557,25 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   function onKeyDown( event ) {
 
     if ( scope.enabled === false || scope.noKeys === true || scope.noPan === true ) return;
+
+    // change key controls if you're in nodeView
+    if ( theatre.nodeView ) {
+
+      switch ( event.keyCode ) {
+
+        case scope.keys.LEFT:
+          theatre.prevNode();
+          break;
+
+        case scope.keys.RIGHT:
+          // scope.pan( - scope.keyPanSpeed, 0 );
+          // scope.update();
+          theatre.nextNode();
+          break;
+      }
+
+      return;
+    }
 
     switch ( event.keyCode ) {
 
@@ -682,4 +763,3 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 };
 
 THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;

@@ -14,7 +14,7 @@ var Parser = function (code) {
 
   traverse(programBody);  // Traverse the syntax tree to inject watchpoints
 
-  console.log(JSON.stringify(syntaxTree, null, 2));
+  // console.log(JSON.stringify(syntaxTree, null, 2));
 
   injectObjectWrappers(programBody); // inject object registration methods onto all objects
   return syntaxTree;
@@ -307,7 +307,7 @@ var injectObjectWrappers = function (body) {
         if (node.expression.type === 'AssignmentExpression') {
           if (node.expression.right) {
             var objectNode = node.expression.right;
-            console.log(node.expression.right.type);
+            // console.log(node.expression.right.type);
             node.expression.right = injectObjectWrapper(objectNode);
           }
         } else if (node.expression.type === 'CallExpression') {

@@ -1,5 +1,8 @@
 var subroutines={};
 
+// inside methods propertize, elementize, labelize - create 
+
+
 subroutines.Fun=function(composite, opts){
 	if (opts===undefined){var opts={};}
 	if (opts.z1===undefined){opts.z1=0;}
@@ -18,6 +21,7 @@ subroutines.Fun=function(composite, opts){
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
@@ -265,6 +269,7 @@ subroutines.Conditional=function(composite,opts){
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 		
@@ -456,6 +461,11 @@ subroutines.skybox = function(scene, maxSize) {
 
 
 subroutines.elementize=function(composite,opts){
+
+	// create copies so that you can set primary to false and avoid them as you move through timeline nodes
+	opts.componentData = JSON.parse(JSON.stringify(opts.componentData));
+	opts.componentData.primary = false;
+
 	if (opts===undefined){var opts={};}
 	if (opts.z1===undefined){opts.z1=0;}
 	if (opts.z2===undefined){opts.z2=0;}
@@ -519,6 +529,11 @@ subroutines.SelectHalo=function(scene,opts){
 
 
 subroutines.propertize=function(composite,opts){
+
+	// copy obj to set primary to false and avoid them as you move through timeline nodes
+	opts.componentData = JSON.parse(JSON.stringify(opts.componentData));
+	opts.componentData.primary = false;
+
 	if (opts===undefined){var opts={};}
 	if (opts.z1===undefined){opts.z1=0;}
 	if (opts.z2===undefined){opts.z2=0;}
@@ -550,6 +565,9 @@ subroutines.propertize=function(composite,opts){
 
 subroutines.labelize=function(composite,opts){
 	
+	// create copies so that you can set primary to false and avoid them as you move through timeline nodes
+	opts.componentData = JSON.parse(JSON.stringify(opts.componentData));
+	opts.componentData.primary = false;
 	
 	///canvas madness starts here
 	var message=opts.componentData.hasOwnProperty('value') ? opts.componentData.value : "Yo!";
