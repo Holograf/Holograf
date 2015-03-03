@@ -312,22 +312,29 @@ subroutines.LoopCycle=function(composite,opts){
 	var steps=60;
 	var planeInterval = 360/steps;
 	var radianInterval = (2*Math.PI)/steps;
+	var group = new THREE.Object3D();
 	for (var j=0;j<steps;j++){
 		var ticGeometry = new THREE.PlaneBufferGeometry( 30, 10 );
 		var material = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
 		var plane = new THREE.Mesh( ticGeometry, material );
 		plane.grayness=1;
-		plane.position.z=opts.z1;
+		// plane.position.z=opts.z1;
 		plane.position.x=opts.x1;
 		plane.rotation.z-=radianInterval*j;
 		var coords = utils.getPoint(plane.position.x,plane.position.y,opts.radius,planeInterval*j);
 		plane.position.x=coords.x2;
 		plane.position.y=coords.y2;
+
 		
 		plane.componentData=opts.componentData;
-		plane=utils.tweenify(plane,{z1: opts.z1, z2:opts.z2, x1:plane.position.x, x2:plane.position.x+opts.x2} );
-		composite.add( plane );
+		// plane=utils.tweenify(plane,{z1: opts.z1, z2:opts.z2, x1:plane.position.x, x2:plane.position.x+opts.x2} );
+		group.add( plane );
 	}
+	group.componentData=opts.componentData;
+	group.position.z = opts.z1;
+	group=utils.tweenify(group,{z1: opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	group.rotate=new TWEEN.Tween(group.rotation).to({z:2*Math.PI},(opts.componentData.hasOwnProperty('enter') ) ? 90000 : -90000).repeat(Infinity).start();
+	composite.add( group );
 };
 	
 subroutines.TimeLight=function(composite) {
@@ -694,7 +701,7 @@ subroutines.hexagonGeometry=new THREE.TorusGeometry(50,10,3,3);
 subroutines.functionDeclarationGeometry=new THREE.OctahedronGeometry(50);
 subroutines.objectDeclarationGeometry=new THREE.IcosahedronGeometry(50);
 subroutines.triangleGeometry=new THREE.RingGeometry(100,5,3,3);
-subroutines.loopGeometry=new THREE.TorusGeometry(500,20,20,30);
+subroutines.loopGeometry=new THREE.TorusGeometry(500,20,5,30);
 subroutines.funGeometry=new THREE.CylinderGeometry(100,50,80,6,1,true);
 subroutines.variableGeometry=new THREE.DodecahedronGeometry(25);
 subroutines.dfltMaterial=new THREE.SpriteMaterial({});
