@@ -23,6 +23,12 @@ body {
   font-size: 3rem;
 }
 
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+    color: #555;
+    background-color: $lighter-gray;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
 
 
 .dataInput {
