@@ -15,7 +15,9 @@ var App = React.createClass({
 
   //get the current data from the Store
   getAppState: function() {
-    return AppStore.getState();
+    var s = AppStore.getState();
+    console.log(s);
+    return s;
   },
 
   //this is run automatically each time a new <App /> is created

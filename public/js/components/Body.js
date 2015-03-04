@@ -11,35 +11,27 @@ var Visual3D = require('./Visual3D.js');
 var Instructions = require('./Instructions.js');
 var Team = require('./Team.js');
 var addons = require('react-addons');
+var Loader = require('./Loader');
+var OverlayMixin = require('react-bootstrap/OverlayMixin');
+var Button = require('react-bootstrap/Button');
+var Modal = require('react-bootstrap/Modal');
+var Actions = require('../actions/Actions');
+
 
 module.exports = React.createClass({
 
+  mixins: [OverlayMixin],
+
+  handleSelect: function (selectedTab) {
+    Actions.selectTab(selectedTab);
+  },
+
   render: function() {
 
-    // var codeClasses = addons.classSet({
-    //   'active': !this.props.compiledStatus
-    // });
-    // className={codeClasses}
-    // var visualClasses = addons.classSet({
-    //   'active': this.props.compiledStatus
-    // });
-    // className={visualClasses}
-
-
-
-    // Naked Bootstrap with some React stuffs
-    // <div className="navbar-brand">Holograf</div>
-    // <ul className="nav nav-tabs" defaultActiveKey={1}>
-    //   <li role="presentation" eventKey={1} className="active"><a href="#">Code</a></li>
-    //   <li role="presentation" eventKey={2}><a href="#">3D Visualization</a></li>
-    // </ul>
-
-
     return (
-      <div className="appContainer">
-        
-        <div className="navbar-brand">Holograf</div>
-        <TabbedArea defaultActiveKey={1}>
+      <div className="appContainer" >
+        <div className="navbar-brand">HOLOGRAF</div>
+        <TabbedArea defaultActiveKey={1} activeKey={this.props.selectedTab} onSelect={this.handleSelect}>
           <TabPane className="tab1" eventKey={1} tab="Code">
             <CodeEditor {...this.props} />
           </TabPane>
@@ -55,7 +47,22 @@ module.exports = React.createClass({
 
         </TabbedArea>
       </div>
+      
     );
+  },
+
+  renderOverlay: function () {
+    if (!this.props.isLoading) {
+      return <span/>;
+    }
+
+    return (
+        <Modal bsStyle="modal-sm" title="Rendering..." animate={false}>
+          <div className="modal-body">
+            <Loader {...this.props} />
+          </div>
+        </Modal>
+      );
   }
 });
 

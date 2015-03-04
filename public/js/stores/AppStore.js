@@ -12,8 +12,19 @@ var compile = require('../compiler/Compiler')
 var CHANGE_EVENT = 'change';
 var COMPILE_EVENT = 'compile';
 
-var _code, _data, _shareUrl, _compiledStatus, _tabKey;
-var templateCode = 'var s = function(a) {    a();    };    var q = function () {    var x = 1;  for (var i = 0; i< 5; i++) {  x++;  }  };     var r = q;    s(r);';
+var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading;
+var templateCode = 
+'var s = function(a) {\n'+
+'  a();\n'+
+'};\n'+
+'var q = function () {\n'+
+'  var x = 1;\n'+
+'  for (var i = 0; i< 5; i++) {\n'+
+'    x++;\n'+
+'  }\n'+
+'};\n'+
+'var r = q;\n'+
+'s(r);';
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
@@ -22,7 +33,8 @@ var AppStore = assign({}, EventEmitter.prototype, {
     _data = [];
     _shareUrl = '';
     _compiledStatus = false;
-    _tabKey = 1;
+    _selectedTab = 1;
+    _isLoading = false;
   },
 
   getState: function() {
@@ -31,7 +43,8 @@ var AppStore = assign({}, EventEmitter.prototype, {
       data: _data,
       compiledStatus: _compiledStatus,
       shareUrl: _shareUrl,
-      tabKey: _tabKey
+      selectedTab: _selectedTab,
+      isLoading: _isLoading
     });
   },
 
@@ -41,17 +54,42 @@ var AppStore = assign({}, EventEmitter.prototype, {
     } else {
       _code = code;
     }
+    AppStore.emitChange();
   },
 
   compileCode : function() {
+    _isLoading = true;
+    AppStore.emitChange();
+
     _data = compile(_code);
     _compiledStatus = true;
-    _tabKey = 2;
-    theatre.display(_data);
+
+    setTimeout(function() {
+      AppStore.renderScene();
+    }, 500);
+  },
+
+  renderScene: function () {
+    theatre.display(_data, this.compileEnd);
+  },
+
+  compileEnd : function() {
+    setTimeout(function() {
+      console.log('done!')
+      _isLoading = false;
+      _selectedTab = 2;
+      AppStore.emitChange();
+    }, 1000);
   },
 
   updateShareUrl : function(shareUrl) {
     _shareUrl = shareUrl;
+    AppStore.emitChange();
+  },
+
+  selectTab: function(tab) {
+    _selectedTab = tab;
+    AppStore.emitChange();
   },
 
   // getCode: function() {
@@ -118,9 +156,12 @@ var AppStore = assign({}, EventEmitter.prototype, {
       case AppConstants.UPDATE_SHAREURL:
         AppStore.updateShareUrl(action.shareUrl);
         break;
+
+      case AppConstants.SELECT_TAB:
+        AppStore.selectTab(action.tab);
+        break;
     }
 
-    AppStore.emitChange();
     return true;
   })
 
