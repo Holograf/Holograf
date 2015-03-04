@@ -201,7 +201,12 @@ utils.modalizeText=function(obj){
   } else if (obj.componentData.hasOwnProperty('invoke') ){
     d+="function: "+obj.componentData.name+" invocation";
   } else if (obj.componentData.hasOwnProperty('return') && obj.componentData.return.hasOwnProperty('value') ) {
-    d+="function: "+obj.componentData.name+" returns "+obj.componentData.return.value+"";
+    if (obj.componentData.return.value==='___undefined'){
+      d+="function: "+obj.componentData.name+" returns undefined";
+    } else {
+      d+="function: "+obj.componentData.name+" returns "+obj.componentData.return.value+"";
+    }
+    
   } else if (obj.componentData.for) {
     d+="loop "+obj.componentData.for+"";  
   } else if (obj.componentData.type==='param'){
@@ -266,4 +271,24 @@ utils.tweenify=function(obj,opts){
   obj.collapse  = new TWEEN.Tween(obj.position).to({x:opts.x1},tweenDuration).chain(zCollapse).easing(TWEEN.Easing[easingType].Out);
   obj.expand    = new TWEEN.Tween(obj.position).to({z:opts.z2},tweenDuration).chain(xExpand).easing(TWEEN.Easing[easingType].Out);
   return obj;
+};
+
+utils.dull=function(composite){
+	composite.children.forEach(function( shape ) {
+		if (shape.grayness){
+			shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
+			shape.material.opacity = 0;
+		}
+	});
+};
+
+utils.shine=function(composite,id){
+	for (var i=0;i<composite.children.length;i++){
+		if (composite.children[i].componentData.id===id && composite.children[i].material.color){
+			composite.children[i].material.color.setRGB(1,1,0);
+			if (composite.children[i].material.transparent){
+			  composite.children[i].material.opacity=1;
+			}
+		}
+	}
 };
