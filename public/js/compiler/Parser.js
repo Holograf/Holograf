@@ -7,7 +7,7 @@ var wrappedFunctionCount = 0;
 
 var Parser = function (code) {
 
-  var syntaxTree = esprimaParse(code );
+  var syntaxTree = esprimaParse(code);
   console.log(JSON.stringify(syntaxTree, null, 2));
 
   var programBody = syntaxTree.body;
@@ -105,8 +105,14 @@ var checkVariableDeclarations = function (node, body, index) {
   if (node.type === 'VariableDeclaration') {
     for (var i = 0; i < node.declarations.length; i++) {
       var declaration = node.declarations[i];
+      
 
-      if (declaration.init) { var declarationType = declaration.init.type; }
+      if (declaration.init) { 
+        var declarationType = declaration.init.type; 
+      }
+      if (declaration.loc) {
+        var line = declaration.loc.start.line;
+      }
 
       if (declarationType === 'FunctionExpression') { // ie var f = function () { return 1; };
         traverseFunction(declaration.init);
