@@ -6,6 +6,7 @@ var theatre = {
 	cameraSpeed: 1500
 };
 
+
 theatre.display=function(allData, onRendered){	
 	var camera, composite, container, controls, modalCanvas, particleLight, renderer, scene, selectHalo, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
@@ -20,6 +21,19 @@ theatre.display=function(allData, onRendered){
 	animate();
 	
 	function init(data) {
+
+		if ()
+		  cancelAnimationFrame(this.id);// Stop the animation
+	    this.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
+	    this.scene = null;
+	    this.projector = null;
+	    this.camera = null;
+	    this.controls = null;
+	    empty(this.modelContainer);
+
+			function empty(elem) {
+			    while (elem.lastChild) elem.removeChild(elem.lastChild);
+			}
 
 		
 		scene = new THREE.Scene();
@@ -78,6 +92,21 @@ theatre.display=function(allData, onRendered){
 		window.addEventListener( 'resize', onWindowResize, false );
 		window.addEventListener( 'mouseup', onMouseUp, false);
 	}
+
+	// function removeScene() {
+	//   cancelAnimationFrame(this.id);// Stop the animation
+ //    this.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
+ //    this.scene = null;
+ //    this.projector = null;
+ //    this.camera = null;
+ //    this.controls = null;
+ //    empty(this.modelContainer);
+
+	// 	function empty(elem) {
+	// 	    while (elem.lastChild) elem.removeChild(elem.lastChild);
+	// 	}
+
+	// }
 
 	function onWindowResize() {
 		windowHalfX = window.innerWidth / 2;

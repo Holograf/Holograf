@@ -28,6 +28,9 @@ module.exports = React.createClass({
 
   compile: function (e) {
     // console.log('this.props:',this.props);
+    if (this.props.compiledStatus) {
+      theatre.removeScene();
+    }
     Actions.compile();
   },
 
