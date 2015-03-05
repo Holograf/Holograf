@@ -7,7 +7,7 @@ var theatre = {
 };
 
 
-theatre.display=function(allData, onRendered){	
+theatre.display = function(allData, onRendered) {	
 	var camera, composite, container, controls, modalCanvas, particleLight, renderer, scene, selectHalo, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
@@ -15,29 +15,15 @@ theatre.display=function(allData, onRendered){
 	var timeline = utils.parseTimeline(allData);
 	theatre.code = allData.code;
 	theatre.timeline = timeline;
-	
 	init(timeline);
 	onRendered();
 	animate();
 	
 	function init(data) {
 
-		if ()
-		  cancelAnimationFrame(this.id);// Stop the animation
-	    this.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
-	    this.scene = null;
-	    this.projector = null;
-	    this.camera = null;
-	    this.controls = null;
-	    empty(this.modelContainer);
-
-			function empty(elem) {
-			    while (elem.lastChild) elem.removeChild(elem.lastChild);
-			}
-
-		
 		scene = new THREE.Scene();
-		
+		theatre.scene = scene;
+
 		// timeline elements
 
 		particleLight = subroutines.TimeLight();
@@ -56,6 +42,7 @@ theatre.display=function(allData, onRendered){
 
 		// PerspectiveCamera   method args: (field of view angle, aspectRatio, near, far)
 		camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+		theatre.camera = camera;
 		var camDistPartial = composite.maxSize / 2;
 		camera.position.x = -camDistPartial;
 		camera.position.y = camDistPartial * 1.5;
@@ -64,8 +51,8 @@ theatre.display=function(allData, onRendered){
 		// camera.lookAt(target);  // PLACED IN OrbitControls.js
 
 		controls = new THREE.OrbitControls(camera, container, target);
+		theatre.controls = controls;
 		// controls.addEventListener( 'change', render );
-		// theatre.camera = camera;
 		// theatre.target = target;
 		theatre.initCamera = {
 			'position': new THREE.Vector3().copy( camera.position ), 
@@ -79,34 +66,22 @@ theatre.display=function(allData, onRendered){
 
 		// renderer
 		renderer = new THREE.WebGLRenderer({antialias:true});
+		theatre.renderer = renderer;
 		renderer.setClearColor( 0x333333, 1);
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight - 88);  // hard-coded top offset
 		// renderer.setSize( window.innerWidth, window.innerHeight-$(container).offset().top );
 	
 		container = document.getElementById('three-scene');
+		theatre.container = container;
 		container.appendChild(renderer.domElement);
 
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		window.addEventListener( 'resize', onWindowResize, false );
 		window.addEventListener( 'mouseup', onMouseUp, false);
+
 	}
-
-	// function removeScene() {
-	//   cancelAnimationFrame(this.id);// Stop the animation
- //    this.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
- //    this.scene = null;
- //    this.projector = null;
- //    this.camera = null;
- //    this.controls = null;
- //    empty(this.modelContainer);
-
-	// 	function empty(elem) {
-	// 	    while (elem.lastChild) elem.removeChild(elem.lastChild);
-	// 	}
-
-	// }
 
 	function onWindowResize() {
 		windowHalfX = window.innerWidth / 2;
@@ -120,6 +95,7 @@ theatre.display=function(allData, onRendered){
 	function onMouseMove( e ) {
 
 		e.preventDefault();
+		if ( theatre.controlsEnabled === false ) return;
 
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
@@ -150,7 +126,7 @@ theatre.display=function(allData, onRendered){
 			  if (document.getElementById("modal-canvas") && !theatre.nodeView){
 			    document.body.removeChild(document.getElementById("modal-canvas"));
 			  }
-				
+
 				utils.dull(composite);
 
 			// Intersects.length >= 1
@@ -161,7 +137,7 @@ theatre.display=function(allData, onRendered){
 				theatre.highlightNode = intersects[0].object;
 				var selectedId = intersects[0].object.componentData.id;
 				utils.shine(composite,selectedId);
-				
+
 			}
 		}
 	}
@@ -169,6 +145,7 @@ theatre.display=function(allData, onRendered){
 	function onMouseUp ( e ) {
 		e.preventDefault();
 		if (theatre.expanded === false) return;
+		if (theatre.controlsEnabled === false) return;
 
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
@@ -177,7 +154,7 @@ theatre.display=function(allData, onRendered){
 		//check the type of camera
 		//extract that offset into an external variable that doesn't have to be recalculated every time... later
 		var x =  ( event.clientX / window.innerWidth ) * 2 - 1;
-		var y = - ( (event.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
+		var y = - ( ( event.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
 		if ( camera instanceof THREE.OrthographicCamera ) {
 	    vector.set( x, y, - 1 ); // z = - 1 important!
 	    vector.unproject( camera );
@@ -232,6 +209,7 @@ theatre.display=function(allData, onRendered){
 		}
 	}
 
+
 	function placeHalo(nodePosition) {
 		selectHalo.material.opacity = 0;
 		selectHalo.position.x = nodePosition.x;
@@ -271,7 +249,7 @@ theatre.display=function(allData, onRendered){
 	}
 	
 	function animate() {
-		requestAnimationFrame( animate );
+		theatre.reqId = requestAnimationFrame( animate );
 		render();
 	}
 
@@ -363,6 +341,10 @@ theatre.display=function(allData, onRendered){
 		new TWEEN.Tween(camera.position).to(targetPosition, theatre.cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 		new TWEEN.Tween( camera.rotation ).to(endRotation, theatre.cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 		
+		// set new camera position & rotation to avoid change after tweening to viewNode  --  this isn't working yet
+		// camera.position = targetPosition; // new THREE.Vector3(newX, newY, newZ);
+		// camera.rotation = nextCamera.rotation; // new THREE.Quaternion().copy( nextCamera.rotation );
+
 		nextCamera = null;
 
 		theatre.viewIndex = theatre.currentNode.componentData.timelineIndex;
@@ -384,33 +366,51 @@ theatre.display=function(allData, onRendered){
 	};
 
 
-	theatre.pause=function(){
+	theatre.pause = function(){
 		theatre.scenePaused ? particleLight.tween.start() : particleLight.tween.stop();
-		theatre.scenePaused=!theatre.scenePaused;
+		theatre.scenePaused = !theatre.scenePaused;
 	};
 
-	theatre.expand=function(){
+	theatre.expand = function() {
+		console.log('expand - theatre.expanded:', theatre.expanded);
 		var action = theatre.expanded ? "collapse" : "expand";
-		for (var i=0;i<composite.children.length;i++){
+		for (var i = 0; i < composite.children.length; i++){
 			composite.children[i][action].start();
 		}
-		if (action==='collapse'){
+		if (action === 'collapse'){
 			visualTimeline.hide.start();
-			theatre.pause();
 			particleLight.material.opacity = 0;
-			selectHalo.material.opacity = 0;
-
 			// gray out all shapes
 			$("#three-modal").hide();
 			utils.dull(composite);
 			
 		} else {
 			visualTimeline.show.start();
-			theatre.pause();
-			particleLight.material.opacity=1;
-			selectHalo.material.opacity = 0;
+			particleLight.material.opacity = 1;
 		}
-		theatre.expanded=!theatre.expanded;
+		theatre.pause();
+		selectHalo.material.opacity = 0;
+		theatre.expanded = !theatre.expanded;
+	};
+
+	theatre.clearScene = function() {
+
+		cancelAnimationFrame(theatre.reqId);// Stop the animation
+		document.removeEventListener( 'keydown', controls.onKeyDown, false )
+		theatre.scene = null;
+		theatre.camera = null;
+		theatre.controls = null;
+		theatre.nodeView = false;
+		theatre.expanded = false;
+		theatre.scenePaused = true;
+
+		empty(theatre.container);
+
+		function empty(elem) {
+		    while (elem.lastChild) elem.removeChild(elem.lastChild);
+		}
+
+
 	};
 
 

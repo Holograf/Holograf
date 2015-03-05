@@ -27,6 +27,16 @@ module.exports = React.createClass({
   },
 
   render: function() {
+    if (this.props.selectedTab !== 2) {
+      theatre.controlsEnabled = false;
+      if (document.getElementById("modal-canvas")){
+        document.body.removeChild(document.getElementById("modal-canvas"));
+      }
+      // console.log('selectedTab:', this.props.selectedTab);
+    } else {
+      theatre.controlsEnabled = true;
+    }
+
 
     return (
       <div className="appContainer" >

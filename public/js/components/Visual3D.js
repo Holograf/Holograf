@@ -53,6 +53,8 @@ module.exports = React.createClass({
   },
 
   render: function() {
+
+
     // if (this.props.data.programSteps) {
     //   var timeline = utils.parseTimeline(this.props.data.programSteps, this.props.data.components);
     //   displayScene(timeline);
@@ -60,13 +62,12 @@ module.exports = React.createClass({
 
     return (
       <div>
-        <div id="three-scene" data={this.props.data} >
-          <Button className="visualButton" bsStyle="primary" onClick={this.pauseScene} >Pause</Button>
-          <Button className="visualButton" bsStyle="primary" onClick={this.expandScene} >Expand</Button>
-          <Button className="visualButton" bsStyle="primary" onClick={this.prevNode} >Previous</Button>
-          <Button className="visualButton" bsStyle="primary" onClick={this.nextNode} >Next</Button>
-          <Button className="visualButton" bsStyle="primary" onClick={this.returnCamera} >Return</Button>
-        </ div>
+        <Button className="visualButton" bsStyle="primary" onClick={this.pauseScene} >Pause</Button>
+        <Button className="visualButton" bsStyle="primary" onClick={this.expandScene} >Expand</Button>
+        <Button className="visualButton" bsStyle="primary" onClick={this.prevNode} >Previous</Button>
+        <Button className="visualButton" bsStyle="primary" onClick={this.nextNode} >Next</Button>
+        <Button className="visualButton" bsStyle="primary" onClick={this.returnCamera} >Return</Button>
+        <div id="three-scene" data={this.props.data} ></ div>
         <div id="three-modal"></div>
       </div>
     );

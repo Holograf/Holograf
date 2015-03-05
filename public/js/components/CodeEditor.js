@@ -29,8 +29,15 @@ module.exports = React.createClass({
   compile: function (e) {
     // console.log('this.props:',this.props);
     if (this.props.compiledStatus) {
-      theatre.removeScene();
+      theatre.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
+      window.addEventListener( 'mousemove', null, false );
+      window.addEventListener( 'resize', null, false );
+      window.addEventListener( 'mouseup', null, false);
+      window.addEventListener( 'keydown', null, false );
     }
+      // theatre.removeScene();
+
+
     Actions.compile();
   },
 
@@ -50,8 +57,8 @@ module.exports = React.createClass({
     var cx = React.addons.classSet; 
     var compileClasses = cx({
       'pull-right': true,
-      'codeButton': true,
-      'disabled': this.props.compiledStatus
+      'codeButton': true  //,
+      // 'disabled': this.props.compiledStatus
     });
     var resetClasses = cx({
       'pull-right': true,
@@ -61,20 +68,16 @@ module.exports = React.createClass({
     var shareClasses = cx({
       'disabled': !this.props.compiledStatus
     });
-    // var editorClasses = cx({
-    //   // 'textAreaClassName': 'form-control',
-    //   'disabled': !this.props.compiledStatus
-    // });
 
-    // Coordinate the status of the code displayed with what is in the Store
+    // Update the status of the code displayed with what is in the Store
     this.options.value = this.props.code;
 
     // Remove interaction with the code once it has been compiled
-    if (this.props.compiledStatus) {
-      delete this.options.onChange;
-      this.options.readOnly = true;
-      // $(".codeBox").css("color", "gray");
-    };
+    // if (this.props.compiledStatus) {
+    //   delete this.options.onChange;
+    //   this.options.readOnly = true;
+    //   // $(".codeBox").css("color", "gray");
+    // };
 
 
     return (
