@@ -8,7 +8,6 @@ for (var i = 0; i < 3; i++) {
 output: function() {
 var counter = 0;
 ___Program.set('counter', counter, 1);
-___Program.set('i', 0, 2);
 ___Program.loop('for', 'open', 2);
 for (var i = 0; i < 3; i++) {
     ___Program.loop('for', 'cycle', 2);
@@ -27,18 +26,14 @@ data: {
   },
   {
    "id": 2,
-   "value": 0
-  },
-  {
-   "id": 3,
    "for": "open"
   },
   {
-   "id": 3,
+   "id": 2,
    "for": "cycle"
   },
   {
-   "id": 2,
+   "id": 3,
    "value": 0
   },
   {
@@ -46,11 +41,11 @@ data: {
    "value": 0
   },
   {
-   "id": 3,
+   "id": 2,
    "for": "cycle"
   },
   {
-   "id": 2,
+   "id": 3,
    "value": 1
   },
   {
@@ -58,11 +53,11 @@ data: {
    "value": 1
   },
   {
-   "id": 3,
+   "id": 2,
    "for": "cycle"
   },
   {
-   "id": 2,
+   "id": 3,
    "value": 2
   },
   {
@@ -70,11 +65,11 @@ data: {
    "value": 3
   },
   {
-   "id": 3,
+   "id": 2,
    "for": "close"
   },
   {
-   "id": 2,
+   "id": 3,
    "value": 3
   }
  ],
@@ -97,20 +92,20 @@ data: {
   },
   {
    "id": 2,
-   "type": "var",
-   "name": "i",
+   "type": "block",
+   "name": "for",
    "block": 0,
    "scope": 0,
    "createdAt": 1
   },
   {
    "id": 3,
-   "type": "block",
-   "name": "for",
-   "block": 0,
+   "type": "var",
+   "name": "i",
+   "block": 2,
    "scope": 0,
-   "createdAt": 2
-  }
+   "createdAt": 3
+  },
  ],
  "scopes": {
   "0": {

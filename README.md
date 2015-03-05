@@ -1,10 +1,10 @@
-# Suspicious Pi
+# Holograf
 
-Suspicious Pi is a tool for visualizing programs.
+[Holograf](http://holograf.io) lets programmers visualize the flow of data through their work in 3D.
 
 ##Deployment
 
-SuspiciousPi is built using gulp.
+Holograf is built using gulp.
 
 First, install dependencies
 

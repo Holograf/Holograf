@@ -40,16 +40,17 @@
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.2.0",
     "gulp-jasmine": "^2.0.0",
+    "gulp-jasmine2-phantomjs": "^0.2.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^1.3.2",
     "gulp-shell": "^0.2.11",
-    "jest-cli": "^0.3.0",
     "jstify": "^0.8.0",
     "karma": "^0.12.31",
     "karma-browserify": "^3.0.2",
     "reactify": "^1.0.0",
     "rewireify": "0.0.13",
     "run-sequence": "^1.0.2",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "webworkify": "^1.0.2"
   }
 }

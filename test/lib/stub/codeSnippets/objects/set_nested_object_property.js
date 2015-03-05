@@ -9,7 +9,7 @@ output: function() {
 var object = { stuff: {}.___obj() }.___obj();
 ___Program.set('object', object, 1);
 object.stuff.name = 'andy';
-___Program.setObjectProperty('object[stuff][name]', object['stuff'], 4);
+___Program.setObjectProperty('object[stuff][name]', object['stuff'], 'name', 4);
 },
 data: {
  "programSteps": [

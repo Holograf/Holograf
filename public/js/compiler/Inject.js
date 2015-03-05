@@ -20,7 +20,7 @@ module.exports = {
     if (expression.type === 'UpdateExpression') {
 
       if (expression.argument.type === 'MemberExpression') {
-        var name = this.traverseMemberExpression(expression.argument);
+        var name = this.traverseMemberExpression(expression.argument).string;
 
         var injectedNode = this.createNode('setObjectProperty', name);  // ????????????????????????????
         return injectedNode;
@@ -42,8 +42,10 @@ module.exports = {
   // Object injection
   traverseMemberExpression: function (object) { // Make a string of accessors from an object node?
     var string = '';
+    var accessorType = '';
     var traverse = function (object) {
       if (object.property) {
+        accessorType = object.property.type;
         if (object.property.type === 'Literal') {
           string = '[' + object.property.value + ']' + string;
         } else {
@@ -58,14 +60,36 @@ module.exports = {
     }.bind(this);
     traverse(object);
 
-    return string;
+    if (!object.computed) {
+      accessorType = 'Literal';
+    }
+
+    return {
+      string: string,
+      accessorType: accessorType
+    }
+  },
+
+  parseKey: function (fullObjectString) {
+    var key = fullObjectString.substring(fullObjectString.lastIndexOf('[') + 1, fullObjectString.length - 1);
+    return key;
+  },
+
+  parseParent: function (fullObjectString) {
+    var parent = fullObjectString.substring(0, fullObjectString.lastIndexOf('['));
+    return parent;
   },
 
   memberExpression: function (node) {
     var object = node.expression.left;
-    var string = this.traverseMemberExpression(object);
+    var traversedObject = this.traverseMemberExpression(object);
+    var string = traversedObject.string;
+    var accessorType = traversedObject.accessorType;
+    var parent = this.parseParent(string);
+    var key = this.parseKey(string);
 
     var injectedNode = this.createNode('setObjectProperty', string);
+    this.addArgument(injectedNode, key, accessorType);
 
     return injectedNode;
   },
@@ -77,8 +101,7 @@ module.exports = {
   },
 
   setParentObject: function (objectString) {
-    var parentObject = objectString.substring(0, objectString.lastIndexOf('['));
-    return this.setObjectAccessor(parentObject);
+    return this.setObjectAccessor(objectString.substring(0, objectString.lastIndexOf('[')));
   },
 
   //----------------------------------------------------------------------------------
@@ -99,9 +122,15 @@ module.exports = {
                                     // as well as the 'init' (for for loops) and 'cycle'
     var injectionPoint = node.body;
 
-    if (type === 'forIn') {
+
+    if (type === 'for' || type === 'forIn') {
       // Insert a watcher on the iterator
-      var name = node.left.declarations[0].id.name;
+      if (type === 'forIn') {
+        var name = node.left.declarations[0].id.name;
+        type = 'for';
+      } else {
+        var name = node.init.declarations[0].id.name;
+      }
       var injectedNode = this.createNode('set', name);
       this.addArgument(injectedNode, node.loc.start.line);
       injectionPoint.body.unshift(injectedNode);
@@ -125,6 +154,8 @@ module.exports = {
       return this.createNode('loop', type, 'open');
     }
 
+
+
     if (type === 'while' || type === 'do') {
       // Inject a watcher for the loop cycle
       injectedNode = this.createNode('loop', type, 'cycle');
@@ -137,15 +168,19 @@ module.exports = {
   },
 
   loopClose: function (node, type) { // Inject ___Program.block(loop type, 'close')
+    if (type === 'forIn') {
+      type = 'for';
+    }
     return this.createNode('loop', type, 'close');
   },
 
   loopPost: function (node, type) { // Handle iterator value after loop execution
-    if (type === 'for') {
-      var name = node.init.declarations[0].id.name;
-    } else { 
-      name = node.left.declarations[0].id.name;
-    }
+
+      if (type === 'forIn') {
+        var name = node.left.declarations[0].id.name;
+      } else {
+        var name = node.init.declarations[0].id.name;
+      }
     var injectedNode = this.createNode('set', name);
 
     return injectedNode;

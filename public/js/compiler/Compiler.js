@@ -24,6 +24,7 @@ var Compiler = function (rawCode) {
         reject(e);
       });
   })
+
 }
 
 module.exports = Compiler;

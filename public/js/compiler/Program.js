@@ -12,9 +12,6 @@ var Program = function () {
   this._code = '';
   this.stepLines = [];
 
-  this._baseTime = performance.now();
-
-  this._baseTime = performance.now();
   this.initialize();
 }
 
@@ -203,11 +200,12 @@ Program.prototype.addStep = function (name, key, value, line) {
   var step = this.makeStep(id, key, value);
   this.programSteps.push(step);
 
-  this.stepLines.push({
+  var stepLine = {
     id: id,
-    line: line,
-    time: performance.now() - this._baseTime
-  });
+    line: line
+  }
+
+  this.stepLines.push(stepLine);
 
   return step;
 }
@@ -441,12 +439,14 @@ Program.prototype.lastIdOfObject = function (parentId) {
 //----------------------------------------------------------------------------------
 // Object comprehension methods
 Program.prototype.setObjectProperty = function (fullObjectString, parent, key, line) {
-  var id = this.getId(fullObjectString);
-
-
 
   var parentObjectString = fullObjectString.substring(0, fullObjectString.lastIndexOf('['));
-  var key = fullObjectString.substring(fullObjectString.lastIndexOf('[') + 1, fullObjectString.length - 1);
+  if (key === undefined) {
+    key = fullObjectString.substring(fullObjectString.lastIndexOf('['), fullObjectString.lastIndexOf(']'));
+  }
+
+  var lookupString = parentObjectString + '[' + key + ']';
+  var id = this.getId(lookupString );
   
   var value = parent[key];
   var parentId = parent.___id;

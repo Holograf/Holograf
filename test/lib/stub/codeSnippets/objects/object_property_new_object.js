@@ -7,7 +7,7 @@ output: function() {
 var x = {}.___obj();
 ___Program.set('x', x, 1);
 x.a = {}.___obj();
-___Program.setObjectProperty('x[a]', x, 2);
+___Program.setObjectProperty('x[a]', x, 'a', 2);
 },
 data: {
  "programSteps": [

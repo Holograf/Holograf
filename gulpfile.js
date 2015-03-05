@@ -9,6 +9,7 @@ var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var jasmine = require('gulp-jasmine');
+var workerify = require('workerify');
 
 var paths = {
   scripts: ['public/**/*.js'],
@@ -86,8 +87,8 @@ gulp.task('testScript', shell.task([
 ]));
 
 gulp.task('specs', function () {
-    return gulp.src('test/spec/suite.js')
-        .pipe(jasmine());
+  return gulp.src('test/spec/suite.js')
+      .pipe(jasmine());
 });
 
 gulp.task('test', function(callback) {

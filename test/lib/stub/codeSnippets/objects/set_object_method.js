@@ -16,7 +16,7 @@ object.f = function () {
     return ___Program.returnState;
     ___Program.return(___functionId, 4);
 }.___fn();
-___Program.setObjectProperty('object[f]', object, 2);
+___Program.setObjectProperty('object[f]', object, 'f', 2);
 },
 data: {
  "programSteps": [
