@@ -121,52 +121,23 @@ theatre.display=function(allData, onRendered){
 			  if (document.getElementById("modal-canvas") && !theatre.nodeView){
 			    document.body.removeChild(document.getElementById("modal-canvas"));
 			  }
-				// $("#three-modal").hide();
-
-				composite.children.forEach(function( shape ) {
-					shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
-					shape.material.opacity = 0;
-				});
+				
+				utils.dull(composite);
 
 			// Intersects.length >= 1
 			} else {
 				// If not expanded, do nothing
 				if (!theatre.expanded) return;
 
-
 				theatre.highlightNode = intersects[0].object;
 				var selectedId = intersects[0].object.componentData.id;
-				/*
-				$("#three-modal").html( utils.displayText(intersects[0].object) );
-				if (!$("#three-modal").is(":visible") ){
-					$("#three-modal").fadeIn();
-				}
-				*/
-
-
-				intersects[0].object.material.color.setRGB( 1, 1, 0 );
-				composite.children.forEach(function( shape ) {
-					if (shape.material.hasOwnProperty('opacity') ){
-						shape.material.opacity = 1;
-					}
-					if (shape.componentData.id===selectedId){
-						shape.material.color.setRGB( 1, 1, 0 );
-					}
-				});
+				utils.shine(composite,selectedId);
 				
-				//raphael code here?
-				if ($("#modal-canvas").length===0){
-					modal = createModal();
-				}
-				utils.modal.headline(modal, theatre.highlightNode);
-				placeHalo(theatre.highlightNode.position);
-				utils.rippleList(modal, utils.allValues(timeline, selectedId));
 			}
 		}
 	}
 
 	function onMouseUp ( e ) {
-		
 		e.preventDefault();
 		if (theatre.expanded === false) return;
 
@@ -212,12 +183,8 @@ theatre.display=function(allData, onRendered){
 				theatre.currentNode = intersects[0].object;
 				theatre.viewNode(theatre.currentNode.position);
 
-				// raphael code here???
-
-
 				theatre.nodeView = true;
 
-				
 				//raphael code here?
 				if ($("#modal-canvas").length===0){
 					modal = createModal();
@@ -239,7 +206,6 @@ theatre.display=function(allData, onRendered){
 	}
 
 	function createModal(){
-		
 	  var canvas=document.createElement("DIV");
 	  // TODO refactor these into CSS
 	  canvas.id="modal-canvas";
@@ -259,12 +225,10 @@ theatre.display=function(allData, onRendered){
 		utils.modal.headline(modal, node);
 		placeHalo(node.position);
 		utils.rippleList(modal, utils.allValues(theatre.timeline, node.componentData.id));
-
 	}
 	
 	function animate() {
 		requestAnimationFrame( animate );
-		// controls.update();
 		render();
 	}
 
@@ -272,11 +236,7 @@ theatre.display=function(allData, onRendered){
 		if (!theatre.expanded) return;
 		var foundNext = false;
 		var i = 0;
-		// console.log('theatre.nextNode called!');
-		// console.log('theatre.viewIndex:', theatre.viewIndex);
-		console.log('theatre.currentNode:', theatre.currentNode);
-
-		// var findNext = function (index) {}  // DRY refactor
+		utils.dull(composite);
 		while (!foundNext && i < composite.children.length) {
 			// Get this to move on to the next one that's primary, even if it's not the NEXT index
 			if ( theatre.viewIndex < composite.children[i].componentData.timelineIndex && composite.children[i].componentData.primary ) {				
@@ -299,6 +259,7 @@ theatre.display=function(allData, onRendered){
 				i++;
 			}
 		}
+		utils.shine(composite,theatre.currentNode.componentData.id);
 		placeHalo(theatre.currentNode.position);
 		theatre.viewNode(theatre.currentNode.position);
 	};
@@ -306,18 +267,13 @@ theatre.display=function(allData, onRendered){
 	theatre.prevNode = function() {
 		if (!theatre.expanded) return;
 		var foundPrev = false;
-		var i = composite.children.length - 1;  
-		console.log('theatre.prevNode called!');
-		console.log('theatre.viewIndex:', theatre.viewIndex);
-		console.log('theatre.currentNode:', theatre.currentNode);
-
+		var i = composite.children.length - 1; 
+		utils.dull(composite);
+		
 		while (!foundPrev && i >= 0) {
 			if ( theatre.viewIndex > composite.children[i].componentData.timelineIndex && composite.children[i].componentData.primary ) {
-				console.log('the previous one!', 'index:', i, composite.children[i].position);
-				
 				theatre.currentNode = composite.children[i];
 				theatre.viewIndex = i;
-				console.log('new theatre.currentNode:', theatre.currentNode);
 				foundPrev = true;
 			}
 			i--;
@@ -336,13 +292,15 @@ theatre.display=function(allData, onRendered){
 		}
 		placeHalo(theatre.currentNode.position);
 		theatre.viewNode(theatre.currentNode.position);
-
+		if (theatre.currentNode && theatre.currentNode.componentData.id){
+			utils.shine(composite,theatre.currentNode.componentData.id);
+		}
 
 	};
 
 	theatre.viewNode = function(nodePosition) {
 		if (!theatre.expanded) return;
-		console.log('viewNode called', nodePosition);
+
 		// final camera position
 		var newX = nodePosition.x - 800;			
 		var newY = nodePosition.y + 800;
@@ -378,11 +336,6 @@ theatre.display=function(allData, onRendered){
 			new TWEEN.Tween(camera.position).to(theatre.initCamera.position, theatre.cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 			new TWEEN.Tween( camera.rotation ).to(theatre.initCamera.rotation, theatre.cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
 		}
-		// OR could send camera to where it was right before entering nodeView
-		// if (theatre.lastPosition) {
-		// 	new TWEEN.Tween(camera.position).to(theatre.lastPosition, theatre.cameraSpeed).start();
-		// 	new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, theatre.cameraSpeed).start();
-		// }
 
 		theatre.nodeView = false;
 	};
@@ -406,15 +359,7 @@ theatre.display=function(allData, onRendered){
 
 			// gray out all shapes
 			$("#three-modal").hide();
-			composite.children.forEach(function( shape ) {
-				shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
-				shape.material.opacity = 0;
-			});
-			// return to lastposition - not working right now
-			// if (theatre.nodeView) {
-			// 	new TWEEN.Tween(camera.position).to(theatre.lastPosition, cameraSpeed).start();
-			// 	new TWEEN.Tween( camera.rotation ).to(theatre.lastRotation, cameraSpeed).start();
-			// }
+			utils.dull(composite);
 			
 		} else {
 			visualTimeline.show.start();

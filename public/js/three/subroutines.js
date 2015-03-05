@@ -171,13 +171,14 @@ subroutines.FunctionDeclaration=function(composite, opts){
 	var z2=opts.z2;
 	var r=opts.r || 300;
 	var geometry = Object.create(subroutines.functionDeclarationGeometry);
-	var grayness = 0;
+	var grayness = 0.9;
 	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
@@ -195,13 +196,14 @@ subroutines.FunctionInvocation=function(composite, opts){
 	var z2=opts.z2;
 	var r=opts.r || 300;
 	var geometry = Object.create(subroutines.funGeometry);
-	var grayness = 0;
+	var grayness = 0.9;
 	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
@@ -220,13 +222,14 @@ subroutines.FunctionReturn=function(composite, opts){
 	var z2=opts.z2;
 	var r=opts.r || 300;
 	var geometry = Object.create(subroutines.funGeometry);
-	var grayness = 0;
+	var grayness = 0.9;
 	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
 	object.grayness=grayness;
 	object.componentData=opts.componentData;
+	object.componentData.primary=true;
 	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
@@ -613,6 +616,9 @@ subroutines.labelize=function(composite,opts){
 };
 
 subroutines.Composite = function(data,scopes,particleLight){
+	
+	//console.log(data);
+	
 	var composite=new THREE.Object3D();
 	composite.maxSize=100*data.length;
 	var buffer=10;
