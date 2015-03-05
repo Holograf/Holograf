@@ -100,16 +100,19 @@ module.exports = {
       // Insert a watcher on the iterator
       var name = node.init.declarations[0].id.name;
       var injectedNode = this.createNode('set', name);
+      this.addArgument(injectedNode, node.loc.start.line);
       injectionPoint.body.unshift(injectedNode);
 
       // Inject a watcher for the loop cycle
       injectedNode = this.createNode('loop', type, 'cycle');
+      this.addArgument(injectedNode, node.loc.start.line);
       injectionPoint.body.unshift(injectedNode);
     }
 
     if (type === 'while' || type === 'do') {
       // Inject a watcher for the loop cycle
       injectedNode = this.createNode('loop', type, 'cycle');
+      this.addArgument(injectedNode, node.loc.start.line);
       injectionPoint.body.unshift(injectedNode);
     }
 
@@ -134,7 +137,10 @@ module.exports = {
 
     var traverse = function(node) {
       var injectionPoint = node.consequent ? node.consequent : node;
+      var line = injectionPoint.loc.start.line;
+
       var injectedNode = this.createNode('enter', 'if', paths++);
+      this.addArgument(injectedNode, line);
       injectionPoint.body.unshift(injectedNode);
 
       if (node.alternate) {
@@ -147,7 +153,8 @@ module.exports = {
   },
 
   ifClose: function (node) {
-    return this.createNode('block', 'if', 'close');
+    var injectedNode = this.createNode('block', 'if', 'close');
+    return injectedNode;
   },
 
   //----------------------------------------------------------------------------------
@@ -156,23 +163,30 @@ module.exports = {
     term = term || 'invoke';
     var injectionPoint = node.body;
 
+    if (node.loc) {
+      var startLine = node.loc.start.line;
+      var endLine = node.loc.end.line;
+    }
+
     // Create the parameter watchers
     for (var i = params.length - 1; i >= 0; i--) {
       var injectedNode = this.createNode('param', params[i].name)
+      this.addArgument(injectedNode, startLine);
       injectionPoint.unshift(injectedNode);
     }
     // Inject the ___Program.invoke('fn name')
     var injectedNode = this.createNode(term);
     this.addArgument(injectedNode, '___functionId', 'Identifier');
+    this.addArgument(injectedNode, startLine);
     injectionPoint.unshift(injectedNode);
 
     var calleeNode = this.createFunctionCalleeNode();
-    console.log(calleeNode);
     injectionPoint.unshift(calleeNode)
 
     // Inject teh implicit ___Program.return('fn name')
     var injectedNode = this.createNode('return');
     this.addArgument(injectedNode, '___functionId', 'Identifier');
+    this.addArgument(injectedNode, endLine);
     injectionPoint.push(injectedNode);
   },
 
@@ -282,6 +296,15 @@ module.exports = {
     }
     return node;
   },
+
+  changeLineArgument: function (injectedNode, line) {
+    var lastIndex = injectedNode.expression.arguments.length - 1;
+    injectedNode.expression.arguments[lastIndex] = {
+      type: 'Literal',
+      value: line
+    }
+  },
+
 
   isNotInjectedFunction: function (node) {
     if (node.expression && node.expression.callee && node.expression.callee.object) {

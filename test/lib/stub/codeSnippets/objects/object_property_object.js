@@ -14,7 +14,7 @@ var object = {
         quest: 'to test'
     }.___obj()
 }.___obj();
-___Program.set('object', object);
+___Program.set('object', object, 1);
 },
 data: {
  "programSteps": [

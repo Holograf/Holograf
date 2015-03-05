@@ -5,10 +5,10 @@ var f = function () {};
 output: function() {
 var f = function () {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
-    ___Program.return(___functionId);
+    ___Program.invoke(___functionId, 1);
+    ___Program.return(___functionId, 1);
 }.___fn();
-___Program.set('f', f);
+___Program.set('f', f, 1);
 },
 data: {
  "programSteps": [

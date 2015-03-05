@@ -10,16 +10,17 @@ var result = object.speak();
 output: function() {
 var object = {
     speak: function () {
-        ___Program.method('object.speak');
+        var ___functionId = arguments.callee.___id;
+        ___Program.method(___functionId, 2);
         ___Program.returnState = 'woof!';
-        ___Program.return('object.speak');
+        ___Program.return(___functionId, 3);
         return ___Program.returnState;
-        ___Program.return('object.speak');
-    }
-};
-___Program.object('object', object, '{}');
+        ___Program.return(___functionId, 4);
+    }.___fn()
+}.___obj();
+___Program.set('object', object, 1);
 var result = object.speak();
-___Program.set('result', result);
+___Program.set('result', result, 6);
 },
 data: {
  "programSteps": [

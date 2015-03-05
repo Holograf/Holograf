@@ -11,22 +11,22 @@ if (x > 5) {
 },
 output: function() {
 var x = 4;
-___Program.set('x', x);
-___Program.block('if', 3);
+___Program.set('x', x, 1);
+___Program.block('if', 3, 2);
 if (x > 5) {
-    ___Program.enter('if', 0);
+    ___Program.enter('if', 0, 2);
     var size = 'large';
-    ___Program.set('size', size);
+    ___Program.set('size', size, 3);
 } else if (size > 3) {
-    ___Program.enter('if', 1);
+    ___Program.enter('if', 1, 4);
     var size = 'medium';
-    ___Program.set('size', size);
+    ___Program.set('size', size, 5);
 } else {
-    ___Program.enter('if', 2);
+    ___Program.enter('if', 2, 6);
     var size = 'small';
-    ___Program.set('size', size);
+    ___Program.set('size', size, 7);
 }
-___Program.block('if', 'close');
+___Program.block('if', 'close', 8);
 },
 data: {
  "programSteps": [

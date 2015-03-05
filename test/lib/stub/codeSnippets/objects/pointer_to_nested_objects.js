@@ -4,10 +4,10 @@ var x = {stats: {height: 'tall'}};
 var y = x.stats;
 },
 output: function() {
-var x = { stats: { height: 'tall' } };
-___Program.object('x', x, '{"stats":{}}');
+var x = { stats: { height: 'tall' }.___obj() }.___obj();
+___Program.set('x', x, 1);
 var y = x.stats;
-___Program.set('y', y, 'x.stats');
+___Program.set('y', y, 2);
 },
 data: {
  "programSteps": [

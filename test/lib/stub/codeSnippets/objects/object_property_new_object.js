@@ -5,9 +5,9 @@ x.a = {};
 },
 output: function() {
 var x = {}.___obj();
-___Program.set('x', x);
+___Program.set('x', x, 1);
 x.a = {}.___obj();
-___Program.setObjectProperty('x[a]', x);
+___Program.setObjectProperty('x[a]', x, 2);
 },
 data: {
  "programSteps": [

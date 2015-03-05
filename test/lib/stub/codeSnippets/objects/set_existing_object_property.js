@@ -7,9 +7,9 @@ object.name = 'luke';
 },
 output: function() {
 var object = { name: 'andy' }.___obj();
-___Program.set('object', object);
+___Program.set('object', object, 1);
 object.name = 'luke';
-___Program.setObjectProperty('object[name]', object);
+___Program.setObjectProperty('object[name]', object, 4);
 },
 data: {
  "programSteps": [

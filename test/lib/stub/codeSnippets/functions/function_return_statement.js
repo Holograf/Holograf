@@ -8,15 +8,15 @@ var result = f();
 output: function() {
 var f = function () {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId);
+    ___Program.invoke(___functionId, 1);
     ___Program.returnState = 1;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 2);
     return ___Program.returnState;
-    ___Program.return(___functionId);
+    ___Program.return(___functionId, 3);
 }.___fn();
-___Program.set('f', f);
+___Program.set('f', f, 1);
 var result = f();
-___Program.set('result', result);
+___Program.set('result', result, 4);
 },
 data: {
  "programSteps": [

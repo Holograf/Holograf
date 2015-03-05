@@ -7,9 +7,9 @@ object = 12;
 },
 output: function() {
 var object = { name: 'andy' }.___obj();
-___Program.set('object', object);
+___Program.set('object', object, 1);
 object = 12;
-___Program.set('object', object);
+___Program.set('object', object, 4);
 },
 data: {
  "programSteps": [

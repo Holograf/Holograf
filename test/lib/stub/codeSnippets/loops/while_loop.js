@@ -7,14 +7,14 @@ while (counter < 3) {
 },
 output: function() {
 var counter = 0;
-___Program.set('counter', counter);
-___Program.loop('while', 'open');
+___Program.set('counter', counter, 1);
+___Program.loop('while', 'open', 2);
 while (counter < 3) {
-    ___Program.loop('while', 'cycle');
+    ___Program.loop('while', 'cycle', 2);
     counter++;
-    ___Program.set('counter', counter);
+    ___Program.set('counter', counter, 3);
 }
-___Program.loop('while', 'close');
+___Program.loop('while', 'close', 4);
 },
 data: {
  "programSteps": [

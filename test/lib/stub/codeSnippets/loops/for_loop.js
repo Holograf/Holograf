@@ -7,17 +7,17 @@ for (var i = 0; i < 3; i++) {
 },
 output: function() {
 var counter = 0;
-___Program.set('counter', counter);
-___Program.set('i', 0);
-___Program.loop('for', 'open');
+___Program.set('counter', counter, 1);
+___Program.set('i', 0, 2);
+___Program.loop('for', 'open', 2);
 for (var i = 0; i < 3; i++) {
-    ___Program.loop('for', 'cycle');
-    ___Program.set('i', i);
+    ___Program.loop('for', 'cycle', 2);
+    ___Program.set('i', i, 2);
     counter += i;
-    ___Program.set('counter', counter);
+    ___Program.set('counter', counter, 3);
 }
-___Program.loop('for', 'close');
-___Program.set('i', i);
+___Program.loop('for', 'close', 4);
+___Program.set('i', i, 4);
 },
 data: {
  "programSteps": [

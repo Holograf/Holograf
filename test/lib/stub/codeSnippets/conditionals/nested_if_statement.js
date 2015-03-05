@@ -12,25 +12,25 @@ if (x > 5) {
 },
 output: function() {
 var x = 15;
-___Program.set('x', x);
-___Program.block('if', 2);
+___Program.set('x', x, 1);
+___Program.block('if', 2, 2);
 if (x > 5) {
-    ___Program.enter('if', 0);
+    ___Program.enter('if', 0, 2);
     var size = 'large';
-    ___Program.set('size', size);
-    ___Program.block('if', 1);
+    ___Program.set('size', size, 3);
+    ___Program.block('if', 1, 4);
     if (x > 10) {
-        ___Program.enter('if', 0);
+        ___Program.enter('if', 0, 4);
         size = 'extra' + size;
-        ___Program.set('size', size);
+        ___Program.set('size', size, 5);
     }
-    ___Program.block('if', 'close');
+    ___Program.block('if', 'close', 6);
 } else {
-    ___Program.enter('if', 1);
+    ___Program.enter('if', 1, 7);
     var size = 'small';
-    ___Program.set('size', size);
+    ___Program.set('size', size, 8);
 }
-___Program.block('if', 'close');
+___Program.block('if', 'close', 9);
 },
 data: {
  "programSteps": [

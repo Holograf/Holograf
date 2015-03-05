@@ -4,7 +4,7 @@ var x = undefined;
 },
 output: function() {
 var x = undefined;
-___Program.set('x', x);
+___Program.set('x', x, 1);
 },
 data: {
  "programSteps": [
