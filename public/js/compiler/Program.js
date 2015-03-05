@@ -316,7 +316,7 @@ Program.prototype.set = function (name, value, line, param) {
   if (value && typeof value === 'object') {
     var objectId = value.___id;
     if ( !this.getId(name) ) {
-      var component = this.instantiate(name, 'pointer', objectId);
+      var component = this.instantiate(name, 'pointer', objectId, line);
       component.type = param || 'var';
       this.setObjectAcessor(value, component.id, name);
     } else {
@@ -329,7 +329,7 @@ Program.prototype.set = function (name, value, line, param) {
   } else if (typeof value === 'function') {
     var functionId = value.___id;
     if ( !this.getId(name) ) {
-      var component = this.instantiate(name, 'pointer', functionId);
+      var component = this.instantiate(name, 'pointer', functionId, line);
       component.type = param || 'var';
       this.setObjectAcessor(value, component.id, name);
     } else {
@@ -337,10 +337,10 @@ Program.prototype.set = function (name, value, line, param) {
     }
   } else {
     if (param) {
-      var component = this.instantiate(name, 'value', value);
+      var component = this.instantiate(name, 'value', value, line);
       component.type = 'param';
     } else if ( !this.getId(name) ) {
-      this.instantiate(name, 'value', value);
+      this.instantiate(name, 'value', value, line);
     } else {
       this.addStep(name, 'value', value, line);
     }
@@ -468,17 +468,17 @@ Program.prototype.setObjectProperty = function (fullObjectString, parent, key, l
     var memberName = this.components[parentId].type === 'array' ? 'element' : 'property';
 
     if (value && typeof value === 'object') {
-      var component = this.instantiate(fullObjectString, 'pointer', pointerId);
+      var component = this.instantiate(fullObjectString, 'pointer', pointerId, line);
       component.name = key;
       component.type = memberName;
       component.parent = parentId;
     } else if (typeof value === 'function') {
-      var component = this.instantiate(fullObjectString, 'pointer', pointerId);
+      var component = this.instantiate(fullObjectString, 'pointer', pointerId, line);
       component.name = key;
       component.type = memberName === 'property' ? 'method': 'function'
       component.parent = parentId;
     } else {
-      var component = this.instantiate(fullObjectString, 'value', value);
+      var component = this.instantiate(fullObjectString, 'value', value, line);
       component.name = key;
       component.type = memberName;
       component.parent = parentId;
