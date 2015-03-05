@@ -10,7 +10,10 @@ utils.toGlossary=function(x){
   return glossary;
 };
 
-utils.parseTimeline=function(timeline,components){
+utils.parseTimeline=function(allData){
+  var timeline = allData.programSteps;
+  var lineline = allData.lines;
+  var components = allData.components;
   var glossary= utils.toGlossary(components);
   
   for (var i=0;i<timeline.length;i++){
@@ -29,7 +32,8 @@ utils.parseTimeline=function(timeline,components){
     if (timeline[i].component.hasOwnProperty('pointer')){
       timeline[i].component.pointsTo=components[timeline[i].component.pointer];
     }
-    
+    timeline[i].component.line=lineline[i].line;
+    timeline[i].component.time=lineline[i].line;
   }
 
   return timeline;
@@ -85,7 +89,7 @@ utils.modal.headline=function(canvas, obj){
   } 
   var cData = obj.componentData;
   
-  var text=c.text(-1000,100,utils.modalizeText(obj))
+  var text=c.text(-1000,110,utils.modalizeText(obj))
     .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
     .animate({x:10},600,"<>");
   var bbox=text.getBBox();
@@ -96,19 +100,32 @@ utils.modal.headline=function(canvas, obj){
 };
 
 
-utils.rippleList=function(canvas,collection){
-  var x=-300;
+utils.rippleList=function(canvas,collection,selectedLine){
+  if (selectedLine===undefined){selectedLine=-1;}
+  
+  var x=-40;
   var y=120;
-  var anim=new Raphael.animation({x:10},300,"<>");
+  var anim=new Raphael.animation({x:10,"opacity":1},400,"<>");
   var barAnim=new Raphael.animation({x:0},300,"<>");
   for (var i=0;i<collection.length;i++){
     y+=30;
-    var backBar=canvas.rect(x,y,300,29)
+    var text=canvas.text(x,y+13,(collection[i]) )
+      .attr({fill:"#fff","font-size":"20px","text-anchor":"start","opacity":0})
+      .animate(anim.delay( 600+(i*50) ));
+      
+    var bBox=text.getBBox();    
+    text.attr({"x":-1*(bBox.width+30)});
+  
+    var backBar=canvas.rect((bBox.width+20)*-1,y,bBox.width+20,29)
       .attr({"fill":"#000","opacity":0.8})
       .animate(barAnim.delay( 600+(i*50) ));
-    var text=canvas.text(x,y+13,i+1+": "+collection[i])
-      .attr({fill:"#fff","font-size":"20px","text-anchor":"start"})
-      .animate(anim.delay( 600+(i*50) ));
+      
+    text.toFront();
+    
+    if ( (i+1)===selectedLine){
+      text.attr({"fill":"#000","opacity":1});
+      backBar.attr({"fill":"#ff3","width":bBox.width+20});
+    }
   }
 };
 
@@ -198,6 +215,8 @@ utils.modalizeText=function(obj){
     d+="if open";
   } else if (obj.componentData.hasOwnProperty('if') && obj.componentData.if==='close'){
     d+="if close";
+  } else if (obj.componentData.hasOwnProperty('if') ){
+    d+="if";
   } else if (obj.componentData.hasOwnProperty('invoke') ){
     d+="function: "+obj.componentData.name+" invocation";
   } else if (obj.componentData.hasOwnProperty('return') && obj.componentData.return.hasOwnProperty('value') ) {
