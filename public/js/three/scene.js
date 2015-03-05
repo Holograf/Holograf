@@ -11,8 +11,8 @@ theatre.display=function(allData, onRendered){
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	var scopes = utils.extractScopes(allData);
-	var timeline = utils.parseTimeline(allData.programSteps, allData.components);
-
+	var timeline = utils.parseTimeline(allData);
+	theatre.code = allData.code;
 	theatre.timeline = timeline;
 	
 	init(timeline);
@@ -191,7 +191,14 @@ theatre.display=function(allData, onRendered){
 				}
 				utils.modal.headline(modal,intersects[0]);
 				placeHalo(intersects[0].object.position);
-				utils.rippleList(modal,utils.allValues(timeline,selectedId));
+				var collection = [];
+				/*
+				collection = utils.allValues(timeline,selectedId);
+				*/
+				if (collection.length<1){
+					collection = theatre.code.split("\n");
+				}
+				utils.rippleList(modal,collection,intersects[0].object.componentData.line);
 			}
 		}
 	}
@@ -224,7 +231,14 @@ theatre.display=function(allData, onRendered){
 	function updateModal(modal, node) {
 		utils.modal.headline(modal, node);
 		placeHalo(node.position);
-		utils.rippleList(modal, utils.allValues(theatre.timeline, node.componentData.id));
+		var collection = [];
+		/*
+		collection = utils.allValues(theatre.timeline, node.componentData.id);
+		*/
+		if (collection.length<1){
+			collection = theatre.code.split("\n");
+		}
+		utils.rippleList(modal, collection, node.componentData.line);
 	}
 	
 	function animate() {
