@@ -29,7 +29,8 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   // API
 
   // Set to false to disable this control
-  this.enabled = true;
+  // this.enabled = true;
+
 
   // "target" sets the location of focus, where the control orbits around
   // and where it pans with respect to.
@@ -72,9 +73,8 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   // Set to true to disable use of the keys
   this.noKeys = false;
 
-  // The four arrow keys
-  this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, EXPAND: 32, PAUSE: 13
- };
+  // The keys
+  this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, EXPAND: 32, PAUSE: 13 };
 
   // Mouse buttons
   this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
@@ -340,7 +340,8 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   function onMouseDown( event ) {
 
-    if ( scope.enabled === false ) return;
+    // console.log('theatre.controlsEnabled:', theatre.controlsEnabled);
+    if ( theatre.controlsEnabled === false ) return;
     event.preventDefault();
 
     if ( event.button === scope.mouseButtons.ORBIT ) {
@@ -376,7 +377,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   function onMouseMove( event ) {
 
-    if ( scope.enabled === false ) return;
+    if ( theatre.controlsEnabled === false ) return;
 
     event.preventDefault();
 
@@ -435,7 +436,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   function onMouseUp( event ) {
 
-    if ( scope.enabled === false ) return;
+    if ( theatre.controlsEnabled === false ) return;
     event.preventDefault();
 
     document.removeEventListener( 'mousemove', onMouseMove, false );
@@ -521,7 +522,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   function onMouseWheel( event ) {
 
-    if ( scope.enabled === false || scope.noZoom === true || state !== STATE.NONE ) return;
+    if ( theatre.controlsEnabled === false || scope.noZoom === true || state !== STATE.NONE ) return;
 
     event.preventDefault();
     event.stopPropagation();
@@ -554,7 +555,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   }
 
-  function onKeyDown( event ) {
+  this.onKeyDown = function ( event ) {
 
     if ( scope.enabled === false || scope.noKeys === true || scope.noPan === true ) return;
 
@@ -568,8 +569,6 @@ THREE.OrbitControls = function ( object, domElement, target ) {
           break;
 
         case scope.keys.RIGHT:
-          // scope.pan( - scope.keyPanSpeed, 0 );
-          // scope.update();
           theatre.nextNode();
           break;
       }
@@ -606,15 +605,12 @@ THREE.OrbitControls = function ( object, domElement, target ) {
       case scope.keys.PAUSE:
         theatre.pause();
         break;
-
-
     }
-
   }
 
   function touchstart( event ) {
 
-    if ( scope.enabled === false ) return;
+    if ( theatre.controlsEnabled === false ) return;
 
     switch ( event.touches.length ) {
 
@@ -660,7 +656,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   function touchmove( event ) {
 
-    if ( scope.enabled === false ) return;
+    if ( theatre.controlsEnabled === false ) return;
 
     event.preventDefault();
     event.stopPropagation();
@@ -739,7 +735,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   function touchend( /* event */ ) {
 
-    if ( scope.enabled === false ) return;
+    if ( theatre.controlsEnabled === false ) return;
 
     scope.dispatchEvent( endEvent );
     state = STATE.NONE;
@@ -755,7 +751,8 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   this.domElement.addEventListener( 'touchend', touchend, false );
   this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-  window.addEventListener( 'keydown', onKeyDown, false );
+  this.domElement.addEventListener( 'keydown', this.onKeyDown, false );
+
 
   // force an update at start
   this.update();

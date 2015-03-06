@@ -58,6 +58,17 @@ var AppStore = assign({}, EventEmitter.prototype, {
   },
 
   compileCode : function() {
+
+    if (_compiledStatus) {
+      console.log('cleared scene!');
+      theatre.clearScene();
+
+      // reset initial values
+      _data = [];
+      _shareUrl = '';
+      _compiledStatus = false;
+    }
+
     _isLoading = true;
     AppStore.emitChange();
 
