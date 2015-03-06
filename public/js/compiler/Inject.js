@@ -36,8 +36,6 @@ module.exports = {
     }
   },
 
-  // var object = node.expression.left;
-  // var string = this.traverseMemberExpression(object);
 
 
   //----------------------------------------------------------------------------------

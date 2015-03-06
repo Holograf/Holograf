@@ -12,7 +12,7 @@ var compile = require('../compiler/Compiler')
 var CHANGE_EVENT = 'change';
 var COMPILE_EVENT = 'compile';
 
-var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading;
+var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error;
 var templateCode = 
 'var s = function(a) {\n'+
 '  a();\n'+
@@ -44,7 +44,8 @@ var AppStore = assign({}, EventEmitter.prototype, {
       compiledStatus: _compiledStatus,
       shareUrl: _shareUrl,
       selectedTab: _selectedTab,
-      isLoading: _isLoading
+      isLoading: _isLoading,
+      error: _error
     });
   },
 
@@ -69,15 +70,29 @@ var AppStore = assign({}, EventEmitter.prototype, {
       _compiledStatus = false;
     }
 
-    _isLoading = true;
-    AppStore.emitChange();
+    setTimeout(function (){
+      _isLoading = true;
+      AppStore.emitChange();
+    }, 200);
 
-    _data = compile(_code);
-    _compiledStatus = true;
+    compile(_code)
+      .then(function (data) {
+        _compiledStatus = true;
+        _data = data;
+        AppStore.emitChange();
 
-    setTimeout(function() {
-      AppStore.renderScene();
-    }, 500);
+        setTimeout(function() {
+          AppStore.renderScene();
+        }, 500);
+      })
+      .error(function (error) {
+        _error = {
+          line: error.lineno,
+          message: error.message
+        }
+        _isLoading = false;
+        AppStore.emitChange();
+      })
   },
 
   renderScene: function () {
@@ -103,32 +118,11 @@ var AppStore = assign({}, EventEmitter.prototype, {
     AppStore.emitChange();
   },
 
-  // getCode: function() {
-  //   return _code;
-  // },
-
-  // getData: function() {       
-  //   return _data;
-  // },
-
-  // getShareUrl: function() {
-  //   return _shareUrl;
-  // },
-
-  // getProgramStep: function(n) {
-  //   if (_data) {
-  //     return _data.buildStep(n);
-  //   },
-  
-  // getCompiledStatus: function() {
-  //   return _compiledStatus;
-  // },
-
-  // getProgramStep: function(n) {
-  //   if (_data) {
-  //     return _data.buildStep(n);
-  //   }
-  // },
+  resetError: function () {
+    _error = null;
+    _isLoading = false;
+    AppStore.emitChange();
+  },
 
   emitChange: function() {
     this.emit(CHANGE_EVENT);
@@ -170,6 +164,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
       case AppConstants.SELECT_TAB:
         AppStore.selectTab(action.tab);
+        break;
+
+      case AppConstants.RESET_ERROR:
+        AppStore.resetError();
         break;
     }
 
