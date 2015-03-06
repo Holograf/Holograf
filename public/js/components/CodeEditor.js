@@ -85,9 +85,9 @@ module.exports = React.createClass({
         <CodeMirror {...this.options} className="codeBox"/>
 
         <Panel>
-          <Col xs={6} md={4}><Input readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} className={shareClasses}>Share</Button>} /></Col>
           <Button bsStyle="primary" onClick={this.compile} className={compileClasses} >Compile</Button>
           <Button bsStyle="danger" onClick={this.refresh} className={resetClasses} >Reset Code</Button>
+          <Col xs={6} md={4}><Input readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} className={shareClasses}>Share</Button>} /></Col>
         </Panel>
       </div>
     );

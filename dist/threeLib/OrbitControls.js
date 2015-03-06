@@ -4,12 +4,16 @@
  * @author alteredq / http://alteredqualia.com/
  * @author WestLangley / http://github.com/WestLangley
  * @author erich666 / http://erichaines.com
+ * @author conrad / http://mattconrad.co
  */
 /*global THREE, console */
 
 // This set of controls performs orbiting, dollying (zooming), and panning. It maintains
 // the "up" direction as +Y, unlike the TrackballControls. Touch on tablet and phones is
 // supported.
+//
+// These controls have been customized to allow for changes to be made to a scene
+// and then to re-render it.
 //
 //    Orbit - left mouse / touch: one finger move
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
@@ -21,16 +25,27 @@
 //      controls.target.z = 150;
 // Simple substitute "OrbitControls" and the control should work as-is.
 
-THREE.OrbitControls = function ( object, domElement, target ) {
+THREE.OrbitControls = function ( object, domElement, target, compiledStatus ) {
 
   this.object = object;
   this.domElement = ( domElement !== undefined ) ? domElement : document;
 
+  // Remove prior controls event listeners upon subsequent compiling/rendering:
+  if (compiledStatus) {
+    this.domElement.removeEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
+    this.domElement.removeEventListener( 'mousedown', onMouseDown, false );
+    this.domElement.removeEventListener( 'mousewheel', onMouseWheel, false );
+    this.domElement.removeEventListener( 'DOMMouseScroll', onMouseWheel, false ); // firefox
+    this.domElement.removeEventListener( 'touchstart', touchstart, false );
+    this.domElement.removeEventListener( 'touchend', touchend, false );
+    this.domElement.removeEventListener( 'touchmove', touchmove, false );
+    this.domElement.removeEventListener( 'keydown', onKeyDown, false );
+  }
+
   // API
 
   // Set to false to disable this control
-  // this.enabled = true;
-
+  this.enabled = true;
 
   // "target" sets the location of focus, where the control orbits around
   // and where it pans with respect to.
@@ -74,7 +89,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   this.noKeys = false;
 
   // The keys
-  this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, EXPAND: 32, PAUSE: 13 };
+  this.keys = { LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, EXPAND: 32, PAUSE: 13 };
 
   // Mouse buttons
   this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
@@ -116,7 +131,6 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   var state = STATE.NONE;
 
   // for reset
-
   this.target0 = this.target.clone();
   this.position0 = this.object.position.clone();
 
@@ -284,6 +298,9 @@ THREE.OrbitControls = function ( object, domElement, target ) {
     // rotate offset back to "camera-up-vector-is-up" space
     offset.applyQuaternion( quatInverse );
 
+    if (theatre.nodeView) {
+      this.target = theatre.target;
+    }
     position.copy( this.target ).add( offset );
 
     this.object.lookAt( this.target );
@@ -312,7 +329,19 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   this.reset = function () {
 
+    if ( document.getElementById("modal-canvas") ){
+      document.body.removeChild(document.getElementById("modal-canvas"));
+    }
+
+    if (theatre.initCamera) {
+      new TWEEN.Tween(theatre.camera.position).to(theatre.initCamera.position, theatre.cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
+      new TWEEN.Tween( theatre.camera.rotation ).to(theatre.initCamera.rotation, theatre.cameraSpeed).easing(TWEEN.Easing.Quadratic.InOut).start();
+    }
+    // theatre.target = theatre.initTarget;
+    theatre.selectHalo.material.opacity = 0;
+
     state = STATE.NONE;
+    theatre.nodeView = false;
 
     this.target.copy( this.target0 );
     this.object.position.copy( this.position0 );
@@ -339,7 +368,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   }
 
   function onMouseDown( event ) {
-
+    // console.log('event:', event);
     // console.log('theatre.controlsEnabled:', theatre.controlsEnabled);
     if ( theatre.controlsEnabled === false ) return;
     event.preventDefault();
@@ -366,17 +395,16 @@ THREE.OrbitControls = function ( object, domElement, target ) {
       panStart.set( event.clientX, event.clientY );
 
     }
-
     if ( state !== STATE.NONE ) {
       document.addEventListener( 'mousemove', onMouseMove, false );
       document.addEventListener( 'mouseup', onMouseUp, false );
       scope.dispatchEvent( startEvent );
     }
-
   }
 
   function onMouseMove( event ) {
-
+    // debugger;
+    // console.log('onMouseMove');
     if ( theatre.controlsEnabled === false ) return;
 
     event.preventDefault();
@@ -444,6 +472,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
     scope.dispatchEvent( endEvent );
     state = STATE.NONE;
   }
+
     // The following is inside scene.js - if this action is the problem, might refactor to go here in order to allow highlighting of ShareURL 
   //   if (theatre.expanded === false) return;
 
@@ -555,48 +584,54 @@ THREE.OrbitControls = function ( object, domElement, target ) {
 
   }
 
-  this.onKeyDown = function ( event ) {
+  onKeyDown = function ( event ) {
 
     if ( scope.enabled === false || scope.noKeys === true || scope.noPan === true ) return;
 
-    // change key controls if you're in nodeView
-    if ( theatre.nodeView ) {
+    // if ( theatre.nodeView ) {
 
       switch ( event.keyCode ) {
 
         case scope.keys.LEFT:
           theatre.prevNode();
+          // scope.update();
           break;
 
         case scope.keys.RIGHT:
           theatre.nextNode();
+          // scope.update();
           break;
-      }
 
-      return;
-    }
+        case scope.keys.DOWN:
+          scope.reset();
+          // scope.update();
+          break;
+    //   }
 
-    switch ( event.keyCode ) {
+    //   return;
+    // }
 
-      case scope.keys.UP:
-        scope.pan( 0, scope.keyPanSpeed );
-        scope.update();
-        break;
+    // switch ( event.keyCode ) {
 
-      case scope.keys.BOTTOM:
-        scope.pan( 0, - scope.keyPanSpeed );
-        scope.update();
-        break;
+    //   case scope.keys.UP:
+    //     scope.pan( 0, scope.keyPanSpeed );
+    //     scope.update();
+    //     break;
 
-      case scope.keys.LEFT:
-        scope.pan( scope.keyPanSpeed, 0 );
-        scope.update();
-        break;
+    //   case scope.keys.DOWN:
+    //     scope.pan( 0, - scope.keyPanSpeed );
+    //     scope.update();
+    //     break;
 
-      case scope.keys.RIGHT:
-        scope.pan( - scope.keyPanSpeed, 0 );
-        scope.update();
-        break;
+    //   case scope.keys.LEFT:
+    //     scope.pan( scope.keyPanSpeed, 0 );
+    //     scope.update();
+    //     break;
+
+    //   case scope.keys.RIGHT:
+    //     scope.pan( - scope.keyPanSpeed, 0 );
+    //     scope.update();
+    //     break;
 
       case scope.keys.EXPAND:
         theatre.expand();
@@ -751,7 +786,7 @@ THREE.OrbitControls = function ( object, domElement, target ) {
   this.domElement.addEventListener( 'touchend', touchend, false );
   this.domElement.addEventListener( 'touchmove', touchmove, false );
 
-  this.domElement.addEventListener( 'keydown', this.onKeyDown, false );
+  this.domElement.addEventListener( 'keydown', onKeyDown, false );
 
 
   // force an update at start

@@ -699,7 +699,7 @@ subroutines.Composite = function(data,scopes,particleLight){
 	animations[animations.length-1].chain(animations[0]);
 	particleLight.tween=animations[0];
 	
-	console.log(data);
+	// console.log(data);
 	return composite;
 };	
 

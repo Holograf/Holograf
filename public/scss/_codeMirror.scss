@@ -4,9 +4,15 @@
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
   font-size: 1.75rem;
-  height: $input-height;
+  height: $input-height;  
   padding-top: $input-margin;
+  line-height: 1;
+  position: relative;
+  overflow: hidden;
+  background: white;
+  color: black;
 }
+
 
 /* PADDING */
 
@@ -140,13 +146,6 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 /* The rest of this file contains styles related to the mechanics of
    the editor. You probably shouldn't touch them. */
 
-.CodeMirror {
-  line-height: 1;
-  position: relative;
-  overflow: hidden;
-  background: white;
-  color: black;
-}
 
 .CodeMirror-scroll {
   overflow: scroll !important; /* Things will break if this is overridden */

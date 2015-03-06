@@ -46,7 +46,7 @@ module.exports = React.createClass({
             <CodeEditor {...this.props} />
           </TabPane>
           <TabPane className="tab2" eventKey={2} tab="3D Visualization">
-            <Visual3D data={this.props.data} compiledStatus={this.props.compiledStatus} />
+            <Visual3D {...this.props.data} />
           </TabPane>
           <TabPane className="tab3" eventKey={3} tab="Instructions">
             <Instructions />
