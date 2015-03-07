@@ -13,18 +13,26 @@ $input-margin: 20px;
 
 body {
   font-family: "PT Mono","lucida grande","Segoe UI",arial,verdana,"lucida sans unicode",tahoma,sans-serif;
-  font-size: 2rem;
 }
 
 .navbar-brand {
   font-size: 3rem;
+  padding-bottom: 0;
+  height: auto;
 }
+a {
+  font-size: 1.5rem;
+}
+// .nav {
+//   position: absolute;
+// }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
-    color: #555;
-    background-color: $lighter-gray;
-    border: 1px solid #ddd;
-    border-bottom-color: transparent;
+  color: #555;
+  background-color: $lighter-gray;
+  // background-color: $gray;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
 }
 .dataInput {
   margin-top: $input-margin;
@@ -32,10 +40,6 @@ body {
   // min-height: $input-height - 35px;
   font-family: monospace;
   font-size: 16px;
-}
-.navbar-brand {
-  padding-bottom: 0;
-  height: auto;
 }
 // .visual-container {
 //   background-color: #ececec;
@@ -59,16 +63,13 @@ body {
 .codeButton {
   margin: 5px 5px 5px 10px;
 }
-
 .modal-body {
   min-height: 400px;
 }
-
 #three-scene {
   background-color: #333333;
   // height: $window-heightpx;
 }
-
 #three-modal{
   display:none;
   position:fixed;

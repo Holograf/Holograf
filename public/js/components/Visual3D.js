@@ -11,15 +11,9 @@ var Input = require('react-bootstrap/Input');
 var Col = require('react-bootstrap/Col');
 var Actions = require('../actions/Actions');
 
-
-
-// import threejs scene once it's kosher with Browserify
-// var ThreeJS = require('../three/src/scene');
-
 module.exports = React.createClass({
 
   save: function () {
-    // To add processed code use: processedCode: JSON.stringify(this.props.data)};
     var data = {rawCode: this.props.code, processedCode: 'processedCode'};
     Actions.updateUrl(data);
   },

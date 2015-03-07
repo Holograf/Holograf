@@ -587,6 +587,10 @@ THREE.OrbitControls = function ( object, domElement, target, compiledStatus ) {
   onKeyDown = function ( event ) {
 
     if ( scope.enabled === false || scope.noKeys === true || scope.noPan === true ) return;
+    if (!theatre.expanded) {
+      theatre.expand();
+      return;
+    }
 
     // if ( theatre.nodeView ) {
 
@@ -594,12 +598,12 @@ THREE.OrbitControls = function ( object, domElement, target, compiledStatus ) {
 
         case scope.keys.LEFT:
           theatre.prevNode();
-          // scope.update();
+          scope.update();
           break;
 
         case scope.keys.RIGHT:
           theatre.nextNode();
-          // scope.update();
+          scope.update();
           break;
 
         case scope.keys.DOWN:
