@@ -32,7 +32,8 @@
     "react-addons": "^0.9.1-deprecated",
     "react-bootstrap": "^0.13.3",
     "react-router": "^0.12.0",
-    "webworkify": "^1.0.2"
+    "webworkify": "^1.0.2",
+    "workerify": "^0.3.0"
   },
   "devDependencies": {
     "gulp": "^3.8.10",
@@ -50,6 +51,7 @@
     "reactify": "^1.0.0",
     "rewireify": "0.0.13",
     "run-sequence": "^1.0.2",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "webworkify": "^1.0.2"
   }
 }

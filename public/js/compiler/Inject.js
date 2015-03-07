@@ -1,7 +1,6 @@
 var esprimaParse = require('esprima').parse;
 
 module.exports = {
-
   //----------------------------------------------------------------------------------
   // Explicit Injection point methods
   variable: function (node) {
@@ -43,9 +42,11 @@ module.exports = {
   traverseMemberExpression: function (object) { // Make a string of accessors from an object node?
     var string = '';
     var accessorType = '';
+    var accessor;
     var traverse = function (object) {
       if (object.property) {
         accessorType = object.property.type;
+        accessor = object.property;
         if (object.property.type === 'Literal') {
           string = '[' + object.property.value + ']' + string;
         } else {
@@ -66,6 +67,7 @@ module.exports = {
 
     return {
       string: string,
+      accessor: accessor,
       accessorType: accessorType
     }
   },
@@ -81,16 +83,63 @@ module.exports = {
   },
 
   memberExpression: function (node) {
+
+    console.log(node);
+
     var object = node.expression.left;
     var traversedObject = this.traverseMemberExpression(object);
     var string = traversedObject.string;
     var accessorType = traversedObject.accessorType;
+    var accessor = traversedObject.accessor;
     var parent = this.parseParent(string);
     var key = this.parseKey(string);
 
     var injectedNode = this.createNode('setObjectProperty', string);
     this.addArgument(injectedNode, key, accessorType);
 
+
+    console.log(accessor);
+    this.addExpressionArgument(injectedNode, accessor);
+
+    return injectedNode;
+  },
+
+  parentObject: function (node) {
+    var parentObject = node.expression.left.object;
+    var injectedNode = esprimaParse('___Program.parentObject = {};').body[0];
+    injectedNode.expression.right = parentObject;
+    return injectedNode;
+  },
+
+  objectAccessor: function (node) {
+    var objectAccessor = deepCopy( node.expression.left.property );
+    var injectedNode = esprimaParse('___Program.objectAccessor = {};').body[0];
+    injectedNode.expression.right = objectAccessor;
+
+    if (node.expression.left.computed === false) {
+      injectedNode.expression.right = {
+        type: 'Literal',
+        value: injectedNode.expression.right.name
+      }
+      console.log(injectedNode);
+    }
+
+    return injectedNode;
+  },
+
+  objectExpressionStatement: function (node, parentObjectNode, objectAccessorNode) {
+    var rightExpression = node.expression.right;
+    var injectedNode = esprimaParse('___Program.parentObject[___Program.objectAccessor] = expression;').body[0];
+    injectedNode.expression.right = rightExpression;
+    return injectedNode;
+  },
+
+  setObjectPropertyExpression: function (node) {
+    console.log('NODE TO INJECT!', node);
+    var lineNumber = node.loc.start.line;
+    var injectedNode = esprimaParse(
+      '___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor,' + lineNumber + ');'
+      ).body[0];
     return injectedNode;
   },
 
@@ -353,6 +402,11 @@ module.exports = {
     return node;
   },
 
+  addExpressionArgument: function (node, expression) {
+    node.expression.arguments.push(expression);
+    return node;
+  },
+
   changeLineArgument: function (injectedNode, line) {
     var lastIndex = injectedNode.expression.arguments.length - 1;
     injectedNode.expression.arguments[lastIndex] = {
@@ -387,6 +441,8 @@ module.exports = {
 
 }
 
-
+var deepCopy = function (node) {
+  return JSON.parse( JSON.stringify(node) );
+}
 
 

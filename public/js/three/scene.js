@@ -115,7 +115,6 @@ theatre.display = function(allData, onRendered) {
 
 		//extract that offset into external variable that doesn't have to be recalculated every time... later
 		var x =  ( e.clientX / window.innerWidth ) * 2 - 1;
-
 		var y = - ( (e.clientY-$(container).offset().top ) / (window.innerHeight-105) ) * 2 + 1;
 
 		//check the type of camera
