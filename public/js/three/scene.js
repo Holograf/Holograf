@@ -77,8 +77,6 @@ theatre.display = function(allData, onRendered) {
 		theatre.container = container;
 		container.appendChild(renderer.domElement);
 
-
-		renderer.setSize(window.innerWidth-20,window.innerHeight-$(container).offset().top);
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		window.addEventListener( 'resize', onWindowResize, false );
