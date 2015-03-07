@@ -1,3 +1,3 @@
-var y = {a: {name: 'andy'}};
-var x = {};
-x.name = y.a;
+var bug = 0;
+for (var i = bug; i < 3; i++) {
+}

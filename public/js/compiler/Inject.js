@@ -84,8 +84,13 @@ module.exports = {
   //----------------------------------------------------------------------------------
   // Loop Injection helper functions
   loopInit: function (node, type) {
-    var name = node.init.declarations[0].id.name;
-    var value = node.init.declarations[0].init.value;
+    if (type === 'for') {
+      var name = node.init.declarations[0].id.name;
+      var value = node.init.declarations[0].init.value;
+    } else {
+      name = node.left.declarations[0].id.name;
+      value = node.left.declarations[0].init;
+    }
 
     return this.createNode('set', name, value);
   },
@@ -94,17 +99,30 @@ module.exports = {
                                     // as well as the 'init' (for for loops) and 'cycle'
     var injectionPoint = node.body;
 
-    if (type === 'for') {
+    if (type === 'forIn') {
       // Insert a watcher on the iterator
-      var name = node.init.declarations[0].id.name;
+      var name = node.left.declarations[0].id.name;
       var injectedNode = this.createNode('set', name);
       this.addArgument(injectedNode, node.loc.start.line);
+      injectionPoint.body.unshift(injectedNode);
+
+      // Inject a watcher for the loop cycle
+      injectedNode = this.createNode('loop', 'for', 'cycle');
+      injectionPoint.body.unshift(injectedNode);
+      return this.createNode('loop', 'for', 'open');
+    }
+
+    if (type === 'for') {
+      // Insert a watcher on the iterator
+      name = node.init.declarations[0].id.name;
+      injectedNode = this.createNode('set', name);
       injectionPoint.body.unshift(injectedNode);
 
       // Inject a watcher for the loop cycle
       injectedNode = this.createNode('loop', type, 'cycle');
       this.addArgument(injectedNode, node.loc.start.line);
       injectionPoint.body.unshift(injectedNode);
+      return this.createNode('loop', type, 'open');
     }
 
     if (type === 'while' || type === 'do') {
@@ -112,9 +130,10 @@ module.exports = {
       injectedNode = this.createNode('loop', type, 'cycle');
       this.addArgument(injectedNode, node.loc.start.line);
       injectionPoint.body.unshift(injectedNode);
+      return this.createNode('loop', type, 'open');
     }
 
-    return this.createNode('loop', type, 'open');
+    
   },
 
   loopClose: function (node, type) { // Inject ___Program.block(loop type, 'close')
@@ -122,7 +141,11 @@ module.exports = {
   },
 
   loopPost: function (node, type) { // Handle iterator value after loop execution
-    var name = node.init.declarations[0].id.name;
+    if (type === 'for') {
+      var name = node.init.declarations[0].id.name;
+    } else { 
+      name = node.left.declarations[0].id.name;
+    }
     var injectedNode = this.createNode('set', name);
 
     return injectedNode;
@@ -193,7 +216,7 @@ module.exports = {
     return injectedNode.body[0];
   },
 
-  method: function (node, name, params) {
+  method: function (node, params) {
     this.invoke(node, params, 'method');
   },
 

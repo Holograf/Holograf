@@ -8,6 +8,7 @@ var wrappedFunctionCount = 0;
 
 var Parser = function (code) {
 
+  // console.log(JSON.stringify(esprimaParse(code), null, 2));
   return new Promise (function (resolve, reject) {
     var syntaxTree = esprimaParse(code, {loc: true});
     var programBody = syntaxTree.body;
@@ -29,41 +30,37 @@ var traverseFunction = function (fn) {
   traverse(functionBody.body);
 }
 
-var traverseMethod = function (method, name) {
+var traverseMethod = function (method) {
   var methodBody = method.body;
   var params = method.params;
 
   // Inject invocation and parameter watchers inside the function body 
-  inject.method(methodBody, name, params);
+  inject.method(methodBody, params);
   traverse(methodBody.body);
 }
 
-var traverseObjectProperties = function (properties, objName) {
+var traverseObjectProperties = function (properties) {
   for (var i = 0; i < properties.length; i++) {
     var property = properties[i];
-    var keyName = objName + '[' + property.key.name + ']';
-    
     if (property.value.type === 'FunctionExpression') {
-      traverseMethod(property.value, keyName);
+      traverseMethod(property.value);
     } else if (property.value.type === 'ObjectExpression') {
-      traverseObjectProperties(property.value.properties, keyName);
+      traverseObjectProperties(property.value.properties);
     } else if (property.value.type === 'ArrayExpression') {
-      traverseArrayElements(property.value.elements, keyName);
+      traverseArrayElements(property.value.elements);
     }
   }
 }
 
-var traverseArrayElements = function (elements, arrName) {
+var traverseArrayElements = function (elements) {
   for (var index = 0; index < elements.length; index++) {
     var element = elements[index];
-    var indexName = arrName + '[' + index + ']';
-    
     if (element.type === 'FunctionExpression') {
       traverseFunction(element, '___anonymous');
     } else if (element.type === 'ObjectExpression') {
-      traverseObjectProperties(element.properties, indexName);
+      traverseObjectProperties(element.properties);
     } else if (element.type === 'ArrayExpression') {
-      traverseArrayElements(element.elements, indexName);
+      traverseArrayElements(element.elements);
     } 
   }
 }
@@ -74,9 +71,9 @@ var traverseArguments = function (args) {
     if (arg.type === 'FunctionExpression') {
       traverseFunction(arg, '___anonymous');
     } else if (arg.type === 'ObjectExpression') {
-      traverseObjectProperties(arg.properties, indexName);
+      traverseObjectProperties(arg.properties);
     } else if (arg.type === 'ArrayExpression') {
-      traverseArrayElements(arg.elements, indexName);
+      traverseArrayElements(arg.elements);
     } 
   }
 }
@@ -220,6 +217,14 @@ var traverse = function (body) {
         injectAfter(node, body, index, 'return');
 
         advance(2);
+      }
+      
+      if (node.type === 'ForInStatement') {
+        injectBefore(node, body, index, 'loopInit', 'forIn');
+        injectAfter(node, body, index, 'loopOpen', 'forIn');
+        injectAfter(node, body, index + 2, 'loopClose', 'for');
+        injectAfter(node, body, index + 3, 'loopPost', 'forIn');
+        advance(4);
       }
 
       if (node.type === 'ForStatement') {
