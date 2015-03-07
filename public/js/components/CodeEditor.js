@@ -27,17 +27,6 @@ module.exports = React.createClass({
   },
 
   compile: function (e) {
-    // console.log('this.props:',this.props);
-    if (this.props.compiledStatus) {
-      theatre.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
-      window.addEventListener( 'mousemove', null, false );
-      window.addEventListener( 'resize', null, false );
-      window.addEventListener( 'mouseup', null, false);
-      window.addEventListener( 'keydown', null, false );
-    }
-      // theatre.removeScene();
-
-
     Actions.compile();
   },
 
@@ -53,6 +42,12 @@ module.exports = React.createClass({
 
 // bsStyle options: ["default","primary","success","info","warning","danger","link","inline","tabs","pills"]. 
   render: function () {
+
+    if (this.props.selectedTab === 2 && !this.props.compiledStatus && theatre.firstRender) {
+      this.compile();
+      theatre.firstRender = false;
+    }
+
     // dynamic classes for the buttons
     var cx = React.addons.classSet; 
     var compileClasses = cx({

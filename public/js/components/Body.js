@@ -33,10 +33,9 @@ module.exports = React.createClass({
         document.body.removeChild(document.getElementById("modal-canvas"));
       }
       // console.log('selectedTab:', this.props.selectedTab);
-    } else {
+    } else {            //if (this.props.compiledStatus) {
       theatre.controlsEnabled = true;
     }
-
 
     return (
       <div className="appContainer" >
@@ -46,7 +45,7 @@ module.exports = React.createClass({
             <CodeEditor {...this.props} />
           </TabPane>
           <TabPane className="tab2" eventKey={2} tab="3D Visualization">
-            <Visual3D {...this.props.data} />
+            <Visual3D {...this.props} />
           </TabPane>
           <TabPane className="tab3" eventKey={3} tab="Instructions">
             <Instructions />

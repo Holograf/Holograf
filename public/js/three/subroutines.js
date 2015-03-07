@@ -3,50 +3,49 @@ var subroutines={};
 // inside methods propertize, elementize, labelize - create 
 
 
-subroutines.Fun=function(composite, opts){
-	if (opts===undefined){var opts={};}
-	if (opts.z1===undefined){opts.z1=0;}
-	if (opts.z2===undefined){opts.z2=0;}
-	if (opts.x1===undefined){opts.x1=0;}
-	if (opts.componentData===undefined){opts.componentData={};}
-	var x=opts.x1;
-	var z1=opts.z1;
-	var z2=opts.z2;
-	var r=opts.r || 300;
+subroutines.Fun = function(composite, opts){
+	if (opts === undefined){var opts={};}
+	if (opts.z1 === undefined){opts.z1=0;}
+	if (opts.z2 === undefined){opts.z2=0;}
+	if (opts.x1 === undefined){opts.x1=0;}
+	if (opts.componentData === undefined){opts.componentData={};}
+	var x = opts.x1;
+	var z1 = opts.z1;
+	var z2 = opts.z2;
+	var r = opts.r || 300;
 	var geometry = Object.create(subroutines.variableGeometry);
 	var grayness = 0.5;
-	var material=new THREE.MeshLambertMaterial({});
+	var material = new THREE.MeshLambertMaterial({});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
-	object.grayness=grayness;
-	object.componentData=opts.componentData;
-	object.componentData.primary=true;
-	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
+	object.grayness = grayness;
+	object.componentData = opts.componentData;
+	object.componentData.primary = true;
+	object = utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
-	object.rotation.x=-1*(Math.PI/2);
+	object.rotation.x = -1 * (Math.PI/2);
 	composite.add(object);
 	
-	if (opts.componentData.type==='property'){
+	if (opts.componentData.type === 'property'){
 		subroutines.propertize(composite,opts);
-	} else if (opts.componentData.type==='element'){
+	} else if (opts.componentData.type === 'element'){
 		subroutines.elementize(composite,opts);
 	}
 	
 	if (opts.componentData.value!==undefined){
 		subroutines.labelize(composite,opts);
 	}
-	
 };
 
 subroutines.ArrayDeclaration=function(composite, opts){
-	if (opts===undefined){var opts={};}
-	if (opts.z1===undefined){opts.z1=0;}
-	if (opts.z2===undefined){opts.z2=0;}
-	if (opts.x1===undefined){opts.x1=0;}
-	if (opts.x2===undefined){opts.x2=0;}
-	if (opts.componentData===undefined){opts.componentData={};}
+	if (opts === undefined){var opts={};}
+	if (opts.z1 === undefined){opts.z1=0;}
+	if (opts.z2 === undefined){opts.z2=0;}
+	if (opts.x1 === undefined){opts.x1=0;}
+	if (opts.x2 === undefined){opts.x2=0;}
+	if (opts.componentData === undefined){opts.componentData={};}
 	var geometry = Object.create(subroutines.functionDeclarationGeometry);
 	var grayness = 0.5;
 	var material=new THREE.MeshBasicMaterial({});
@@ -93,9 +92,9 @@ subroutines.ArrayDeclaration=function(composite, opts){
 	var path = new THREE.Path( curve.getPoints( 4 ) );
 	var geometry = path.createPointsGeometry( 4 );
 	var ellipse = new THREE.Line( geometry, material );
-	ellipse.componentData=opts.componentData;
+	ellipse.componentData = opts.componentData;
 	ellipse.grayness = grayness;
-	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	ellipse = utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	ellipse.position.set( opts.x1, 0, opts.z1 );
 	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
 	
@@ -103,22 +102,22 @@ subroutines.ArrayDeclaration=function(composite, opts){
 };
 
 subroutines.ObjectDeclaration=function(composite, opts){
-	if (opts===undefined){var opts={};}
-	if (opts.z1===undefined){opts.z1=0;}
-	if (opts.z2===undefined){opts.z2=0;}
-	if (opts.x1===undefined){opts.x1=0;}
-	if (opts.x2===undefined){opts.x2=0;}
-	if (opts.componentData===undefined){opts.componentData={};}
+	if (opts === undefined){var opts={};}
+	if (opts.z1 === undefined){opts.z1=0;}
+	if (opts.z2 === undefined){opts.z2=0;}
+	if (opts.x1 === undefined){opts.x1=0;}
+	if (opts.x2 === undefined){opts.x2=0;}
+	if (opts.componentData === undefined){opts.componentData={};}
 	var geometry = Object.create(subroutines.objectDeclarationGeometry);
 	var grayness = 0.9;
 	var material=new THREE.MeshBasicMaterial({});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
-	object.grayness=grayness;
-	object.componentData=opts.componentData;
-	object.componentData.primary=true;
-	object=utils.tweenify(object,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	object.grayness = grayness;
+	object.componentData = opts.componentData;
+	object.componentData.primary = true;
+	object = utils.tweenify(object,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( opts.x1, 0, opts.z1 );
 	composite.add(object);
@@ -136,12 +135,12 @@ subroutines.ObjectDeclaration=function(composite, opts){
 	
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
-	ellipse.componentData=opts.componentData;
+	ellipse.componentData = opts.componentData;
 	ellipse.grayness = grayness;
-	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	ellipse = utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	
 	ellipse.position.set( opts.x1, 0, opts.z1 );
-	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({x:2*Math.PI},6000).repeat(Infinity).start();
+	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({x:2 * Math.PI},6000).repeat(Infinity).start();
 	
 	composite.add(ellipse);
 			
@@ -157,60 +156,60 @@ subroutines.ObjectDeclaration=function(composite, opts){
 	var material = new THREE.LineBasicMaterial( { color : 0xffffff } );
 	
 	var ellipse = new THREE.Line( geometry, material );
-	ellipse.componentData=opts.componentData;
+	ellipse.componentData = opts.componentData;
 	ellipse.grayness = grayness;
-	ellipse=utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
+	ellipse = utils.tweenify(ellipse,{z1:opts.z1, z2:opts.z2, x1:opts.x1, x2:opts.x2} );
 	ellipse.position.set( opts.x1, 0, opts.z1 );
 	ellipse.rotate = new TWEEN.Tween(ellipse.rotation).to({y:2*Math.PI},3000).repeat(Infinity).start();
 	
 	composite.add(ellipse);
 };
 
-subroutines.FunctionDeclaration=function(composite, opts){
-	if (opts===undefined){var opts={};}
-	if (opts.z1===undefined){opts.z1=0;}
-	if (opts.z2===undefined){opts.z2=0;}
-	if (opts.x===undefined){opts.x=0;}
-	if (opts.componentData===undefined){opts.componentData={};}
-	var x=opts.x;
-	var z1=opts.z1;
-	var z2=opts.z2;
-	var r=opts.r || 300;
+subroutines.FunctionDeclaration = function(composite, opts){
+	if (opts === undefined){var opts = {};}
+	if (opts.z1 === undefined){opts.z1 = 0;}
+	if (opts.z2 === undefined){opts.z2 = 0;}
+	if (opts.x === undefined){opts.x = 0;}
+	if (opts.componentData === undefined){opts.componentData = {};}
+	var x = opts.x;
+	var z1 = opts.z1;
+	var z2 = opts.z2;
+	var r = opts.r || 300;
 	var geometry = Object.create(subroutines.functionDeclarationGeometry);
 	var grayness = 0.9;
-	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
+	var material = new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
-	object.grayness=grayness;
-	object.componentData=opts.componentData;
-	object.componentData.primary=true;
-	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
+	object.grayness = grayness;
+	object.componentData = opts.componentData;
+	object.componentData.primary = true;
+	object = utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
 	composite.add(object);
 };
 
 subroutines.FunctionInvocation=function(composite, opts){
-	if (opts===undefined){var opts={};}
-	if (opts.z1===undefined){opts.z1=0;}
-	if (opts.z2===undefined){opts.z2=0;}
-	if (opts.x===undefined){opts.x=0;}
-	if (opts.componentData===undefined){opts.componentData={};}
-	var x=opts.x;
-	var z1=opts.z1;
-	var z2=opts.z2;
-	var r=opts.r || 300;
+	if (opts === undefined){var opts={};}
+	if (opts.z1 === undefined){opts.z1=0;}
+	if (opts.z2 === undefined){opts.z2=0;}
+	if (opts.x === undefined){opts.x=0;}
+	if (opts.componentData === undefined){opts.componentData={};}
+	var x = opts.x;
+	var z1 = opts.z1;
+	var z2 = opts.z2;
+	var r = opts.r || 300;
 	var geometry = Object.create(subroutines.funGeometry);
 	var grayness = 0.9;
-	var material=new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
+	var material = new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
 	material.color.setRGB( grayness, grayness, grayness );
 	var object = new THREE.Mesh(geometry, material );
 
-	object.grayness=grayness;
-	object.componentData=opts.componentData;
-	object.componentData.primary=true;
-	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
+	object.grayness = grayness;
+	object.componentData = opts.componentData;
+	object.componentData.primary = true;
+	object = utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
 		
 	object.position.set( x, 0, z1 );
 	object.rotation.x=(Math.PI/2);
@@ -447,6 +446,32 @@ subroutines.skybox = function(scene, maxSize) {
 
 };
 
+subroutines.Axes = function(scene) {
+	var xLineMaterial = new THREE.LineBasicMaterial( { color: 'yellow'} );
+	var yLineMaterial = new THREE.LineBasicMaterial( { color: 'red'} );
+	var zLineMaterial = new THREE.LineBasicMaterial( { color: 'green'} );
+	
+	var xGeometry = new THREE.Geometry();
+	xGeometry.vertices.push(	new THREE.Vector3( -10000, 0, 0 ) );
+	xGeometry.vertices.push(	new THREE.Vector3( 10000, 0, 0 ) );
+	
+	var yGeometry = new THREE.Geometry();
+	yGeometry.vertices.push(	new THREE.Vector3( 0, -10000, 0 ) );
+	yGeometry.vertices.push(	new THREE.Vector3( 0, 10000, 0 ) );
+	
+	var zGeometry = new THREE.Geometry();
+	zGeometry.vertices.push(	new THREE.Vector3( 0, 0, -10000 ) );
+	zGeometry.vertices.push(	new THREE.Vector3( 0, 0, 10000 ) );
+	
+	xLines[0] = new THREE.Line( xGeometry, xLineMaterial );
+	yLines[1] = new THREE.Line( yGeometry, yLineMaterial );
+	zLines[2] = new THREE.Line( zGeometry, zLineMaterial );
+
+	scene.add(xLine);
+	scene.add(yLine);
+	scene.add(zLine);
+};
+
 subroutines.elementize=function(composite,opts){
 
 	// create copies so that you can set primary to false and avoid them as you move through timeline nodes
@@ -513,8 +538,6 @@ subroutines.SelectHalo=function(scene,opts){
 
 	return halo;
 };
-
-
 
 subroutines.propertize=function(composite,opts){
 
@@ -629,24 +652,21 @@ subroutines.Composite = function(data,scopes,particleLight){
 			radius=200;
 		}
 		
-		
-		
+
 		//all the possible heiroglyphs
-		var opts={z1:z1, z2:z2, x1:0, x2:x, componentData:data[i].component, radius:radius} ;
-		
+		var opts = {z1:z1, z2:z2, x1:0, x2:x, componentData:data[i].component, radius:radius} ;
 		
 		//console.log(data[i].component.time);
 		
-		var delorian=100;
+		var delorian = 100;
 		if (i<data.length-1 && typeof data[i].component.time==='number' && typeof data[i+1].component.time==='number') {
 			delorian=2000*(data[i+1].component.time-data[i].component.time);
 		}
 		nextTween=new TWEEN.Tween(particleLight.position).to({x:x, z:z2}, delorian);
+		// nextTween = new TWEEN.Tween(particleLight.position).to({x:x, z:z2}, cycleStep);
 		animations.push(nextTween);
 		animations[i].chain(animations[i+1]);
 
-		
-		
 		
 		if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='array') {
 			subroutines.ArrayDeclaration(composite, opts);

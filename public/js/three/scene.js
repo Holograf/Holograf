@@ -3,7 +3,8 @@ var theatre = {
 	expanded: false, 
 	controlsEnabled: true, 	//toggle based on tab, link controls to
 	nodeView: false,
-	cameraSpeed: 1500
+	cameraSpeed: 1500,
+	firstRender: true
 };
 
 
@@ -197,13 +198,14 @@ theatre.display = function(allData, onRendered) {
 			// if an object is clicked, enter nodeView and zoom in
 			} else if (intersects.length > 0) { 
 				// save the prior position before entering nodeView
-				if (!theatre.nodeView) {
-					theatre.lastPosition = new THREE.Vector3().copy( camera.position );
-					theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
-				}
+				// if (!theatre.nodeView) {
+				// 	theatre.lastPosition = new THREE.Vector3().copy( camera.position );
+				// 	theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
+				// }
 
-				var selectedId=intersects[0].object.componentData.id || -1;
+				var selectedId = intersects[0].object.componentData.id || -1;
 
+				// maybe?
 				theatre.currentNode = intersects[0].object;
 				theatre.viewNode(theatre.currentNode.position);
 
@@ -241,17 +243,19 @@ theatre.display = function(allData, onRendered) {
 	}
 
 	function createModal(){
-	  var canvas=document.createElement("DIV");
+	  var canvas = document.createElement("div");
 	  // TODO refactor these into CSS
-	  canvas.id="modal-canvas";
-	  canvas.style.position="fixed";
-	  canvas.style.top="90px";
-	  canvas.style.left="0px";
-	  canvas.style.width=$(window).innerWidth()+"px";
-	  canvas.style.height=$(window).innerHeight()+90+"px";
-	
+	  canvas.id = "modal-canvas";
+	  canvas.style.position = "fixed";
+	  canvas.style.top = "46px";
+	  canvas.style.left = "0px";
+	  canvas.style.bottom = "50px"
+	  canvas.style.width = $(window).innerWidth()+ "px";
+	  var height = $(window).innerHeight - 96;
+	  canvas.style.height = height + "px";
+
 	  document.body.appendChild(canvas);
-	  
+
 	  var c = new Raphael('modal-canvas');
 	  return c;
 	}
