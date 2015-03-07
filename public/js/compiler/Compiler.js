@@ -13,9 +13,9 @@ var Compiler = function (rawCode) {
       .then(generateCode)
       .then(execute)
       .then(function (data) {
-        console.log(data.wrappedCode);
-        console.log(JSON.stringify(data.programSteps,null,1));
-        console.log(JSON.stringify(data.components,null,1));
+        // console.log(data.wrappedCode);
+        // console.log(JSON.stringify(data.programSteps,null,1));
+        // console.log(JSON.stringify(data.components,null,1));
 
         data.code = rawCode;
         resolve(data);
