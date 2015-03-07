@@ -160,7 +160,8 @@ Program.prototype.getData = function () {
     components: this.components,
     scopes: this.scopes,
     lines: this.stepLines,
-    code: this._code
+    code: this._code,
+    wrappedCode: this._wrappedCode
   }
 }
 

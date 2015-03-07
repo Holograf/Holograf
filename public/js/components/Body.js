@@ -11,11 +11,11 @@ var Visual3D = require('./Visual3D.js');
 var Instructions = require('./Instructions.js');
 var Team = require('./Team.js');
 var addons = require('react-addons');
-var Loader = require('./Loader');
 var OverlayMixin = require('react-bootstrap/OverlayMixin');
 var Button = require('react-bootstrap/Button');
-var Modal = require('react-bootstrap/Modal');
 var Actions = require('../actions/Actions');
+var Loading = require('./modals/Loading')
+var Error = require('./modals/Error');
 
 
 module.exports = React.createClass({
@@ -62,17 +62,20 @@ module.exports = React.createClass({
   },
 
   renderOverlay: function () {
-    if (!this.props.isLoading) {
-      return <span/>;
+
+    if (this.props.error) {
+      return (
+        <Error error={this.props.error} />
+      );
+    } else if (this.props.isLoading) {
+      return (
+        <Loading isLoading={this.props.isLoading} />
+      );
+    } else {
+      return <span/>;    
     }
 
-    return (
-        <Modal bsStyle="modal-sm" title="Rendering..." animate={false}>
-          <div className="modal-body">
-            <Loader {...this.props} />
-          </div>
-        </Modal>
-      );
+
   }
 });
 

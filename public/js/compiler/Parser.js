@@ -1,5 +1,6 @@
 var esprimaParse = require('esprima').parse;
 var inject = require('./Inject');
+var Promise = require('bluebird');
 
 // External variables to help manage tracking of function invocations
 var functionStack = [];
@@ -7,13 +8,15 @@ var wrappedFunctionCount = 0;
 
 var Parser = function (code) {
 
-  var syntaxTree = esprimaParse(code, {loc: true});
-  var programBody = syntaxTree.body;
+  return new Promise (function (resolve, reject) {
+    var syntaxTree = esprimaParse(code, {loc: true});
+    var programBody = syntaxTree.body;
+    
+    traverse(programBody);  // Traverse the syntax tree to inject watchpoints
+    injectObjectWrappers(programBody); // inject object registration methods onto all objects
 
-  traverse(programBody);  // Traverse the syntax tree to inject watchpoints
-
-  injectObjectWrappers(programBody); // inject object registration methods onto all objects
-  return syntaxTree;
+    resolve(syntaxTree);
+  });
 }
 
 
