@@ -31,7 +31,7 @@ var Actions = {
       type: 'POST',
       data: data,
       success: function(data) {
-        var shareUrl = 'http://holograf.elasticbeanstalk.com/#/code/' + data.code;
+        var shareUrl = 'http://holograf.io/#/code/' + data.code;
         AppDispatcher.handleViewAction({
           actionType: AppConstants.UPDATE_SHAREURL,
           shareUrl: shareUrl

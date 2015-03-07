@@ -1,4 +1,4 @@
-$input-height: 600px;
+$input-height: 84vh;
 $input-margin: 20px;
 
 
@@ -9,7 +9,10 @@ $input-margin: 20px;
 @import "./codeMirror/theme/blackboard";
 @import url(http://fonts.googleapis.com/css?family=PT+Mono);
 
-
+html, body {
+  overflow-y:hidden;
+  height:100%;
+}
 
 body {
   font-family: "PT Mono","lucida grande","Segoe UI",arial,verdana,"lucida sans unicode",tahoma,sans-serif;
