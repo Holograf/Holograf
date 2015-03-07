@@ -59,6 +59,12 @@ var Actions = {
         console.error(xhr, status, err.toString());
       }.bind(this)
     });
+  },
+
+  resetError: function () {
+    AppDispatcher.handleViewAction({
+      actionType: AppConstants.RESET_ERROR
+    })    
   }
 
 };

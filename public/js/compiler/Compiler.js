@@ -1,24 +1,30 @@
+var lint = require('./Linter');
 var parse = require('./Parser');
-var generateCode = require('escodegen').generate;
+var generateCode = require('./Generator');
 var execute = require('./Execute');
+var Promise = require('bluebird');
 
 var Compiler = function (rawCode) {
 
-  var wrappedSyntaxTree = parse(rawCode);
+  return new Promise (function (resolve, reject) {
 
-  var wrappedCode = generateCode(wrappedSyntaxTree);
-  var data = execute(wrappedCode, rawCode);
+    lint(rawCode)
+      .then(parse)
+      .then(generateCode)
+      .then(execute)
+      .then(function (data) {
+        console.log(data.wrappedCode);
+        console.log(JSON.stringify(data.programSteps,null,1));
+        console.log(JSON.stringify(data.components,null,1));
 
-  console.log(wrappedCode);
-  console.log(JSON.stringify(data.programSteps,null,1));
-  console.log(JSON.stringify(data.components,null,1));
-  console.log(JSON.stringify(data.lines,null,1));
-
-  return data;
+        data.code = rawCode;
+        resolve(data);
+      })
+      .error(function (e) {
+        reject(e);
+      });
+  })
 }
-
-// External variable to help manage tracking of function invocations
-var functionStack = [];
 
 module.exports = Compiler;
 
