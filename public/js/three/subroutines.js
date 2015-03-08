@@ -629,14 +629,12 @@ subroutines.Composite = function(data,scopes,particleLight){
 	var z1, z2;
 	var x=0;
 	
-	var cycleTime=1000*data.length;
+	var cycleTime=500*data.length;
 	var cycleStep=cycleTime/data.length;
 	var animations = [];
 	
 	animations.push(new TWEEN.Tween(particleLight.position).to({x:x}, cycleStep) );
-	//var nextTween = animations.push(new TWEEN.Tween(particleLight.material).to({opacity:1},300) );
-
-	//animations[0].chain(nextTween);
+	
 
 	for (var i=0;i<data.length;i++){
 		z1 = leftMargin + (buffer*i);
@@ -657,13 +655,14 @@ subroutines.Composite = function(data,scopes,particleLight){
 		var opts = {z1:z1, z2:z2, x1:0, x2:x, componentData:data[i].component, radius:radius} ;
 		
 		//console.log(data[i].component.time);
-		
-		var delorian = 100;
+
+		/*
+		var delorian=100;
 		if (i<data.length-1 && typeof data[i].component.time==='number' && typeof data[i+1].component.time==='number') {
 			delorian=2000*(data[i+1].component.time-data[i].component.time);
 		}
-		nextTween=new TWEEN.Tween(particleLight.position).to({x:x, z:z2}, delorian);
-		// nextTween = new TWEEN.Tween(particleLight.position).to({x:x, z:z2}, cycleStep);
+		*/
+		nextTween=new TWEEN.Tween(particleLight.position).to({x:x, z:z2}, cycleStep);
 		animations.push(nextTween);
 		animations[i].chain(animations[i+1]);
 
@@ -698,7 +697,8 @@ subroutines.Composite = function(data,scopes,particleLight){
 	}
 	//nextTween = new TWEEN.Tween(particleLight.material).to({opacity:0},300); 
 	//animations.push(nextTween);
-	
+	animations.push(new TWEEN.Tween(particleLight.position).to({x:0,z:0},1) );	
+	animations[animations.length-2].chain(animations[animations.length-1]);
 	animations[animations.length-1].chain(animations[0]);
 	particleLight.tween=animations[0];
 	

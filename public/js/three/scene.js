@@ -4,12 +4,15 @@ var theatre = {
 	controlsEnabled: true, 	//toggle based on tab, link controls to
 	nodeView: false,
 	cameraSpeed: 1500,
-	firstRender: true
+	firstRender: true,
+	modal: null,
+	headline: null,
+	rippleList: null
 };
 
 
 theatre.display = function(allData, onRendered) {	
-	var camera, composite, container, controls, modalCanvas, particleLight, renderer, scene, selectHalo, tween, visualTimeline;
+	var camera, composite, container, controls, modal, particleLight, renderer, scene, selectHalo, tween, visualTimeline;
 	var windowHalfX = window.innerWidth / 2;
 	var windowHalfY = window.innerHeight / 2;
 	var scopes = utils.extractScopes(allData);
@@ -127,8 +130,9 @@ theatre.display = function(allData, onRendered) {
 			if (intersects.length<1){
 
 			  // Remove modal only appears on mouseover
+			  //Need to address this later to just hide it.
 			  if (document.getElementById("modal-canvas") && !theatre.nodeView){
-			    document.body.removeChild(document.getElementById("modal-canvas"));
+			    //document.body.removeChild(document.getElementById("modal-canvas"));
 			  }
 
 				utils.dull(composite);
@@ -145,14 +149,6 @@ theatre.display = function(allData, onRendered) {
 		}
 	}
 
-	// function onMouseUp (e) {
-	// 	//  if object is not clicked, remove Raphael modals
-	// 	if (intersects.length < 1 && theatre.nodeView) {  
-
-	// 		if (document.getElementById("modal-canvas")){
-	// 			document.body.removeChild(document.getElementById("modal-canvas"));
-	// 		}
-	// }
 
 	function onMouseDown ( e ) {
 		e.preventDefault();
@@ -183,11 +179,14 @@ theatre.display = function(allData, onRendered) {
 		if (composite){
 			var intersects = raycaster.intersectObjects( composite.children, true );	
 
-			//  if object is not clicked, remove Raphael modals
+			//  if object is not clicked, remove Raphael ss
 			if (intersects.length < 1 && theatre.nodeView) {  
 
 				if (document.getElementById("modal-canvas")){
 					document.body.removeChild(document.getElementById("modal-canvas"));
+					theatre.modal = null;
+					theatre.rippleList = null;
+					theatre.headline = null;
 				}
 
 			// if an object is clicked, enter nodeView and zoom in
@@ -205,24 +204,23 @@ theatre.display = function(allData, onRendered) {
 				theatre.viewNode(theatre.currentNode.position);
 
 				theatre.nodeView = true;
-				// !!!
 				controls.update();
 
-
-				//raphael code here?
 				if ($("#modal-canvas").length===0){
 					modal = createModal();
+					theatre.modal=modal;
+					utils.modal.headline(modal,intersects[0],theatre);
+
+					var collection = [];
+					if (collection.length<1){
+						collection = theatre.code.split("\n");
+					}
+					utils.rippleList(modal,collection,intersects[0].object.componentData.line,theatre);
+				
 				}
-				utils.modal.headline(modal,intersects[0]);
 				placeHalo(intersects[0].object.position);
-				var collection = [];
-				/*
-				collection = utils.allValues(timeline,selectedId);
-				*/
-				if (collection.length<1){
-					collection = theatre.code.split("\n");
-				}
-				utils.rippleList(modal,collection,intersects[0].object.componentData.line);
+
+				
 			}
 		}
 	}
@@ -255,17 +253,36 @@ theatre.display = function(allData, onRendered) {
 	  return c;
 	}
 
+
 	function updateModal(modal, node) {
-		utils.modal.headline(modal, node);
-		placeHalo(node.position);
-		var collection = [];
-		/*
-		collection = utils.allValues(theatre.timeline, node.componentData.id);
-		*/
-		if (collection.length<1){
-			collection = theatre.code.split("\n");
+		
+		if (theatre.headline){
+			theatre.headline.attr({"text":utils.modalizeText(node)});
+			var bBox=theatre.headline.getBBox();
+			theatre.headline.data("backboard").stop();
+			theatre.headline.data("backboard").animate({"width":bBox.width+20},300,"<>");
+			if (theatre.rippleList){
+				for (var i=0;i<theatre.rippleList.length;i++){
+					var line=theatre.rippleList[i];
+					line.stop();
+					line.data("backboard").stop();
+					if (line.data("lineNumber")===node.componentData.line){
+						line.data("backboard").attr({"fill":"#ff3"});
+						line.attr({"fill":"#000"});
+					} else {
+						line.data("backboard").animate({"fill":"#000"},300);
+						line.animate({"fill":"#fff"},300);
+					}
+				}
+			}
+		} else {
+			utils.modal.headline(modal, node, theatre);
+			var collection = [];
+			if (collection.length<1){ collection = theatre.code.split("\n"); }
+			utils.rippleList(modal, collection, node.componentData.line, theatre);
 		}
-		utils.rippleList(modal, collection, node.componentData.line);
+		
+		placeHalo(node.position);
 	}
 	
 	function animate() {
@@ -397,9 +414,11 @@ theatre.display = function(allData, onRendered) {
 
 		theatre.viewIndex = theatre.currentNode.componentData.timelineIndex;
 		if (document.getElementById("modal-canvas")){
-			document.body.removeChild(document.getElementById("modal-canvas"));
+			//document.body.removeChild(document.getElementById("modal-canvas"));
+		} else {
+			modal = createModal();
 		}
-		modal = createModal();
+		theatre.modal = modal;
 		updateModal(modal, theatre.currentNode)
 		theatre.nodeView = true;
 	};
@@ -435,7 +454,7 @@ theatre.display = function(allData, onRendered) {
 			
 		} else {
 			visualTimeline.show.start();
-			particleLight.material.opacity = 1;
+			particleLight.material.opacity = 0.5;
 		}
 		theatre.pause();
 		selectHalo.material.opacity = 0;
