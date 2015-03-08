@@ -11,7 +11,7 @@ var y = [
 ].___obj();
 ___Program.set('y', y, 1);
 y[0] = 'new';
-___Program.setObjectProperty('y[0]', y, 2);
+___Program.setObjectProperty('y[0]', y, '0', 2);
 },
 data: {
  "programSteps": [

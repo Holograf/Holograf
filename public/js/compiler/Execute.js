@@ -9,6 +9,7 @@ module.exports = function (wrappedCode) {
     var worker = createWorker(require('./workers/WrappedCodeWorker.js'));
     // add a listener for errors from the Worker
     worker.addEventListener('error', function(e){
+      console.log('Error evaluating...')
       reject(e);
     });
 

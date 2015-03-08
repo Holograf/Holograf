@@ -35,6 +35,7 @@ $loader: 200px;
   width: $loader * 0.2;
   top: $loader * 0.12;
   height: $loader * 0.06;
+  animation: 2.5s ease 0s infinite spinner;
   -webkit-animation: 2.5s ease 0s infinite spinner;
 }
 
@@ -44,6 +45,7 @@ $loader: 200px;
   width: $loader * 0.3;
   top: $loader * 0.105;
   height: $loader * 0.09;
+  animation: 2.5s ease 0.1s infinite spinner;
   -webkit-animation: 2.5s ease 0.1s infinite spinner;
 }
 
@@ -53,6 +55,7 @@ $loader: 200px;
   width: $loader * 0.4;
   top: $loader * 0.09;
   height: $loader * 0.12;
+  animation: 2.5s ease 0.2s infinite spinner;
   -webkit-animation: 2.5s ease 0.2s infinite spinner;
 }
 
@@ -62,6 +65,7 @@ $loader: 200px;
   width: $loader * 0.5;
   top: $loader * 0.075;
   height: $loader * 0.15;
+  animation: 2.5s ease 0.3s infinite spinner;
   -webkit-animation: 2.5s ease 0.3s infinite spinner;
 }
 
@@ -71,6 +75,7 @@ $loader: 200px;
   width: $loader * 0.6;
   top: $loader * 0.06;
   height: $loader * 0.18;
+  animation: 2.5s ease 0.4s infinite spinner;
   -webkit-animation: 2.5s ease 0.4s infinite spinner;
 }
 
@@ -80,6 +85,7 @@ $loader: 200px;
   width: $loader * 0.7;
   top: $loader * 0.045;
   height: $loader * 0.21;
+  animation: 2.5s ease 0.5s infinite spinner;
   -webkit-animation: 2.5s ease 0.5s infinite spinner;
 }
 
@@ -89,6 +95,7 @@ $loader: 200px;
   width: $loader * 0.80;
   top: $loader * 0.03;
   height: $loader * 0.24;
+  animation: 2.5s ease 0.6s infinite spinner;
   -webkit-animation: 2.5s ease 0.6s infinite spinner;
 }
 
@@ -98,6 +105,7 @@ $loader: 200px;
   width: $loader * 0.90;
   top: $loader * 0.015;
   height: $loader * 0.27;
+  animation: 2.5s ease 0.7s infinite spinner;
   -webkit-animation: 2.5s ease 0.7s infinite spinner;
 }
 

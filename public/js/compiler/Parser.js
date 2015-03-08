@@ -228,15 +228,25 @@ var traverse = function (body) {
       }
 
       if (node.type === 'ForStatement') {
-        injectBefore(node, body, index, 'loopInit', 'for');
-        injectAfter(node, body, index, 'loopOpen', 'for');
-        var loopCloseNode = injectAfter(node, body, index + 2, 'loopClose', 'for');
+        injectBefore(node, body, index, 'loopOpen', 'for');
+        var loopCloseNode = injectAfter(node, body, index + 1, 'loopClose', 'for');
         inject.changeLineArgument(loopCloseNode, node.loc.end.line);
 
-        var loopPostNode = injectAfter(node, body, index + 3, 'loopPost', 'for');
+        var loopPostNode = injectAfter(node, body, index + 2, 'loopPost', 'for');
         inject.changeLineArgument(loopPostNode, node.loc.end.line);
 
-        advance(4);
+        advance(3);
+      }
+
+      if (node.type === 'ForInStatement') {
+        injectBefore(node, body, index, 'loopOpen', 'forIn');
+        var loopCloseNode = injectAfter(node, body, index + 1, 'loopClose', 'forIn');
+        inject.changeLineArgument(loopCloseNode, node.loc.end.line);
+
+        var loopPostNode = injectAfter(node, body, index + 2, 'loopPost', 'forIn');
+        inject.changeLineArgument(loopPostNode, node.loc.end.line);
+
+        advance(3);
       }
 
       if (node.type === 'WhileStatement') {

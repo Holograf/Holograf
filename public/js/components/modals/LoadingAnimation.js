@@ -9,8 +9,6 @@ module.exports = React.createClass({
 
   render: function() {
 
-    console.log('HIDDEN?', this.props.isLoading);
-
     return (
       <div className={'whirlpool ' + (this.props.isLoading ? '' : 'hidden')}>
         <div className={"ring ring1" + (this.props.isLoading ? '' : 'hidden')}></div>

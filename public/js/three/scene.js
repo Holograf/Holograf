@@ -77,8 +77,6 @@ theatre.display = function(allData, onRendered) {
 		theatre.container = container;
 		container.appendChild(renderer.domElement);
 
-
-		renderer.setSize(window.innerWidth-20,window.innerHeight-$(container).offset().top);
 		// User interaction
 		window.addEventListener( 'mousemove', onMouseMove, false );
 		window.addEventListener( 'resize', onWindowResize, false );
@@ -108,9 +106,8 @@ theatre.display = function(allData, onRendered) {
 		var dir = new THREE.Vector3();
 
 		//extract that offset into external variable that doesn't have to be recalculated every time... later
-		var x =  ( event.clientX / window.innerWidth ) * 2 - 1;
-		var topset = $(container).offset().top;
-		var y = - ( ( event.clientY ) / (window.innerHeight) ) * 2 + 1;
+		var x =  ( e.clientX / window.innerWidth ) * 2 - 1;
+		var y = - ( (e.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
 
 		//check the type of camera
 		if ( camera instanceof THREE.OrthographicCamera ) {
@@ -170,10 +167,8 @@ theatre.display = function(allData, onRendered) {
 
 		//check the type of camera
 		//extract that offset into an external variable that doesn't have to be recalculated every time... later
-		var x =  ( event.clientX / window.innerWidth ) * 2 - 1;
-
-		var y = - ( ( event.clientY ) / window.innerHeight ) * 2 + 1;
-
+		var x =  ( e.clientX / window.innerWidth ) * 2 - 1;
+		var y = - ( ( e.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
 		if ( camera instanceof THREE.OrthographicCamera ) {
 	    vector.set( x, y, - 1 ); // z = - 1 important!
 	    vector.unproject( camera );
