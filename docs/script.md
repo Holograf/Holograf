@@ -10,11 +10,13 @@ Programmers. are. blind.
 
 We cannot actually see the internal workings of these programs we create.
 
-We're forced to rely on our imaginations to understand the hidden movements of our applications
+We're forced to rely on our imaginations 
 
-As a consequence, those increadibly complicated internal mechanisms remain mostly invisible, 
+to understand the hidden movements of our applications and as a consequence, 
 
-even to their creators.
+those increadibly complicated internal mechanisms 
+
+remain mostly invisible, even to their creators.
 
 We're about to change that, and give Engineers eyes to see their invisible machines.
 

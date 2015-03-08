@@ -89,9 +89,9 @@ utils.modal.donut = function(canvas,x,y,obj){
   
 };
 
-// adds the top line "x = 1" to Ra
-utils.modal.headline = function(canvas, obj){
-  var c = canvas;
+
+utils.modal.headline=function(canvas, obj, theatre){
+  var c=canvas;
   if (obj.object) {
     obj = obj.object;
   } 
@@ -106,8 +106,11 @@ utils.modal.headline = function(canvas, obj){
     .attr({"fill":"#000",opacity:0.8})
     .animate({x:0}, 600, "<>");
   text.toFront();
+  text.data("backboard",backboard);
+  theatre.headline=text;
 };
 
+<<<<<<< HEAD
 // Adds array of strings to 
 utils.rippleList = function(canvas, collection, selectedLine){
   if (selectedLine === undefined) { selectedLine = -1; }
@@ -134,7 +137,39 @@ utils.rippleList = function(canvas, collection, selectedLine){
     if ( (i+1) === selectedLine){
       text.attr({"fill": "#000", "opacity": 1});
       backBar.attr({"fill":"#ff3", "width": bBox.width+20});
+=======
+
+utils.rippleList=function(canvas,collection,selectedLine,theatre){
+  if (selectedLine===undefined){selectedLine=-1;}
+  theatre.rippleList = [];
+  var x=-40;
+  var y=30;
+  var anim=new Raphael.animation({x:10,"opacity":1},400,"<>");
+  var barAnim=new Raphael.animation({x:0},300,"<>");
+  for (var i=0;i<collection.length;i++){
+    y+=30;
+    var text=canvas.text(x,y+13,(collection[i]) )
+      .attr({fill:"#fff","font-size":"20px","text-anchor":"start","opacity":0})
+      .animate(anim.delay( 600+(i*50) ));
+      
+    var bBox=text.getBBox();    
+    text.attr({"x":-1*(bBox.width+30)});
+  
+    var backBoard=canvas.rect((bBox.width+20)*-1,y,bBox.width+20,29)
+      .attr({"fill":"#000","opacity":0.8})
+      .animate(barAnim.delay( 600+(i*50) ));
+      
+    text.toFront();
+    
+    if ( (i+1)===selectedLine){
+      text.attr({"fill":"#000","opacity":1});
+      backBoard.attr({"fill":"#ff3","width":bBox.width+20});
+>>>>>>> modal text no longer slides in and out with every change of selection.
     }
+    
+    text.data("backboard",backBoard);
+    text.data("lineNumber",i+1);
+    theatre.rippleList.push(text);
   }
 };
 

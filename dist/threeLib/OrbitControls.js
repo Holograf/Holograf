@@ -331,6 +331,9 @@ THREE.OrbitControls = function ( object, domElement, target, compiledStatus ) {
 
     if ( document.getElementById("modal-canvas") ){
       document.body.removeChild(document.getElementById("modal-canvas"));
+			theatre.modal = null;
+			theatre.rippleList = null;
+			theatre.headline = null;
     }
 
     if (theatre.initCamera) {
