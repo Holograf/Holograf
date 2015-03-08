@@ -34,6 +34,7 @@ theatre.display = function(allData, onRendered) {
 		composite = subroutines.Composite(data,scopes,particleLight);
 		theatre.maxSize = composite.maxSize;
 		scene.add( composite );
+		// subroutines.Axes(scene);
 
 		visualTimeline = subroutines.VisualTimeline(data, scopes);
 		scene.add(visualTimeline);
@@ -43,7 +44,7 @@ theatre.display = function(allData, onRendered) {
 
 		camera = new THREE.PerspectiveCamera( 60, (window.innerWidth-20) / window.innerHeight, 1, 100000 );
 		theatre.camera = camera;
-		var camDistPartial = composite.maxSize / 2;
+		var camDistPartial = composite.maxSize >= 1000 ? composite.maxSize / 2 : 1000;
 		camera.position.x = -camDistPartial;
 		camera.position.y = camDistPartial * 1.5;
 		camera.position.z = camDistPartial;
@@ -92,11 +93,8 @@ theatre.display = function(allData, onRendered) {
 		windowHalfY = window.innerHeight / 2;
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
-
-		var topset = $(container).offset().top;
-
-		renderer.setSize( (window.innerWidth-20), (window.innerHeight-topset) );
-		// render();
+		renderer.setSize( (window.innerWidth-20), (window.innerHeight - 105) );
+		render();
 	}
 
 	function onMouseMove( e ) {
@@ -151,6 +149,7 @@ theatre.display = function(allData, onRendered) {
 
 
 	function onMouseDown ( e ) {
+		// debugger;
 		e.preventDefault();
 		if (theatre.expanded === false) {
 			theatre.expand();

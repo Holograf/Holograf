@@ -110,35 +110,7 @@ utils.modal.headline=function(canvas, obj, theatre){
   theatre.headline=text;
 };
 
-<<<<<<< HEAD
-// Adds array of strings to 
-utils.rippleList = function(canvas, collection, selectedLine){
-  if (selectedLine === undefined) { selectedLine = -1; }
-  
-  var x = -40;    // -=
-  var y = 120;
-  var anim = new Raphael.animation({x:10, "opacity": 1}, 400, "<>");
-  var barAnim = new Raphael.animation({x:0}, 300, "<>");
-  for (var i = 0; i < collection.length; i++){
-    y += 30;
-    var text=canvas.text(x, y+13, (collection[i]) )
-      .attr({fill:"#fff", "font-size":"20px", "text-anchor":"start", "opacity":0})
-      .animate(anim.delay( 600+(i*50) ));
-
-    var bBox = text.getBBox();    
-    text.attr({"x": -1 * (bBox.width+30)});
-
-    var backBar = canvas.rect((bBox.width + 20) * -1, y, bBox.width+20, 29)
-      .attr({"fill": "#000", "opacity": 0.8})
-      .animate(barAnim.delay( 600 + (i * 50) ));
-      
-    text.toFront();
-
-    if ( (i+1) === selectedLine){
-      text.attr({"fill": "#000", "opacity": 1});
-      backBar.attr({"fill":"#ff3", "width": bBox.width+20});
-=======
-
+// Adds code with current line highlighted in sidebar modal
 utils.rippleList=function(canvas,collection,selectedLine,theatre){
   if (selectedLine===undefined){selectedLine=-1;}
   theatre.rippleList = [];
@@ -164,7 +136,6 @@ utils.rippleList=function(canvas,collection,selectedLine,theatre){
     if ( (i+1)===selectedLine){
       text.attr({"fill":"#000","opacity":1});
       backBoard.attr({"fill":"#ff3","width":bBox.width+20});
->>>>>>> modal text no longer slides in and out with every change of selection.
     }
     
     text.data("backboard",backBoard);
@@ -245,8 +216,9 @@ utils.allValues=function(timeline,target){
 };   
     
 
+// creates text for snapshot of object or array
 utils.modalizeText=function(obj){
-  var d="";
+  var d = "";
   if (obj.componentData.pointsTo !== undefined && obj.componentData.pointsTo.type  && obj.componentData.pointsTo.type === 'object'){
     d +="" + obj.componentData.name + " = { } ";
   } else if (obj.componentData.pointsTo !== undefined && obj.componentData.pointsTo.type && obj.componentData.pointsTo.type === 'array'){
