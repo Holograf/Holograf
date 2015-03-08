@@ -34,7 +34,7 @@ theatre.display = function(allData, onRendered) {
 		composite = subroutines.Composite(data,scopes,particleLight);
 		theatre.maxSize = composite.maxSize;
 		scene.add( composite );
-		subroutines.Axes(scene);
+		// subroutines.Axes(scene);
 
 		visualTimeline = subroutines.VisualTimeline(data, scopes);
 		scene.add(visualTimeline);
