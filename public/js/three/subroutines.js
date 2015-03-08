@@ -397,11 +397,13 @@ subroutines.dotGrid = function(scene,data,scopes,maxSize) {
 
 subroutines.skybox = function(scene, maxSize) {
 	var x, y, z;
-	var interval = maxSize / 10;
+	var maxSize = maxSize >= 1000 ? maxSize : 1000;
+	var interval = maxSize / 5;
 	var material = new THREE.LineBasicMaterial( { color: 0x555555 } );
-	var yMod = 500;
+	// var yMod = 500;
+
 	// back horizontal
-	y = -maxSize+yMod;
+	y = -maxSize; // +yMod;
 	while (y < maxSize) {
 		var geometry = new THREE.Geometry();
 		x = 2 * maxSize;
@@ -421,9 +423,9 @@ subroutines.skybox = function(scene, maxSize) {
 		x = 2 * maxSize;
 		z += interval; 
 
-		geometry.vertices.push( new THREE.Vector3( -maxSize, -maxSize+yMod, z))
-		geometry.vertices.push( new THREE.Vector3( x, -maxSize+yMod, z ) );
-		geometry.vertices.push( new THREE.Vector3( x, maxSize+yMod, z ) );
+		geometry.vertices.push( new THREE.Vector3( -maxSize, -maxSize, z));   // +yMod (3)
+		geometry.vertices.push( new THREE.Vector3( x, -maxSize, z ) );
+		geometry.vertices.push( new THREE.Vector3( x, maxSize, z ) );
 		
 		var line = new THREE.Line( geometry, material );
 		scene.add(line);
@@ -434,7 +436,7 @@ subroutines.skybox = function(scene, maxSize) {
 	x = -maxSize - interval;
 	while (x < 2 * maxSize) {
 		var geometry = new THREE.Geometry();
-		y = -maxSize+yMod;
+		y = -maxSize;		// +yMod
 		x += interval; 
 
 		geometry.vertices.push( new THREE.Vector3( x, y, -maxSize ) );
@@ -463,9 +465,9 @@ subroutines.Axes = function(scene) {
 	zGeometry.vertices.push(	new THREE.Vector3( 0, 0, -10000 ) );
 	zGeometry.vertices.push(	new THREE.Vector3( 0, 0, 10000 ) );
 	
-	xLines[0] = new THREE.Line( xGeometry, xLineMaterial );
-	yLines[1] = new THREE.Line( yGeometry, yLineMaterial );
-	zLines[2] = new THREE.Line( zGeometry, zLineMaterial );
+	xLine = new THREE.Line( xGeometry, xLineMaterial );
+	yLine = new THREE.Line( yGeometry, yLineMaterial );
+	zLine = new THREE.Line( zGeometry, zLineMaterial );
 
 	scene.add(xLine);
 	scene.add(yLine);
