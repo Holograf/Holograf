@@ -115,7 +115,7 @@ utils.modal.headline=function(canvas, obj, theatre){
   var cData = obj.componentData;
   
   // var text=c.text(-1000,30,utils.modalizeText(obj))
-  var text = c.text(-1000, 110, utils.modalizeText(obj))
+  var text = c.text(-1000, 30, utils.modalizeText(obj))
     .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
     .animate({x:10},600,"<>");
   var bbox = text.getBBox();
@@ -127,7 +127,7 @@ utils.modal.headline=function(canvas, obj, theatre){
   theatre.headline=text;
 };
 
-// Adds code with current line highlighted in sidebar modal
+
 utils.rippleList=function(canvas,collection,selectedLine,theatre){
   if (selectedLine===undefined){selectedLine=-1;}
   theatre.rippleList = [];
@@ -265,7 +265,10 @@ utils.modalizeText=function(obj){
     d +="parameter: " +obj.componentData.name +" = " +obj.componentData.value +"";
   } else if (obj.componentData.type && obj.componentData.type === 'var') {
     d +="" +obj.componentData.name +" = " +obj.componentData.value +"";
+  } else if (obj.componentData.hasOwnProperty('type') && obj.componentData.type==='property') {
+    d+="{ " + obj.componentData.name + ": " + obj.componentData.value + " }";
   } else {
+    console.log(obj.componentData);
   	for (var key in obj.componentData){
   		d +="" +key +": " +obj.componentData[key]+"\n";
   	}
