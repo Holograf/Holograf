@@ -57,10 +57,4 @@ module.exports = React.createClass({
       </div>
     );
   }
-
-  // _onCompile: function()  {
-  //   // displayScene(this.props.data);
-  //   var timeline = utils.parseTimeline(this.props.data.programSteps, this.props.data.components);
-  //   displayScene(timeline);
-  // }
 });

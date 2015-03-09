@@ -9,7 +9,7 @@ var TabPane = require('react-bootstrap/TabPane');
 var CodeEditor = require('./CodeEditor');
 var Visual3D = require('./Visual3D.js');
 var Instructions = require('./Instructions.js');
-var Team = require('./Team.js');
+var About = require('./About.js');
 var addons = require('react-addons');
 var OverlayMixin = require('react-bootstrap/OverlayMixin');
 var Button = require('react-bootstrap/Button');
@@ -50,8 +50,8 @@ module.exports = React.createClass({
           <TabPane className="tab3" eventKey={3} tab="Instructions">
             <Instructions />
           </TabPane>
-          <TabPane className="tab4" eventKey={4} tab="Team">
-            <Team />
+          <TabPane className="tab4" eventKey={4} tab="About">
+            <About />
           </TabPane>
 
         </TabbedArea>
