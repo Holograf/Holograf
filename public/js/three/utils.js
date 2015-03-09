@@ -56,13 +56,30 @@ utils.getPoint = function(x, y, r, theta){
   return circle;
 };
 
-utils.extractScopes=function(allData){  
-  var scopes = {};  
-  var scopeX = 0;
-  for (var key in allData.scopes){
-    scopes[key] = scopeX+500;
-    scopeX += 500;
+utils.extractScopes=function(allData){
+  var scopes = {'-1': 0};
+  var scopeX = 500;
+  
+  var countLevels = function(key, levels) {
+    levels = levels || 1;
+    var scope = allData.components[key].scope;
+    if (scope === 0) {
+      return levels;
+    }
+    levels++;
+    return countLevels(scope, levels);
   }
+
+  for (var key in allData.scopes){
+    if (key !== '0') {
+      level = countLevels(key);
+      if (!scopes[level]) {
+        scopes[level]=scopeX;
+        scopeX+=500;
+      }
+    }
+  }
+
   return scopes;
 };
 
