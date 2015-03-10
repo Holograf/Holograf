@@ -180,44 +180,6 @@ utils.arcPath=function(x,y,r,theta1,theta2,w){
 	return arcPath;
 };
 
-utils.donut=function(opts){
-    var opts=opts||{};
-    var cc=opts.data;
-    var b=opts.bounds;
-    var c=opts.canvas;
-    opts.fill_color=opts.fill_color || "#d00";
-    opts.radius=opts.radius || Math.min(b.centerX,b.centerY)-10;
-    opts.width=opts.width || opts.radius/8;
-    var sum=0;
-    for (var i in cc){sum+=cc[i];}
-    var s=[];
-    var theta=0;
-    var tOffset=0;
-    for (var i in cc){
-        theta=360*(cc[i]/sum);
-        //if (theta>360){theta=theta-360;}
-        tOffset+=theta;
-        var h=c.path(geo.arcPath(b.centerX,b.centerY,opts.radius,0,theta,opts.width));  
-        h.rotate(tOffset,b.centerX,b.centerY);
-        h.attr({"fill":"#fff","cursor":"pointer"});
-        //h.transform("s 0 0 ",b.centerX,b.centerY);
-        h.data("label",i);
-        h.data("tOffset",tOffset);
-        h.hover(function(){
-           this.stop();
-           this.attr({"fill":opts.fill_color});
-           var t=c.text(b.centerX,b.centerY,this.data("label"));
-           t.attr({"font-size":30});
-           this.data("animatedLabel",t);
-        },function(){
-            this.data("animatedLabel").animate({"opacity":0},500,function(){this.remove();});
-            this.animate({"fill":"#fff"},500);
-        });
-        s.push(h);
-    }
-    
-   return s;
-};
     
 utils.allValues=function(timeline,target){
   var r=[];
@@ -236,10 +198,13 @@ utils.allValues=function(timeline,target){
 utils.modalizeText=function(obj){
   var d = "";
   if (obj.componentData.pointsTo !== undefined && obj.componentData.pointsTo.type  && obj.componentData.pointsTo.type === 'object'){
+    console.log(obj.componentData);
     d +="" + obj.componentData.name + " = { } ";
   } else if (obj.componentData.pointsTo !== undefined && obj.componentData.pointsTo.type && obj.componentData.pointsTo.type === 'array'){
+    console.log(obj.componentData);
     d +="" + obj.componentData.name + " = [ ] ";
   } else if (obj.componentData.hasOwnProperty("type") && obj.componentData.type === 'element'){
+    console.log(obj.componentData);
     d +="[" + obj.componentData.name + "] = " + obj.componentData.value + "";
   } else if (obj.componentData.hasOwnProperty('pointsTo') && obj.componentData.pointsTo.type === 'function'){
     d +="function: " + obj.componentData.name + " declaration";
@@ -265,6 +230,7 @@ utils.modalizeText=function(obj){
   } else if (obj.componentData.type && obj.componentData.type === 'var') {
     d +="" +obj.componentData.name +" = " +obj.componentData.value +"";
   } else if (obj.componentData.hasOwnProperty('type') && obj.componentData.type==='property') {
+    console.log(obj.componentData);
     d+="{ " + obj.componentData.name + ": " + obj.componentData.value + " }";
   } else {
     console.log(obj.componentData);

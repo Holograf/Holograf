@@ -115,7 +115,8 @@ theatre.display = function(allData, onRendered) {
 
 		//extract that offset into external variable that doesn't have to be recalculated every time... later
 		var x =  ( e.clientX / window.innerWidth ) * 2 - 1;
-		var y = - ( (e.clientY-$(theatre.container).offset().top ) / window.innerHeight ) * 2 + 1;
+
+		var y = - ( (e.clientY-$(container).offset().top ) / (window.innerHeight-105) ) * 2 + 1;
 
 		//check the type of camera
 		if ( camera instanceof THREE.OrthographicCamera ) {
@@ -170,7 +171,7 @@ theatre.display = function(allData, onRendered) {
 		//check the type of camera
 		//extract that offset into an external variable that doesn't have to be recalculated every time... later
 		var x =  ( e.clientX / window.innerWidth ) * 2 - 1;
-		var y = - ( ( e.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
+		var y = - ( ( e.clientY-$(container).offset().top ) / (window.innerHeight-105) ) * 2 + 1;
 		if ( camera instanceof THREE.OrthographicCamera ) {
 	    vector.set( x, y, - 1 ); // z = - 1 important!
 	    vector.unproject( camera );
@@ -460,7 +461,7 @@ theatre.display = function(allData, onRendered) {
 			
 		} else {
 			visualTimeline.show.start();
-			particleLight.material.opacity = 0.5;
+			particleLight.material.opacity = 1;
 		}
 		theatre.pause();
 		selectHalo.material.opacity = 0;

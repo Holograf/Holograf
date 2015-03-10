@@ -496,7 +496,7 @@ subroutines.elementize=function(composite,opts){
 	
 	var path = new THREE.Path( curve.getPoints( 4 ) );
 	var geometry = path.createPointsGeometry( 4 );
-	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	var material = new THREE.LineBasicMaterial( { color : 0xffffff } );
 	
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
@@ -563,7 +563,7 @@ subroutines.propertize=function(composite,opts){
 	
 	var path = new THREE.Path( curve.getPoints( 50 ) );
 	var geometry = path.createPointsGeometry( 50 );
-	var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+	var material = new THREE.LineBasicMaterial( { color : 0xffffff } );
 	
 	// Create the final Object3d to add to the scene
 	var ellipse = new THREE.Line( geometry, material );
@@ -621,7 +621,7 @@ subroutines.labelize=function(composite,opts){
 
 subroutines.Composite = function(data,scopes,particleLight){
 	
-	//console.log(data);
+	console.log(data);
 	
 	var composite=new THREE.Object3D();
 	composite.maxSize=100*data.length;
@@ -669,6 +669,7 @@ subroutines.Composite = function(data,scopes,particleLight){
 		animations[i].chain(animations[i+1]);
 
 		
+		
 		if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='array') {
 			subroutines.ArrayDeclaration(composite, opts);
 		} else if (c.pointsTo!==undefined && c.pointsTo.type && c.pointsTo.type==='object') {
@@ -677,13 +678,13 @@ subroutines.Composite = function(data,scopes,particleLight){
 			subroutines.FunctionDeclaration(composite,opts);
 		} else if (data[i].component.type==="block" && data[i].component.name==="if"){
 			subroutines.Conditional(composite, opts);
-		} else if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for!=="cycle"){
+		} else if (data[i].component.type==="block" && (data[i].component.name==="for") && data[i].for!=="cycle"){
 			subroutines.Loop(composite, opts);
 		} else if (data[i].invoke!==undefined) {
 			subroutines.FunctionInvocation(composite,opts);
 		} else if (data[i].return !==undefined){
 			subroutines.FunctionReturn(composite,opts);
-		} else if (data[i].component.type==="block" && data[i].component.name==="for" && data[i].for==="cycle"){
+		} else if (data[i].component.type==="block" && ( data[i].component.name==="for" || data[i].component.name==="while") && (data[i].for==="cycle" || data[i].while==='cycle') ){
 			subroutines.LoopCycle(composite,opts);
 		} else {
 			subroutines.Fun(composite, opts);
