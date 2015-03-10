@@ -14,17 +14,16 @@ var COMPILE_EVENT = 'compile';
 
 var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error;
 var templateCode = 
-'var s = function(a) {\n'+
-'  a();\n'+
-'};\n'+
-'var q = function () {\n'+
-'  var x = 1;\n'+
-'  for (var i = 0; i< 5; i++) {\n'+
-'    x++;\n'+
+'var fibonacci = function (n) {\n'+
+'  if (n < 2){\n'+
+'    return 1;\n'+
+'  } else {\n'+
+'    return fibonacci(n-2) + fibonacci(n-1);\n'+
 '  }\n'+
-'};\n'+
-'var r = q;\n'+
-'s(r);';
+'}\n'+
+'\n'+
+'fibonacci(5);\n';
+
 
 var AppStore = assign({}, EventEmitter.prototype, {
 
