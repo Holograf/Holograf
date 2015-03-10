@@ -28,6 +28,8 @@ coverage
 build/
 dist/*
 !dist/threeLib
+!dist/icons
+!dist/img
 data/
 test/spec/bundle.js
 

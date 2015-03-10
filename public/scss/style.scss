@@ -23,15 +23,14 @@ body {
   height: auto;
 }
 a {
-  font-size: 1.5rem;
+  // font-size: 1.5rem;
 }
-// .nav {
-//   position: absolute;
-// }
+.nav-tabs {
+  min-width: 800px;
+}
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
   color: #555;
   background-color: $lighter-gray;
-  // background-color: $gray;
   border: 1px solid #ddd;
   border-bottom-color: transparent;
 }
@@ -52,15 +51,6 @@ a {
 .appContainer {
   padding-top: 3px;
 }
-
-// .codeContainer {
-//   width: 100%;
-//   height: 80%;     // not doing anything
-// }
-// .codeBox {
-//   height: 70%;
-// }
-
 .codeButton {
   margin: 5px 5px 5px 10px;
 }
@@ -69,7 +59,6 @@ a {
 }
 #three-scene {
   background-color: #333333;
-  // height: $window-heightpx;
 }
 #three-modal{
   display:none;
@@ -85,32 +74,91 @@ a {
   padding:20px;
 }
 
+.about {
+  padding: 30px;
+  padding-left: 40px;
+}
+
+.inspiration {
+  margin: 50px;
+  margin-top: 30px;
+  margin-right: 200px;
+}
+.tech-stack-item {
+  display: inline;
+}
 .tech-stack {
-  display:inline;
+  margin: 0 auto;
+  // width: 
+}
+.stack-items {
+  margin-left: 50px; 
 }
 .stack-image {
-  // display:inline;
   height: 200px;
   width: 300px;
-  margin: 20px;
+  margin: 10px;
   border-radius: 10px;
   transition: all .2s ease-in-out;
 }
 .stack-image:hover { 
   transform: scale(1.1); 
 }
+.team {
+  margin: 0 auto;
+}
+
 .member {
-  display: inline;
+  display: inline-block;
+  text-align: center;
+  height: 350px;
+  width: 280px;
+  margin: 20px;
+  padding: 10px;
 }
 .profile-pic {
   border-radius: 50%;
   display: inline;
 }
-h3 {
-  display: inline;
+.icon {
+  margin-right: 12px;
 }
-.icons {
-  display: inline;
+
+@media only screen and (max-width: 1400px) {
+  .team {
+    width: 800px;
+  }
+  .tech-stack {
+    width: 800px;
+  }
+  .stack-image {
+    margin-right: 40px;
+    margin-bottom: 50px;
+  }
+
+}
+
+@media only screen and (max-width: 700px) {
+  .team {
+    width: 350px;
+  }
+  .tech-stack {
+    width: 350px;
+  }
+  .inspiration {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 360px;
+  }
+  .stack-items {
+    margin-left: 10px;
+  }
+  .stack-image {
+    margin: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
 }
 .instructions{
   margin: 20px;
