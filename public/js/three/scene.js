@@ -56,7 +56,7 @@ theatre.display = function(allData, onRendered) {
 		controls = new THREE.OrbitControls(camera, container, theatre.target, theatre.initCamera);
 		theatre.controls = controls;
 
-		controls.addEventListener( 'change', render );
+		// controls.addEventListener( 'change', render );
 
 		theatre.initCamera = {
 			'position': new THREE.Vector3().copy( camera.position ), 
@@ -82,10 +82,12 @@ theatre.display = function(allData, onRendered) {
 		container.appendChild(renderer.domElement);
 
 		// User interaction
-		window.addEventListener( 'mousemove', onMouseMove, false );
+		// window.addEventListener( 'mousemove', onMouseMove, false );
+		// window.addEventListener( 'resize', onWindowResize, false );
+		// window.addEventListener( 'mousedown', onMouseDown, false);
+		theatre.container.addEventListener( 'mousemove', onMouseMove, false );
+		theatre.container.addEventListener( 'mousedown', onMouseDown, false);
 		window.addEventListener( 'resize', onWindowResize, false );
-		window.addEventListener( 'mousedown', onMouseDown, false);
-
 	}
 
 	function onWindowResize() {
@@ -93,7 +95,12 @@ theatre.display = function(allData, onRendered) {
 		windowHalfY = window.innerHeight / 2;
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
-		renderer.setSize( (window.innerWidth-20), (window.innerHeight - 105) );
+		renderer.setSize( (window.innerWidth - 20), (window.innerHeight - 105) );
+		var height = $(window).innerHeight - 96;
+		theatre.modalCanvas.style.height = height + "px";
+		$('modal-canvas').css('height', function(height) {
+			return height;
+		});
 		render();
 	}
 
@@ -108,7 +115,7 @@ theatre.display = function(allData, onRendered) {
 
 		//extract that offset into external variable that doesn't have to be recalculated every time... later
 		var x =  ( e.clientX / window.innerWidth ) * 2 - 1;
-		var y = - ( (e.clientY-$(container).offset().top ) / window.innerHeight ) * 2 + 1;
+		var y = - ( (e.clientY-$(theatre.container).offset().top ) / window.innerHeight ) * 2 + 1;
 
 		//check the type of camera
 		if ( camera instanceof THREE.OrthographicCamera ) {
@@ -215,11 +222,10 @@ theatre.display = function(allData, onRendered) {
 						collection = theatre.code.split("\n");
 					}
 					utils.rippleList(modal,collection,intersects[0].object.componentData.line,theatre);
-				
+
 				}
 				placeHalo(intersects[0].object.position);
 
-				
 			}
 		}
 	}
@@ -245,6 +251,7 @@ theatre.display = function(allData, onRendered) {
 	  canvas.style.width = $(window).innerWidth()+ "px";
 	  var height = $(window).innerHeight - 96;
 	  canvas.style.height = height + "px";
+	  theatre.modalCanvas = canvas;
 
 	  document.body.appendChild(canvas);
 
@@ -290,7 +297,7 @@ theatre.display = function(allData, onRendered) {
 	}
 
 	theatre.nextNode = function() {
-		if (!theatre.expanded) return;
+		if (!theatre.expanded) theatre.expand();
 		var foundNext = false;
 		var i = 0;
 		utils.dull(composite);
@@ -336,7 +343,7 @@ theatre.display = function(allData, onRendered) {
 	};
 
 	theatre.prevNode = function() {
-		if (!theatre.expanded) return;
+		if (!theatre.expanded) theatre.expand();
 		var foundPrev = false;
 		var i = composite.children.length - 1; 
 		utils.dull(composite);
@@ -464,9 +471,9 @@ theatre.display = function(allData, onRendered) {
 
 		cancelAnimationFrame(theatre.reqId);// Stop the animation
 		// document.removeEventListener( 'keydown', controls.onKeyDown, false );
-		window.removeEventListener( 'mousemove', onMouseMove, false );
+		theatre.container.removeEventListener( 'mousemove', onMouseMove, false );
+		theatre.container.removeEventListener( 'mousedown', onMouseDown, false);
 		window.removeEventListener( 'resize', onWindowResize, false );
-		window.removeEventListener( 'mousedown', onMouseDown, false);
 
 		theatre.scene = null;
 		theatre.camera = null;

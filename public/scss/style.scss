@@ -1,4 +1,4 @@
-$input-height: 84vh;
+$input-height: 600px; // 84vh;
 $input-margin: 20px;
 
 
@@ -10,7 +10,6 @@ $input-margin: 20px;
 @import url(http://fonts.googleapis.com/css?family=PT+Mono);
 
 html, body {
-  overflow-y:hidden;
   height:100%;
 }
 
@@ -29,7 +28,6 @@ a {
 // .nav {
 //   position: absolute;
 // }
-
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
   color: #555;
   background-color: $lighter-gray;
@@ -85,4 +83,32 @@ a {
   font-family:courier;
   font-size:2em;
   padding:20px;
+}
+
+.tech-stack {
+  display:inline;
+}
+.stack-image {
+  // display:inline;
+  height: 200px;
+  width: 300px;
+  margin: 20px;
+  border-radius: 10px;
+  transition: all .2s ease-in-out;
+}
+.stack-image:hover { 
+  transform: scale(1.1); 
+}
+.member {
+  display: inline;
+}
+.profile-pic {
+  border-radius: 50%;
+  display: inline;
+}
+h3 {
+  display: inline;
+}
+.icons {
+  display: inline;
 }

@@ -114,7 +114,6 @@ utils.modal.headline=function(canvas, obj, theatre){
   } 
   var cData = obj.componentData;
   
-  // var text=c.text(-1000,30,utils.modalizeText(obj))
   var text = c.text(-1000, 30, utils.modalizeText(obj))
     .attr({"fill":"#fff","font-size":"40px","text-anchor":"start"})
     .animate({x:10},600,"<>");
