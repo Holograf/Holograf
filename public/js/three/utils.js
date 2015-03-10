@@ -107,8 +107,8 @@ utils.modal.donut = function(canvas,x,y,obj){
 };
 
 
-utils.modal.headline=function(canvas, obj, theatre){
-  var c=canvas;
+utils.modal.headline = function(canvas, obj, theatre){
+  var c = canvas;
   if (obj.object) {
     obj = obj.object;
   } 
@@ -123,7 +123,7 @@ utils.modal.headline=function(canvas, obj, theatre){
     .animate({x:0}, 600, "<>");
   text.toFront();
   text.data("backboard",backboard);
-  theatre.headline=text;
+  theatre.headline = text;
 };
 
 

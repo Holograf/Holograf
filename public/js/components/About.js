@@ -34,10 +34,10 @@ module.exports = React.createClass({
 
         <h1>The Holograf Team</h1>
         <div className='team'>
+          <Member name="Matt Conrad" image="img/matt.png" linkedIn="https://www.linkedin.com/in/matthewmconrad" gitHub="https://github.com/conrad" website="http://mattconrad.co/" />
+          <Member name="Ryan Lee" image="img/ryan.png" linkedIn="https://www.linkedin.com/in/ryanjlee12" gitHub="https://github.com/ryanjlee" website="http://ryanjlee.azurewebsites.net" />
           <Member name="Andy Coenen" image="img/andy.png" linkedIn="https://www.linkedin.com/in/andycoenen" gitHub="https://github.com/cannoneyed" website="http://cannoneyed.github.io/" />
           <Member name="Luke Davis" image="img/luke.png" linkedIn="https://www.linkedin.com/in/lucaswadedavis" gitHub="https://github.com/lucaswadedavis" website="http://lucaswadedavis.com" />
-          <Member name="Ryan Lee" image="img/ryan.png" linkedIn="https://www.linkedin.com/in/ryanjlee12" gitHub="https://github.com/ryanjlee" website="http://ryanjlee.azurewebsites.net" />
-          <Member name="Matt Conrad" image="img/matt.png" linkedIn="https://www.linkedin.com/in/matthewmconrad" gitHub="https://github.com/conrad" website="http://mattconrad.co/" />
         </div>
       </div>
     );

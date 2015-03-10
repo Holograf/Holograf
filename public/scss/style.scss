@@ -1,4 +1,4 @@
-$input-height: 600px; // 84vh;
+$input-height: 84vh;  
 $input-margin: 20px;
 
 
@@ -12,9 +12,15 @@ $input-margin: 20px;
 html, body {
   height:100%;
 }
-
 body {
   font-family: "PT Mono","lucida grande","Segoe UI",arial,verdana,"lucida sans unicode",tahoma,sans-serif;
+
+}
+.input-group {
+  margin: 5px;
+}
+.panel {
+  margin-bottom: 0;
 }
 
 .navbar-brand {
@@ -26,7 +32,7 @@ a {
   // font-size: 1.5rem;
 }
 .nav-tabs {
-  min-width: 800px;
+  min-width: 650px;
 }
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
   color: #555;
@@ -77,10 +83,12 @@ a {
 .about {
   padding: 30px;
   padding-left: 40px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .inspiration {
-  margin: 50px;
+  margin: 30px;
   margin-top: 30px;
   margin-right: 200px;
 }
@@ -89,10 +97,9 @@ a {
 }
 .tech-stack {
   margin: 0 auto;
-  // width: 
 }
 .stack-items {
-  margin-left: 50px; 
+  margin-left: 30px; 
 }
 .stack-image {
   height: 200px;
@@ -124,21 +131,30 @@ a {
   margin-right: 12px;
 }
 
-@media only screen and (max-width: 1400px) {
-  .team {
+@media only screen and (max-width: 1245px) {
+  .inspiration {
     width: 800px;
   }
   .tech-stack {
+    width: 900px;
+  }
+  .team {
     width: 800px;
   }
   .stack-image {
     margin-right: 40px;
     margin-bottom: 50px;
   }
+  // .about {
+  //   width: 910px;
+  // }
 
 }
 
 @media only screen and (max-width: 700px) {
+  .about {
+    width: 390px;
+  }
   .team {
     width: 350px;
   }
