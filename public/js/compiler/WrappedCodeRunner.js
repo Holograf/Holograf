@@ -77,11 +77,11 @@ module.exports = function (wrappedCode) {
     return spliceReturn.___obj();
   }
 
-  try {
-    eval(wrappedCode);
-  } catch (e) {
-    console.log(e);
-  }
+  // try {
+  eval(wrappedCode);
+  // } catch (e) {
+  //   console.log(e);
+  // }
 
 
   // Reset built-in methods

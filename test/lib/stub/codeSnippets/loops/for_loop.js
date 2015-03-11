@@ -10,7 +10,7 @@ var counter = 0;
 ___Program.set('counter', counter, 1);
 ___Program.loop('for', 'open', 2);
 for (var i = 0; i < 3; i++) {
-    ___Program.loop('for', 'cycle', 2);
+    ___Program.loop('for', 'cycle');
     ___Program.set('i', i, 2);
     counter += i;
     ___Program.set('counter', counter, 3);

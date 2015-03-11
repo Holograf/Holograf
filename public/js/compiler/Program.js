@@ -23,17 +23,15 @@ Program.prototype.setCode = function (rawCode) {
 // Object tracking methods
 Program.prototype.registerObject = function (object) {
   var id = this.components.length;
-  Object.defineProperty(object, '___id', { enumerable: false, value: id });
+  Object.defineProperty(object, '___id', { enumerable: false, value: id, writable: true });
   Object.defineProperty(object, '___parsed', { enumerable: false, value: false, writable: true });
-  Object.defineProperty(object, '___accessor', { enumerable: false, value: undefined, writable: true });
-
 
   if (Array.isArray(object)) {
-    this.addComponent('array');
+    var component = this.addComponent('array');
   } else  {
-    this.addComponent('object');
+    var component = this.addComponent('object');
   }
-  this._objects[id] = object;
+  this._objects[id] = {};
 }
 
 Program.prototype.newFunctionId = function () {
@@ -43,106 +41,35 @@ Program.prototype.newFunctionId = function () {
 Program.prototype.registerFunction = function (fn) {
   var id = this.components.length;
 
-  Object.defineProperty(fn, '___id', { enumerable: false, value: id });
-  Object.defineProperty(fn, '___accessor', { enumerable: false, value: undefined, writable: true });
+  Object.defineProperty(fn, '___id', { enumerable: false, value: id, writable: true });
 
   this.addComponent('function');
-
   return id;
 }
 
-Program.prototype.registerObjectProperties = function (object, name) {
+Program.prototype.registerObjectProperties = function (object, line) {
   var type = Array.isArray(object) ? 'element' : 'property';
   for (var key in object) {
     var value = object[key];
-    var accessor = name + '[' + key + ']';
 
     var component = this.addComponent(type, key);
     component.parent = object.___id;
-    this.scopes[this.getCurrentScope()][accessor] = component.id;  
 
     if (typeof value === 'object') {
       this.addStep(component.id, 'pointer', value.___id, line);
-      this.registerObjectProperties(value, accessor);
+      this._objects[component.parent][key] = {};
+      this.registerObjectProperties(value, line);
     } else if (typeof value === 'function') {
       this.addStep(component.id, 'pointer', value.___id, line);
+      this._objects[component.parent][key] = component.id;
     } else {
       this.addStep(component.id, 'value', value, line);
+      this._objects[component.parent][key] = component.id;
     }
   }
 
   this.objectSnapshot(object);
-
   object.___parsed = true;
-}
-
-Program.prototype.setObjectAcessor = function (object, accessor, name) {
-  object.___accessor = accessor;
-  object.___name = name;
-}
-
-//----------------------------------------------------------------------------------
-// Object tracking methods
-Program.prototype.registerObject = function (object) {
-  var id = this.components.length;
-  Object.defineProperty(object, '___id', { enumerable: false, value: id });
-  Object.defineProperty(object, '___parsed', { enumerable: false, value: false, writable: true });
-  Object.defineProperty(object, '___accessor', { enumerable: false, value: undefined, writable: true });
-  Object.defineProperty(object, '___name', { enumerable: false, value: undefined, writable: true });
-
-
-  if (Array.isArray(object)) {
-    this.addComponent('array');
-  } else  {
-    this.addComponent('object');
-  }
-  this._objects[id] = object;
-}
-
-Program.prototype.newFunctionId = function () {
-  return this.components.length;
-}
-
-Program.prototype.registerFunction = function (fn) {
-  var id = this.components.length;
-
-  Object.defineProperty(fn, '___id', { enumerable: false, value: id });
-  Object.defineProperty(fn, '___accessor', { enumerable: false, value: undefined, writable: true });
-  Object.defineProperty(fn, '___name', { enumerable: false, value: undefined, writable: true });
-
-  this.addComponent('function');
-
-  return id;
-}
-
-Program.prototype.registerObjectProperties = function (object, name, line) {
-  var type = Array.isArray(object) ? 'element' : 'property';
-  for (var key in object) {
-    var value = object[key];
-    var accessor = name + '[' + key + ']';
-
-    var component = this.addComponent(type, key);
-    component.parent = object.___id;
-    this.scopes[this.getCurrentScope()][accessor] = component.id;  
-
-    if (typeof value === 'object') {
-      this.addStep(component.id, 'pointer', value.___id, line);
-      this.registerObjectProperties(value, accessor);
-    } else if (typeof value === 'function') {
-      this.addStep(component.id, 'pointer', value.___id, line);
-    } else {
-      this.addStep(component.id, 'value', value, line);
-    }
-  }
-
-  this.objectSnapshot(object);
-
-  object.___parsed = true;
-}
-
-Program.prototype.setObjectAcessor = function (object, accessor, name) {
-  object.___accessor = accessor;
-  object.___name = name;
 }
 
 //----------------------------------------------------------------------------------
@@ -158,7 +85,8 @@ Program.prototype.getData = function () {
     scopes: this.scopes,
     lines: this.stepLines,
     code: this._code,
-    wrappedCode: this._wrappedCode
+    wrappedCode: this._wrappedCode,
+    objects: this._objects
   }
 }
 
@@ -317,12 +245,11 @@ Program.prototype.set = function (name, value, line, param) {
     if ( !this.getId(name) ) {
       var component = this.instantiate(name, 'pointer', objectId, line);
       component.type = param || 'var';
-      this.setObjectAcessor(value, component.id, name);
     } else {
       this.addStep(name, 'pointer', objectId, line);
     }
     if (!value.___parsed) {
-      this.registerObjectProperties(value, name);
+      this.registerObjectProperties(value, line);
     }
 
   } else if (typeof value === 'function') {
@@ -330,7 +257,6 @@ Program.prototype.set = function (name, value, line, param) {
     if ( !this.getId(name) ) {
       var component = this.instantiate(name, 'pointer', functionId, line);
       component.type = param || 'var';
-      this.setObjectAcessor(value, component.id, name);
     } else {
       this.addStep(name, 'pointer', functionId, line);
     }
@@ -438,19 +364,13 @@ Program.prototype.lastIdOfObject = function (parentId) {
 
 //----------------------------------------------------------------------------------
 // Object comprehension methods
-Program.prototype.setObjectProperty = function (fullObjectString, parent, key, line) {
-
-  var parentObjectString = fullObjectString.substring(0, fullObjectString.lastIndexOf('['));
-  if (key === undefined) {
-    key = fullObjectString.substring(fullObjectString.lastIndexOf('['), fullObjectString.lastIndexOf(']'));
-  }
-
-  var lookupString = parentObjectString + '[' + key + ']';
-  var id = this.getId(lookupString );
+Program.prototype.setObjectProperty = function (parent, key, line) {
   
   var value = parent[key];
   var parentId = parent.___id;
   var pointerId = value.___id;
+
+  var id = this._objects[parentId][key];
   
    // Check to see if the object property being set is already defined
   if (id) {
@@ -469,17 +389,20 @@ Program.prototype.setObjectProperty = function (fullObjectString, parent, key, l
     var memberName = this.components[parentId].type === 'array' ? 'element' : 'property';
 
     if (value && typeof value === 'object') {
-      var component = this.instantiate(fullObjectString, 'pointer', pointerId, line);
+      var component = this.addComponent(key, 'pointer', pointerId, line);
+      this.addStep(component.id, 'pointer', pointerId, line);
       component.name = key;
       component.type = memberName;
       component.parent = parentId;
     } else if (typeof value === 'function') {
-      var component = this.instantiate(fullObjectString, 'pointer', pointerId, line);
+      var component = this.addComponent(key, 'pointer', pointerId, line);
+      this.addStep(component.id, 'pointer', pointerId, line);
       component.name = key;
       component.type = memberName === 'property' ? 'method': 'function'
       component.parent = parentId;
     } else {
-      var component = this.instantiate(fullObjectString, 'value', value, line);
+      var component = this.addComponent(key, 'value', value, line);
+      this.addStep(component.id, 'value', value, line);
       component.name = key;
       component.type = memberName;
       component.parent = parentId;

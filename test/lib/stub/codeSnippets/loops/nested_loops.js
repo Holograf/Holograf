@@ -12,11 +12,11 @@ var counter = 0;
 ___Program.set('counter', counter, 1);
 ___Program.loop('for', 'open', 2);
 for (var i = 0; i < 2; i++) {
-    ___Program.loop('for', 'cycle', 2);
+    ___Program.loop('for', 'cycle');
     ___Program.set('i', i, 2);
     ___Program.loop('for', 'open', 3);
     for (var j = 0; j < 2; j++) {
-        ___Program.loop('for', 'cycle', 3);
+        ___Program.loop('for', 'cycle');
         ___Program.set('j', j, 3);
         counter++;
         ___Program.set('counter', counter, 4);

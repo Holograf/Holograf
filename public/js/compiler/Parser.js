@@ -1,6 +1,8 @@
 var esprimaParse = require('esprima').parse;
 var inject = require('./Inject');
 var Promise = require('bluebird');
+var generateCode = require('escodegen').generate;
+
 
 // External variables to help manage tracking of function invocations
 var functionStack = [];
@@ -11,10 +13,16 @@ var Parser = function (code) {
   // console.log(JSON.stringify(esprimaParse(code), null, 2));
   return new Promise (function (resolve, reject) {
     var syntaxTree = esprimaParse(code, {loc: true});
+    console.log(JSON.stringify(esprimaParse(code), null, 2));
+
+
     var programBody = syntaxTree.body;
     
     traverse(programBody);  // Traverse the syntax tree to inject watchpoints
     injectObjectWrappers(programBody); // inject object registration methods onto all objects
+
+    console.log(JSON.stringify(syntaxTree, null, 2));
+
 
     resolve(syntaxTree);
   });
@@ -186,8 +194,19 @@ var checkExpressionStatements = function (node, body, index, advance) {
       }
 
       if (left.type === 'MemberExpression') {
-        injectAfter(node, body, index, 'memberExpression');
-        advance(1);
+
+        var parentObjectNode = inject.parentObject(node);
+        var objectAccessorNode = inject.objectAccessor(node);
+        var expressionStatementNode = inject.objectExpressionStatement(node, parentObjectNode, objectAccessorNode);
+        var setObjectPropertyNode = inject.setObjectPropertyExpression(node, parentObjectNode, objectAccessorNode);
+
+        injectedStatements = [parentObjectNode, objectAccessorNode, expressionStatementNode, setObjectPropertyNode];
+
+        body.splice(index, 1);
+        insertArrayAt(body, index, injectedStatements);
+
+        console.log(body);
+        advance(3);
       } else {
         injectAfter(node, body, index, 'expression');
         advance(1);
@@ -195,6 +214,10 @@ var checkExpressionStatements = function (node, body, index, advance) {
     }
   }
 
+}
+
+function insertArrayAt(array, index, arrayToInsert) {
+    Array.prototype.splice.apply(array, [index, 0].concat(arrayToInsert));
 }
 
 
@@ -209,6 +232,10 @@ var traverse = function (body) {
       checkVariableDeclarations(node, body, index, advance);
       checkExpressionStatements(node, body, index, advance);
 
+      if (node.type === 'FunctionDeclaration') { // ie function f () { return 1; };
+        traverseFunction(node);
+      } 
+
       if (node.type === 'ReturnStatement') {
         if (node.argument && node.argument.type === 'FunctionExpression') {
           traverseFunction(node.argument);
@@ -217,14 +244,6 @@ var traverse = function (body) {
         injectAfter(node, body, index, 'return');
 
         advance(2);
-      }
-      
-      if (node.type === 'ForInStatement') {
-        injectBefore(node, body, index, 'loopInit', 'forIn');
-        injectAfter(node, body, index, 'loopOpen', 'forIn');
-        injectAfter(node, body, index + 2, 'loopClose', 'for');
-        injectAfter(node, body, index + 3, 'loopPost', 'forIn');
-        advance(4);
       }
 
       if (node.type === 'ForStatement') {
@@ -265,7 +284,7 @@ var traverse = function (body) {
       }
 
       // Traverse loop bodies
-      if (node.body) {
+      if (node.body && node.type !== 'FunctionDeclaration') {
         var block = node.body;
         traverse(block.body);
       }
@@ -356,7 +375,22 @@ var injectObjectWrappers = function (body) {
           injectObjectWrappers(node.expression.arguments);
         }
       }
+      if (node.type === 'FunctionDeclaration') {
+        if (node.body.body) {
+          injectObjectWrappers(node.body.body)
+        } else {
+          injectObjectWrappers(node.body);
+        }
+        var functionVariableDeclaration = wrapFunctionDeclaration(node);
+        var name = functionVariableDeclaration.declarations[0].id.name;
+        var line = node.loc.start.line;
+        var functionSetExpression = inject.createNode('set', name);
+        inject.addArgument(functionSetExpression, line, 'Literal');
 
+        body.splice(0, 0, functionVariableDeclaration );
+        body.splice(1, 0, functionSetExpression )
+        index = index + 2;
+      }
       if (node.type === 'Property') {
         var objectNode = node.value;
         node.value = injectObjectWrapper(node.value);
@@ -407,6 +441,28 @@ var injectObjectWrapper = function (node) {
 var wrapFunctionInstantiation = function (functionNode) {
   var wrappedNode = wrapNode(functionNode, '___fn');
   return wrappedNode;
+}
+
+var wrapFunctionDeclaration = function (functionNode) {
+  var name = functionNode.id.name;
+  var functionIdentifier = {
+    "type": "Identifier",
+    "name": name
+  }
+  var wrappedNode = wrapNode(functionIdentifier, '___fn');
+  var variableDeclaration = {
+    type: 'VariableDeclaration',
+    declarations: [ {
+      type: 'VariableDeclarator',
+      id: {
+        type: 'Identifier',
+        name: name
+      },
+      init: wrappedNode
+    } ],
+    kind: 'var'
+  }
+  return variableDeclaration;
 }
 
 var wrapObjectInstantiation = function (objectNode) {

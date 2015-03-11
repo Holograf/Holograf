@@ -6,8 +6,10 @@ object.name = 'andy';
 output: function() {
 var object = {}.___obj();
 ___Program.set('object', object, 1);
-object.name = 'andy';
-___Program.setObjectProperty('object[name]', object, 'name', 2);
+___Program.parentObject = object;
+___Program.objectAccessor = 'name';
+___Program.parentObject[___Program.objectAccessor] = 'andy';
+___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 2);
 },
 data: {
  "programSteps": [

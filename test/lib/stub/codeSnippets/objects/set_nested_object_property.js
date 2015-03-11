@@ -8,8 +8,10 @@ object.stuff.name = 'andy';
 output: function() {
 var object = { stuff: {}.___obj() }.___obj();
 ___Program.set('object', object, 1);
-object.stuff.name = 'andy';
-___Program.setObjectProperty('object[stuff][name]', object['stuff'], 'name', 4);
+___Program.parentObject = object.stuff;
+___Program.objectAccessor = 'name';
+___Program.parentObject[___Program.objectAccessor] = 'andy';
+___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 4);
 },
 data: {
  "programSteps": [

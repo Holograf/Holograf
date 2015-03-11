@@ -10,8 +10,10 @@ var y = [
     3
 ].___obj();
 ___Program.set('y', y, 1);
-y[0] = 'new';
-___Program.setObjectProperty('y[0]', y, '0', 2);
+___Program.parentObject = y;
+___Program.objectAccessor = 0;
+___Program.parentObject[___Program.objectAccessor] = 'new';
+___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 2);
 },
 data: {
  "programSteps": [
