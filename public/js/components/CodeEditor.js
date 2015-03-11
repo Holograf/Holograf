@@ -19,7 +19,7 @@ module.exports = React.createClass({
     textAreaStyle: {minHeight: '10em'},
     value: '',
     mode: 'javascript',
-    theme: 'default',
+    theme: 'blackboard',
     lineNumbers: true,
     onChange: function (e) {
       Actions.updateCode(e.target.value);
