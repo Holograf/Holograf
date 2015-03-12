@@ -1,3 +1,5 @@
+var utils = require('./utils');
+
 var subroutines={};
 
 // inside methods propertize, elementize, labelize - create 
@@ -619,12 +621,10 @@ subroutines.labelize=function(composite,opts){
 	
 };
 
-subroutines.Composite = function(data,scopes,particleLight){
-	
-	console.log(data);
-	
+subroutines.Composite = function(data, scopes, particleLight){
+		
 	var composite=new THREE.Object3D();
-	composite.maxSize=100*data.length;
+	composite.maxSize = 100 * data.length;
 	var buffer=10;
 	var leftMargin=(composite.maxSize/2) - ((data.length*buffer)/2);
 	var interval=composite.maxSize/(data.length+1);
@@ -717,3 +717,5 @@ subroutines.loopGeometry=new THREE.TorusGeometry(500,20,5,30);
 subroutines.funGeometry=new THREE.CylinderGeometry(100,50,80,6,1,true);
 subroutines.variableGeometry=new THREE.DodecahedronGeometry(25);
 subroutines.dfltMaterial=new THREE.SpriteMaterial({});
+
+module.exports = subroutines;

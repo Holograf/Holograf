@@ -5,8 +5,9 @@ $input-margin: 20px;
 @import "colorScheme";
 @import "../../dist/bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "codeMirror";
-@import "whirlpool";
 @import "./codeMirror/theme/blackboard";
+@import "whirlpool";
+@import "visualizer";
 @import url(http://fonts.googleapis.com/css?family=PT+Mono);
 
 html, body {
@@ -47,9 +48,7 @@ a {
   font-family: monospace;
   font-size: 16px;
 }
-// .visual-container {
-//   background-color: #ececec;
-// }
+
 .visualButton {
   margin: 5px 5px 5px 10px;
   display: inline;

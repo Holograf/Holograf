@@ -4,8 +4,8 @@
 
 // About.js
 var React = require('react');
-var TechStackItem = require('./TechStackItem/');
-var Member = require('./Member/');
+var TechStackItem = require('./elements/TechStackItem/');
+var Member = require('./elements/Member/');
 var Actions = require('../actions/Actions');
 
 module.exports = React.createClass({

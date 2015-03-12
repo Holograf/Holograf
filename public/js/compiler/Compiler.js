@@ -4,6 +4,7 @@ var blueprint = require('./Blueprint');
 var wrap = require('./Wrapper');
 var generateCode = require('./Generator');
 var execute = require('./Execute');
+var postProcess = require('./PostProcessor');
 var Promise = require('bluebird');
 
 var Compiler = function (rawCode) {
@@ -16,14 +17,16 @@ var Compiler = function (rawCode) {
       .then(wrap)
       .then(generateCode)
       .then(execute)
+      .then(postProcess)
       .then(function (resolution) {
 
         var data = resolution.data;
-        console.log(data.wrappedCode);
+        // console.log(data.wrappedCode);
         // console.log(JSON.stringify(data.programSteps,null,1));
         // console.log(JSON.stringify(data.components,null,1));
 
         data.code = rawCode;
+        console.log(data);
         resolve(data);
       })
       .error(function (e) {

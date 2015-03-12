@@ -17,9 +17,6 @@ module.exports = function (input) {
 
     worker.addEventListener('message', function(message) {
       clearTimeout(executionTimeCheck);
-      // console.log(JSON.stringify(message.data.programSteps, null, 2));
-      // console.log(JSON.stringify(message.data.components, null, 2));
-      // console.log(JSON.stringify(message.data.scopes, null, 2));
       resolve({
         data: message.data,
         syntaxTree: input.syntaxTree
