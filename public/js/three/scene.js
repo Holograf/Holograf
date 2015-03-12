@@ -32,6 +32,7 @@ theatre.display = function(allData, onRendered) {
 		particleLight = subroutines.TimeLight();
 		scene.add( particleLight );
 		composite = subroutines.Composite(data,scopes,particleLight);
+		theatre.composite = composite;
 		theatre.maxSize = composite.maxSize;
 		scene.add( composite );
 		// subroutines.Axes(scene);
@@ -82,11 +83,9 @@ theatre.display = function(allData, onRendered) {
 		container.appendChild(renderer.domElement);
 
 		// User interaction
-		// window.addEventListener( 'mousemove', onMouseMove, false );
-		// window.addEventListener( 'resize', onWindowResize, false );
-		// window.addEventListener( 'mousedown', onMouseDown, false);
 		theatre.container.addEventListener( 'mousemove', onMouseMove, false );
-		theatre.container.addEventListener( 'mousedown', onMouseDown, false);
+		window.addEventListener( 'mousedown', onMouseDown, false);
+		// theatre.container.addEventListener( 'mousedown', onMouseDown, false);
 		window.addEventListener( 'resize', onWindowResize, false );
 	}
 
@@ -96,11 +95,13 @@ theatre.display = function(allData, onRendered) {
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize( (window.innerWidth - 20), (window.innerHeight - 105) );
-		var height = $(window).innerHeight - 96;
-		theatre.modalCanvas.style.height = height + "px";
-		$('modal-canvas').css('height', function(height) {
-			return height;
-		});
+		if (theatre.modalCanvas) {
+			var height = $(window).innerHeight - 96;
+			theatre.modalCanvas.style.height = height + "px";
+			$('modal-canvas').css('height', function(height) {
+				return height;
+			});
+		}
 		render();
 	}
 
@@ -136,8 +137,8 @@ theatre.display = function(allData, onRendered) {
 
 			  // Remove modal only appears on mouseover
 			  //Need to address this later to just hide it.
-			  if (document.getElementById("modal-canvas") && !theatre.nodeView){
-			    //document.body.removeChild(document.getElementById("modal-canvas"));
+			  if (document.getElementById("modal-canvas")){
+			    document.body.removeChild(document.getElementById("modal-canvas"));
 			  }
 
 				utils.dull(composite);
@@ -156,12 +157,22 @@ theatre.display = function(allData, onRendered) {
 
 
 	function onMouseDown ( e ) {
-		// debugger;
 		e.preventDefault();
-		if (theatre.expanded === false) {
+		if (!theatre.controlsEnabled) return;
+		if (!theatre.expanded) { 
 			theatre.expand();
+			return;
 		}
-		if (theatre.controlsEnabled === false) return;
+
+		// Remove modal overlays
+		if (document.getElementById("modal-canvas")){
+			document.body.removeChild(document.getElementById("modal-canvas"));
+			theatre.modal = null;
+			theatre.rippleList = null;
+			theatre.headline = null;
+		}
+		// remove prior component highlighting
+		utils.dull(composite);
 
 		var vector = new THREE.Vector3();
 		var raycaster = new THREE.Raycaster();
@@ -184,48 +195,21 @@ theatre.display = function(allData, onRendered) {
 
 		if (composite){
 			var intersects = raycaster.intersectObjects( composite.children, true );	
-
-			//  if object is not clicked, remove Raphael ss
-			if (intersects.length < 1 && theatre.nodeView) {  
-
-				if (document.getElementById("modal-canvas")){
-					document.body.removeChild(document.getElementById("modal-canvas"));
-					theatre.modal = null;
-					theatre.rippleList = null;
-					theatre.headline = null;
-				}
-
-			// if an object is clicked, enter nodeView and zoom in
-			} else if (intersects.length > 0) { 
-				// save the prior position before entering nodeView
-				// if (!theatre.nodeView) {
-				// 	theatre.lastPosition = new THREE.Vector3().copy( camera.position );
-				// 	theatre.lastRotation = new THREE.Quaternion().copy( camera.rotation );
-				// }
-
+			if (intersects.length > 0) { 
 				var selectedId = intersects[0].object.componentData.id || -1;
-
-				// maybe?
 				theatre.currentNode = intersects[0].object;
 				theatre.viewNode(theatre.currentNode.position);
+				
 
-				theatre.nodeView = true;
-				controls.update();
-
-				if ($("#modal-canvas").length===0){
-					modal = createModal();
-					theatre.modal=modal;
-					utils.modal.headline(modal,intersects[0],theatre);
-
-					var collection = [];
-					if (collection.length<1){
-						collection = theatre.code.split("\n");
-					}
-					utils.rippleList(modal,collection,intersects[0].object.componentData.line,theatre);
-
+				var collection = [];
+				if (collection.length < 1){
+					collection = theatre.code.split("\n");
 				}
-				placeHalo(intersects[0].object.position);
 
+				utils.modal.headline(modal,intersects[0],theatre);  // need this one?
+				utils.shine(composite,theatre.currentNode.componentData.id);
+				placeHalo(theatre.currentNode.position);
+				controls.update();
 			}
 		}
 	}
@@ -259,32 +243,33 @@ theatre.display = function(allData, onRendered) {
 	  return c;
 	}
 
-
 	function updateModal(modal, node) {
-		
+			// debugger;
 		if (theatre.headline){
 			theatre.headline.attr({"text":utils.modalizeText(node)});
-			var bBox=theatre.headline.getBBox();
+			var bBox = theatre.headline.getBBox();
 			theatre.headline.data("backboard").stop();
 			theatre.headline.data("backboard").animate({"width":bBox.width+20},300,"<>");
-			if (theatre.rippleList){
-				for (var i=0;i<theatre.rippleList.length;i++){
-					var line=theatre.rippleList[i];
-					line.stop();
-					line.data("backboard").stop();
-					if (line.data("lineNumber")===node.componentData.line){
-						line.data("backboard").attr({"fill":"#ff3"});
-						line.attr({"fill":"#000"});
-					} else {
-						line.data("backboard").animate({"fill":"#000"},300);
-						line.animate({"fill":"#fff"},300);
-					}
+		}
+		if (theatre.rippleList){
+			for (var i = 0; i < theatre.rippleList.length; i++){
+				var line = theatre.rippleList[i];
+				line.stop();
+				line.data("backboard").stop();
+				if (line.data("lineNumber") === node.componentData.line){
+					line.data("backboard").attr({"fill" : "#ff3"});
+					line.attr({"fill" : "#000"});
+				} else {
+					line.data("backboard").animate({"fill" : "#000"},300);
+					line.animate({"fill":"#fff"},300);
 				}
 			}
-		} else {
+		}
+		// } else {
+		if (!theatre.headline) {
 			utils.modal.headline(modal, node, theatre);
 			var collection = [];
-			if (collection.length<1){ collection = theatre.code.split("\n"); }
+			if (collection.length < 1){ collection = theatre.code.split("\n"); }
 			utils.rippleList(modal, collection, node.componentData.line, theatre);
 		}
 		
@@ -446,7 +431,6 @@ theatre.display = function(allData, onRendered) {
 	};
 
 	theatre.expand = function() {
-		// console.log('expand - theatre.expanded:', theatre.expanded);
 		var action = theatre.expanded ? "collapse" : "expand";
 		for (var i = 0; i < composite.children.length; i++){
 			composite.children[i][action].start();
@@ -469,7 +453,7 @@ theatre.display = function(allData, onRendered) {
 
 	theatre.clearScene = function() {
 
-		cancelAnimationFrame(theatre.reqId);// Stop the animation
+		cancelAnimationFrame(theatre.reqId);  // Stop the animation
 		// document.removeEventListener( 'keydown', controls.onKeyDown, false );
 		theatre.container.removeEventListener( 'mousemove', onMouseMove, false );
 		theatre.container.removeEventListener( 'mousedown', onMouseDown, false);

@@ -9,7 +9,6 @@ var source = require('vinyl-source-stream');
 var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var jasmine = require('gulp-jasmine');
-var workerify = require('workerify');
 
 var paths = {
   scripts: ['public/**/*.js'],
