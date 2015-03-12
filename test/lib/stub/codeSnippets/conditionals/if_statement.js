@@ -7,14 +7,14 @@ if (x > 5) {
 },
 output: function() {
 var x = 10;
-___Program.set('x', x, 1);
-___Program.block('if', 1, 2);
+___Program.set('x', x, 2);
+___Program.block('if', 1, 5);
 if (x > 5) {
-    ___Program.enter('if', 0, 2);
+    ___Program.enter('if', 0, 9);
     var size = 'large';
-    ___Program.set('size', size, 3);
+    ___Program.set('size', size, 11);
 }
-___Program.block('if', 'close', 4);
+___Program.block('if', 'close', 5);
 },
 data: {
  "programSteps": [

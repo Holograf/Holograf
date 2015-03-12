@@ -1,10 +1,11 @@
 var Program = require('./Program');
 
-module.exports = function (wrappedCode) {
+module.exports = function (wrappedCode, syntaxTree) {
 
 
   var ___Program = new Program;
   ___Program._wrappedCode = wrappedCode;
+  ___Program.setSyntaxTree(syntaxTree);
 
 
   Object.defineProperty(Object.prototype, '___obj', {
@@ -26,7 +27,6 @@ module.exports = function (wrappedCode) {
     enumerable: false,
     writable: true
   });
-
 
 
   // Store built-in methods to track invocation

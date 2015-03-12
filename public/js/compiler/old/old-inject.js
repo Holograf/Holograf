@@ -4,17 +4,14 @@ module.exports = {
   //----------------------------------------------------------------------------------
   // Explicit Injection point methods
   variable: function (node) {
-    // var lineNumber = this.getLineNumber(node);
     var name = node.id.name;
     if (name !== '___functionId') {
       var injectedNode = this.createNode('set', name);
       return injectedNode;
-      // return this.addArgument(injectedNode, lineNumber);
     } 
   },
 
   expression: function (node) {
-    // var lineNumber = this.getLineNumber(node);
     var expression = node.expression;
     if (expression.type === 'UpdateExpression') {
 
@@ -35,6 +32,9 @@ module.exports = {
     }
   },
 
+  invocationPoint: function (node) {
+    return this.createNode('setInvocationPoint');
+  },
 
 
   //----------------------------------------------------------------------------------
@@ -135,10 +135,9 @@ module.exports = {
   },
 
   setObjectPropertyExpression: function (node) {
-    console.log('NODE TO INJECT!', node);
-    var lineNumber = node.loc.start.line;
+    var codeId = node.___id;
     var injectedNode = esprimaParse(
-      '___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor,' + lineNumber + ');'
+      '___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor,' + codeId + ');'
       ).body[0];
     return injectedNode;
   },
@@ -171,9 +170,21 @@ module.exports = {
                                     // as well as the 'init' (for for loops) and 'cycle'
     var injectionPoint = node.body;
 
+    console.log(injectionPoint);
+
+    if (!injectionPoint.body) {
+      node.body = {
+        type: 'BlockStatement',
+        loc: injectionPoint.loc,
+        body: [injectionPoint]
+      }
+      injectionPoint = node.body;
+    }
+
 
     if (type === 'for' || type === 'forIn') {
       // Insert a watcher on the iterator
+
       if (type === 'forIn') {
         var name = node.left.declarations[0].id.name;
         type = 'for';
@@ -181,34 +192,20 @@ module.exports = {
         var name = node.init.declarations[0].id.name;
       }
       var injectedNode = this.createNode('set', name);
-      this.addArgument(injectedNode, node.loc.start.line);
+      this.addArgument(injectedNode, node.___id);
       injectionPoint.body.unshift(injectedNode);
 
-      // Inject a watcher for the loop cycle
       injectedNode = this.createNode('loop', 'for', 'cycle');
+      this.addArgument(injectedNode, node.___id);
       injectionPoint.body.unshift(injectedNode);
+
       return this.createNode('loop', 'for', 'open');
     }
-
-    if (type === 'for') {
-      // Insert a watcher on the iterator
-      name = node.init.declarations[0].id.name;
-      injectedNode = this.createNode('set', name);
-      injectionPoint.body.unshift(injectedNode);
-
-      // Inject a watcher for the loop cycle
-      injectedNode = this.createNode('loop', type, 'cycle');
-      this.addArgument(injectedNode, node.loc.start.line);
-      injectionPoint.body.unshift(injectedNode);
-      return this.createNode('loop', type, 'open');
-    }
-
-
 
     if (type === 'while' || type === 'do') {
       // Inject a watcher for the loop cycle
       injectedNode = this.createNode('loop', type, 'cycle');
-      this.addArgument(injectedNode, node.loc.start.line);
+      this.addArgument(injectedNode, node.___id);
       injectionPoint.body.unshift(injectedNode);
       return this.createNode('loop', type, 'open');
     }
@@ -242,10 +239,10 @@ module.exports = {
 
     var traverse = function(node) {
       var injectionPoint = node.consequent ? node.consequent : node;
-      var line = injectionPoint.loc.start.line;
+      var codeId = injectionPoint.___id;
 
       var injectedNode = this.createNode('enter', 'if', paths++);
-      this.addArgument(injectedNode, line);
+      this.addArgument(injectedNode, codeId);
       injectionPoint.body.unshift(injectedNode);
 
       if (node.alternate) {
@@ -266,32 +263,31 @@ module.exports = {
   // function and method internal injection
   invoke: function (node, params, term) {
     term = term || 'invoke';
-    var injectionPoint = node.body;
+    var injectionPoint = node.body.body;
 
-    if (node.loc) {
-      var startLine = node.loc.start.line;
-      var endLine = node.loc.end.line;
+    if (node.___id) {
+      var codeId = node.___id;
     }
 
     // Create the parameter watchers
     for (var i = params.length - 1; i >= 0; i--) {
       var injectedNode = this.createNode('param', params[i].name)
-      this.addArgument(injectedNode, startLine);
+      this.addArgument(injectedNode, codeId);
       injectionPoint.unshift(injectedNode);
     }
     // Inject the ___Program.invoke('fn name')
     var injectedNode = this.createNode(term);
     this.addArgument(injectedNode, '___functionId', 'Identifier');
-    this.addArgument(injectedNode, startLine);
+    this.addArgument(injectedNode, codeId);
     injectionPoint.unshift(injectedNode);
 
     var calleeNode = this.createFunctionCalleeNode();
     injectionPoint.unshift(calleeNode)
 
-    // Inject teh implicit ___Program.return('fn name')
+    // Inject the implicit ___Program.return('fn name')
     var injectedNode = this.createNode('return');
     this.addArgument(injectedNode, '___functionId', 'Identifier');
-    this.addArgument(injectedNode, endLine);
+    this.addArgument(injectedNode, codeId);
     injectionPoint.push(injectedNode);
   },
 
@@ -407,11 +403,11 @@ module.exports = {
     return node;
   },
 
-  changeLineArgument: function (injectedNode, line) {
+  changeCodeId: function (injectedNode, codeId) {
     var lastIndex = injectedNode.expression.arguments.length - 1;
     injectedNode.expression.arguments[lastIndex] = {
       type: 'Literal',
-      value: line
+      value: codeId
     }
   },
 
@@ -432,11 +428,6 @@ module.exports = {
   isSpecialMethod: function (method) {
     var specialMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'slice'];
     return specialMethods.indexOf(method) !== -1;
-  },
-
-  getLineNumber: function (node) {
-    // var lineNumber = node.loc.start.line;
-    // return lineNumber;
   }
 
 }

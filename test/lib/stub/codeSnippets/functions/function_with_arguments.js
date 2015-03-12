@@ -8,15 +8,16 @@ f(1, 2, 3);
 output: function() {
 var f = function (x, y, z) {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId, 1);
-    ___Program.param('x', x, 1);
-    ___Program.param('y', y, 1);
-    ___Program.param('z', z, 1);
+    ___Program.invoke(___functionId);
+    ___Program.param('x', x, 5);
+    ___Program.param('y', y, 6);
+    ___Program.param('z', z, 7);
     x = y + z;
-    ___Program.set('x', x, 2);
-    ___Program.return(___functionId, 3);
+    ___Program.set('x', x, 9);
+    ___Program.return(___functionId, 4);
 }.___fn();
-___Program.set('f', f, 1);
+___Program.set('f', f, 2);
+___Program.setInvocationPoint(15);
 f(1, 2, 3);
 },
 data: {

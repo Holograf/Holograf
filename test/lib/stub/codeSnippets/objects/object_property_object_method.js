@@ -14,17 +14,18 @@ var object = {
     nested: {
         f: function () {
             var ___functionId = arguments.callee.___id;
-            ___Program.method(___functionId, 3);
+            ___Program.invoke(___functionId);
             ___Program.returnState = true;
-            ___Program.return(___functionId, 4);
+            ___Program.return(___functionId, 11);
             return ___Program.returnState;
-            ___Program.return(___functionId, 5);
+            ___Program.return(___functionId, 10);
         }.___fn()
     }.___obj()
 }.___obj();
-___Program.set('object', object, 1);
+___Program.set('object', object, 2);
+___Program.setInvocationPoint(16);
 var result = object.nested.f();
-___Program.set('result', result, 8);
+___Program.set('result', result, 14);
 },
 data: {
  "programSteps": [

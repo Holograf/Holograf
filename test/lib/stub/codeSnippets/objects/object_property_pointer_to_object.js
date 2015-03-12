@@ -6,11 +6,13 @@ next.o = obj;
 },
 output: function() {
 var obj = { name: 'andy' }.___obj();
-___Program.set('obj', obj, 1);
+___Program.set('obj', obj, 2);
 var next = {}.___obj();
-___Program.set('next', next, 2);
-next.o = obj;
-___Program.setObjectProperty('next[o]', next, 3);
+___Program.set('next', next, 9);
+___Program.parentObject = next;
+___Program.objectAccessor = 'o';
+___Program.parentObject[___Program.objectAccessor] = obj;
+___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 14);
 },
 data: {
  "programSteps": [

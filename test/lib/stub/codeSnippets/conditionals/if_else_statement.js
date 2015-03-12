@@ -9,18 +9,18 @@ if (x > 5) {
 },
 output: function() {
 var x = 1;
-___Program.set('x', x, 1);
-___Program.block('if', 2, 2);
+___Program.set('x', x, 2);
+___Program.block('if', 2, 5);
 if (x > 5) {
-    ___Program.enter('if', 0, 2);
+    ___Program.enter('if', 0, 9);
     var size = 'large';
-    ___Program.set('size', size, 3);
+    ___Program.set('size', size, 11);
 } else {
-    ___Program.enter('if', 1, 4);
+    ___Program.enter('if', 1, 14);
     var size = 'small';
-    ___Program.set('size', size, 5);
+    ___Program.set('size', size, 16);
 }
-___Program.block('if', 'close', 6);
+___Program.block('if', 'close', 5);
 },
 data: {
  "programSteps": [

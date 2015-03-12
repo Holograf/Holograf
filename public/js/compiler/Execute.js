@@ -2,9 +2,11 @@ var Program = require('./Program');
 var createWorker = require('webworkify');
 var Promise = require('bluebird');
 
-module.exports = function (wrappedCode) {
+module.exports = function (input) {
 
   return new Promise (function (resolve, reject) {
+
+    var wrappedCode = input.code;
 
     var worker = createWorker(require('./workers/WrappedCodeWorker.js'));
     // add a listener for errors from the Worker
@@ -15,13 +17,21 @@ module.exports = function (wrappedCode) {
 
     worker.addEventListener('message', function(message) {
       clearTimeout(executionTimeCheck);
-      console.log(JSON.stringify(message.data.programSteps, null, 2));
-      console.log(JSON.stringify(message.data.components, null, 2));
-      console.log(JSON.stringify(message.data.scopes, null, 2));
-      resolve(message.data);
+      // console.log(JSON.stringify(message.data.programSteps, null, 2));
+      // console.log(JSON.stringify(message.data.components, null, 2));
+      // console.log(JSON.stringify(message.data.scopes, null, 2));
+      resolve({
+        data: message.data,
+        syntaxTree: input.syntaxTree
+      });
     })
 
-    worker.postMessage(wrappedCode);
+    // console.log('SYNTAXTREEE', input.syntaxTree);
+
+    worker.postMessage({
+      code: wrappedCode,
+      syntaxTree: input.syntaxTree
+    });
 
     // Put a timeout on the worker to automatically kill the worker
     var executionTimeCheck = setTimeout(function(){

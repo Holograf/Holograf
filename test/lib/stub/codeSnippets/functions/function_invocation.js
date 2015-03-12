@@ -8,13 +8,14 @@ f();
 output: function() {
 var f = function () {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId, 1);
+    ___Program.invoke(___functionId);
     ___Program.returnState = 1;
-    ___Program.return(___functionId, 2);
+    ___Program.return(___functionId, 5);
     return ___Program.returnState;
-    ___Program.return(___functionId, 3);
+    ___Program.return(___functionId, 4);
 }.___fn();
-___Program.set('f', f, 1);
+___Program.set('f', f, 2);
+___Program.setInvocationPoint(8);
 f();
 },
 data: {

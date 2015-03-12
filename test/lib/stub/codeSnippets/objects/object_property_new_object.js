@@ -5,11 +5,11 @@ x.a = {};
 },
 output: function() {
 var x = {}.___obj();
-___Program.set('x', x, 1);
+___Program.set('x', x, 2);
 ___Program.parentObject = x;
 ___Program.objectAccessor = 'a';
 ___Program.parentObject[___Program.objectAccessor] = {}.___obj();
-___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 2);
+___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 7);
 },
 data: {
  "programSteps": [

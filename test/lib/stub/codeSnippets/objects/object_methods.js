@@ -10,14 +10,14 @@ output: function() {
 var object = {
     speak: function () {
         var ___functionId = arguments.callee.___id;
-        ___Program.method(___functionId, 2);
+        ___Program.invoke(___functionId);
         ___Program.returnState = 'woof!';
-        ___Program.return(___functionId, 3);
+        ___Program.return(___functionId, 8);
         return ___Program.returnState;
-        ___Program.return(___functionId, 4);
+        ___Program.return(___functionId, 7);
     }.___fn()
 }.___obj();
-___Program.set('object', object, 1);
+___Program.set('object', object, 2);
 },
 data: {
  "programSteps": [
