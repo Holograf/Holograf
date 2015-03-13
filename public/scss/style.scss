@@ -60,9 +60,33 @@ a {
 .codeButton {
   margin: 5px 5px 5px 10px;
 }
-.modal-body {
-  min-height: 400px;
+.modal-dialog {
+  width: 350px;
 }
+.modal-header {
+  padding: 10px;
+  margin: 0px;
+}
+.modal-body {
+  min-height: 230px;
+  max-width: 300px;
+}
+.whirlpool {
+  left: 75px;
+  bottom: 20px;
+}
+.modal-content {
+  width: 350px;
+}
+button.close {
+  opacity: 0;
+}
+.modal-footer {
+  display: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 #three-scene {
   background-color: #333333;
 }
