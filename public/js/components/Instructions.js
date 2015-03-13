@@ -7,7 +7,6 @@ var React = require('react');
 var Button = require('react-bootstrap/Button');
 var Actions = require('../actions/Actions');
 
-          // <li><a href="http://holograf.io/#/code/54fe62d9f2f6dff21be94bf7">Binary Search</a></li>
 
 module.exports = React.createClass({
 
@@ -38,6 +37,7 @@ module.exports = React.createClass({
         <ul>
           <li><a href="http://holograf.io/#/code/54fe67daf2f6dff21be94bf8">Range Sum</a></li>
           <li><a href="http://holograf.io/#/code/54fe7b65f2f6dff21be94bf9">Compose</a></li>
+          <li><a href="http://holograf.io/#/code/54fe62d9f2f6dff21be94bf7">Binary Search</a></li>
         </ul>
       </div>
     );
