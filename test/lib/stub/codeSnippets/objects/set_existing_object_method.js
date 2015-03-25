@@ -10,18 +10,21 @@ var result = object.f();
 },
 output: function() {
 var object = { f: 'andy' }.___obj();
-___Program.set('object', object, 1);
-object.f = function () {
+___Program.set('object', object, 2);
+___Program.parentObject = object;
+___Program.objectAccessor = 'f';
+___Program.parentObject[___Program.objectAccessor] = function () {
     var ___functionId = arguments.callee.___id;
-    ___Program.invoke(___functionId, 4);
+    ___Program.invoke(___functionId);
     ___Program.returnState = 1;
-    ___Program.return(___functionId, 5);
+    ___Program.return(___functionId, 14);
     return ___Program.returnState;
-    ___Program.return(___functionId, 6);
+    ___Program.return(___functionId, 13);
 }.___fn();
-___Program.setObjectProperty('object[f]', object, 4);
+___Program.setObjectProperty(___Program.parentObject, ___Program.objectAccessor, 10);
+___Program.setInvocationPoint(19);
 var result = object.f();
-___Program.set('result', result, 7);
+___Program.set('result', result, 17);
 },
 data: {
  "programSteps": [

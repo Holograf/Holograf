@@ -50,7 +50,6 @@
     "reactify": "^1.0.0",
     "rewireify": "0.0.13",
     "run-sequence": "^1.0.2",
-    "vinyl-source-stream": "^1.0.0",
-    "webworkify": "^1.0.2"
+    "vinyl-source-stream": "^1.0.0"
   }
 }

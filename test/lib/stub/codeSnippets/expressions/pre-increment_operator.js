@@ -5,9 +5,9 @@ var x = 1;
 },
 output: function() {
 var x = 1;
-___Program.set('x', x, 1);
-++x;
 ___Program.set('x', x, 2);
+++x;
+___Program.set('x', x, 6);
 },
 data: {
  "programSteps": [

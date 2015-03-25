@@ -4,7 +4,7 @@ var x = true;
 },
 output: function() {
 var x = true;
-___Program.set('x', x, 1);
+___Program.set('x', x, 2);
 },
 data: {
  "programSteps": [

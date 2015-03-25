@@ -10,7 +10,7 @@ var object = {
     a: 'name',
     b: 2
 }.___obj();
-___Program.set('object', object, 1);
+___Program.set('object', object, 2);
 },
 data: {
  "programSteps": [

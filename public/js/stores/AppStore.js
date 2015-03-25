@@ -60,7 +60,6 @@ var AppStore = assign({}, EventEmitter.prototype, {
   compileCode : function() {
 
     if (_compiledStatus) {
-      // console.log('cleared scene!');
       theatre.clearScene();
 
       // reset initial values
@@ -82,7 +81,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
         setTimeout(function() {
           AppStore.renderScene();
-        }, 500);
+        }, 300);
       })
       .error(function (error) {
         _error = {
@@ -95,15 +94,15 @@ var AppStore = assign({}, EventEmitter.prototype, {
   },
 
   renderScene: function () {
-    theatre.display(_data, this.compileEnd);
+    theatre.display(_data, this.renderEnd);
   },
 
-  compileEnd : function() {
+  renderEnd : function() {
     setTimeout(function() {
       _isLoading = false;
       _selectedTab = 2;
       AppStore.emitChange();
-    }, 1000);
+    }, 300);
   },
 
   updateShareUrl : function(shareUrl) {
@@ -131,17 +130,7 @@ var AppStore = assign({}, EventEmitter.prototype, {
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   },
-
-  // Not using because still can't detect when data has gone done
-  emitCompile: function() {
-    this.emit(COMPILE_EVENT);
-  },
-  addCompileListener: function(callback) {
-    this.on(COMPILE_EVENT, callback);
-  },
-  removeCompileListener: function(callback) {
-    this.removeListener(COMPILE_EVENT, callback);
-  },
+  
 
   dispatcherIndex: AppDispatcher.register(function(payload){
 

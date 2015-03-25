@@ -9,23 +9,23 @@ for (var i = 0; i < 2; i++) {
 },
 output: function() {
 var counter = 0;
-___Program.set('counter', counter, 1);
-___Program.loop('for', 'open', 2);
+___Program.set('counter', counter, 2);
+___Program.loop('for', 'open', 5);
 for (var i = 0; i < 2; i++) {
-    ___Program.loop('for', 'cycle');
-    ___Program.set('i', i, 2);
-    ___Program.loop('for', 'open', 3);
+    ___Program.loop('for', 'cycle', 5);
+    ___Program.set('i', i, 5);
+    ___Program.loop('for', 'open', 13);
     for (var j = 0; j < 2; j++) {
-        ___Program.loop('for', 'cycle');
-        ___Program.set('j', j, 3);
+        ___Program.loop('for', 'cycle', 13);
+        ___Program.set('j', j, 13);
         counter++;
-        ___Program.set('counter', counter, 4);
+        ___Program.set('counter', counter, 22);
     }
-    ___Program.loop('for', 'close', 5);
-    ___Program.set('j', j, 5);
+    ___Program.set('j', j, 15);
+    ___Program.loop('for', 'close', 13);
 }
-___Program.loop('for', 'close', 6);
-___Program.set('i', i, 6);
+___Program.set('i', i, 7);
+___Program.loop('for', 'close', 5);
 },
 data: {
  "programSteps": [

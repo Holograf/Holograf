@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 module.exports = function (rawCode) {
 
   return new Promise (function (resolve, reject) {
-    var worker = createWorker(require('./workers/rawCodeWorker.js'));
+    var worker = createWorker(require('./workers/RawCodeWorker.js'));
     
     // add a listener for errors from the Worker
     worker.addEventListener('error', function(e){

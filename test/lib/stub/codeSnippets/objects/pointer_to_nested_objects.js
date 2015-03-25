@@ -5,9 +5,9 @@ var y = x.stats;
 },
 output: function() {
 var x = { stats: { height: 'tall' }.___obj() }.___obj();
-___Program.set('x', x, 1);
+___Program.set('x', x, 2);
 var y = x.stats;
-___Program.set('y', y, 2);
+___Program.set('y', y, 12);
 },
 data: {
  "programSteps": [
