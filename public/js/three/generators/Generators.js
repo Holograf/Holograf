@@ -6,6 +6,7 @@ Generators.functionDeclaration = require('./components/FunctionDeclaration');
 Generators.functionInvocation = require('./components/FunctionInvocation');
 Generators.functionReturn = require('./components/FunctionReturn');
 Generators.loop = require('./components/Loop');
+Generators.loopCycle = require('./components/LoopCycle');
 Generators.value = require('./components/Value');
 Generators.label = require('./components/Label');
 Generators.property = require('./components/Property');

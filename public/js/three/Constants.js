@@ -16,7 +16,7 @@ Constants.loop.ticWidth = 30;
 Constants.loop.ticHeight = 10;
 
 Constants.time = {};
-Constants.time.loopCycle = 9000;
+Constants.time.loopCycle = 90000;
 Constants.time.selectionRotation = 3000;
 Constants.time.timelineFade = 1500;
 
