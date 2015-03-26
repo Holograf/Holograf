@@ -1,5 +1,17 @@
 var utils={};
 
+utils.checkDefaults = function (options) {
+  if (options === undefined){
+    var options = {};
+  }
+  if (options.x === undefined) { options.x = 0; }
+  if (options.z1 === undefined) { options.z1 = 0; }
+  if (options.z2 === undefined) { options.z2 = 0; }
+  if (options.componentData === undefined) { options.componentData = {}; }
+
+  return options;
+}
+
 utils.getPoint = function(x, y, r, theta){
   theta += 90;
   theta = theta * (Math.PI/180);
