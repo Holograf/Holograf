@@ -113,7 +113,6 @@ var AppStore = assign({}, EventEmitter.prototype, {
   },
 
   updateHighlight: function(component) {
-    console.log(component.codeId);
     _highlight = {
       id: component.codeId,
       component: component
