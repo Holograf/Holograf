@@ -10,5 +10,6 @@ Generators.value = require('./Value');
 Generators.label = require('./Label');
 Generators.property = require('./Property');
 Generators.element = require('./Element');
+Generators.conditional = require('./Conditional');
 
 module.exports = Generators;

@@ -19,36 +19,6 @@ subroutines.Dflt=function(opts){
 	return particle;
 };
 
-subroutines.Conditional=function(composite,opts){
-	if (opts===undefined){var opts={};}
-	if (opts.z1===undefined){opts.z1=0;}
-	if (opts.z2===undefined){opts.z2=0;}
-	if (opts.x1===undefined){opts.x1=0;}
-	if (opts.componentData===undefined){opts.componentData={};}
-	var x=opts.x1;
-	var z1=opts.z1;
-	var z2=opts.z2;
-	var geometry = Object.create(geometries.hexagon);
-	var grayness = 0.7;
-	if (opts.componentData.if && opts.componentData.if==='close'){
-		grayness = 0.1;
-	}
-	var material=new THREE.MeshPhongMaterial({metal:true});
-	material.color.setRGB( grayness, grayness, grayness );
-	var object = new THREE.Mesh(geometry, material );
-
-	object.grayness=grayness;
-	object.componentData=opts.componentData;
-	object.componentData.primary=true;
-	object=utils.tweenify(object,{z1: z1, z2:z2, x1:opts.x1, x2:opts.x2} );
-		
-		
-	object.rotate=new TWEEN.Tween(object.rotation).to({z:2*Math.PI},(opts.componentData.hasOwnProperty('enter') ) ? 3000 : -3000).repeat(Infinity).start();
-		
-	object.position.set( x, 0, z1 );
-	composite.add(object);
-};
-
 subroutines.TimeLight=function(composite) {
 	var particleLight = new THREE.Mesh( new THREE.SphereGeometry( 20, 0, 0 ), new THREE.MeshBasicMaterial( { color: 0xffffff, transparent:true, opacity:0 } ) );
 	var pointLight = new THREE.PointLight( 0xffffff, 2 );
@@ -265,7 +235,7 @@ subroutines.Composite = function(data, scopes, particleLight){
 
 		else if (component.type === "block") {
 			if (component.name === 'if') {
-				subroutines.Conditional(composite, options);				
+				generate.conditional(composite, options);				
 			}
 			else if (component.name === "for" || component.name === 'while' || component.name === 'do') {
 				if (data[i][component.name] === "cycle") {

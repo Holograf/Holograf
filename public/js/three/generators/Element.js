@@ -1,3 +1,7 @@
+var utils = require('../utils');
+var geometries = require('../Geometries');
+var constants = require('../Constants');
+
 var Element = function (composite, options) {
 
   // create copies so that you can set primary to false and avoid them as you move through timeline nodes
