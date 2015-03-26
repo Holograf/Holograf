@@ -16,6 +16,7 @@ var Button = require('react-bootstrap/Button');
 var Actions = require('../actions/Actions');
 var Loading = require('./modals/Loading')
 var Error = require('./modals/Error');
+var theatre = require('../three/Theatre');
 
 
 module.exports = React.createClass({
@@ -28,6 +29,7 @@ module.exports = React.createClass({
 
   render: function() {
     if (this.props.selectedTab !== 2) {
+
       theatre.controlsEnabled = false;
       if (document.getElementById("modal-canvas")){
         document.body.removeChild(document.getElementById("modal-canvas"));

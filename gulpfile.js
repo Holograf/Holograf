@@ -60,11 +60,9 @@ gulp.task('compress', function() {
 });
 
 gulp.task('three', function() {
-  return gulp.src('./public/js/three/*.js')
-    .pipe(concat('threeMain.js'))
-    .pipe(gulp.dest('./dist/js'));
-    // .pipe(concat('threeMain.js'))
-    // .pipe(gulp.dest('./public/js'));
+  // return gulp.src('./public/js/three/*.js')
+  //   .pipe(concat('threeMain.js'))
+  //   .pipe(gulp.dest('./dist/js'));
 });
 
 gulp.task('threeToBrowse', function() {

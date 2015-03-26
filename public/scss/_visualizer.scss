@@ -1,0 +1,29 @@
+div.visual-container {
+  position: relative;
+  font-size: 1.75rem;
+}
+
+div.code-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
+}
+
+span.code-lines {
+  color: white;
+  white-space: pre;
+  background-color: rgba(12,16,33,0.5);
+  line-height: .5
+}
+
+span.code-headline {
+  background-color: rgba(12,16,33,0.5);
+  font-size: 2rem;
+  line-height: 1.5;
+}
+
+span.codeSnippet.highlighted {
+  color: $color-primary-1;
+  // background-color: rgba(12,16,75,0.5);
+}

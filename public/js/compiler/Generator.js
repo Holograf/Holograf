@@ -14,7 +14,7 @@ var Generator = function (wrappedSyntaxTree) {
       // }
       // console.log('wrapped', wrappedSyntaxTree);
       var generatedCode = generateCode(wrappedSyntaxTree);
-      console.log(generatedCode);
+      // console.log(generatedCode);
 
       resolve({
         code: generatedCode,

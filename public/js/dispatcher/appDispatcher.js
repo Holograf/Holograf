@@ -13,6 +13,13 @@ var AppDispatcher = assign({}, Dispatcher.prototype, {
       source: 'VIEW_ACTION',
       action: action
     })
+  },
+
+  handleThreeAction: function(action) {
+    this.dispatch({
+      source: 'THREE_ACTION',
+      action: action
+    })
   }
 });
 

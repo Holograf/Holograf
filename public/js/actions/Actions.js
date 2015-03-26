@@ -1,6 +1,7 @@
 // app-actions.js
 var AppDispatcher = require('../dispatcher/appDispatcher.js');
 var AppConstants = require('../constants/appConstants.js');
+var Render = require('./Render');
 
 var Actions = {
 
@@ -19,6 +20,8 @@ var Actions = {
   },
 
   compile: function() {
+    Render();
+
     AppDispatcher.handleViewAction({
       actionType: AppConstants.COMPILE
     })
@@ -41,6 +44,14 @@ var Actions = {
         console.error(xhr, status, err.toString());
       }.bind(this)
     });
+  },
+
+  updateHighlight: function (highlight) {
+    console.log('UPDATE HIGHLIGHT!!!');
+    AppDispatcher.handleThreeAction({
+      actionType: AppConstants.UPDATE_HIGHLIGHT,
+      highlight: highlight
+    })
   },
 
   fetchCode: function(id) {
@@ -66,7 +77,6 @@ var Actions = {
       actionType: AppConstants.RESET_ERROR
     })    
   }
-
 };
 
 module.exports = Actions;

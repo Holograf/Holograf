@@ -12,7 +12,11 @@ var compile = require('../compiler/Compiler')
 var CHANGE_EVENT = 'change';
 var COMPILE_EVENT = 'compile';
 
-var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error;
+var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error; 
+var _highlight = {
+  id: null,
+  headline: null
+}
 var templateCode = 
 'var fibonacci = function (n) {\n'+
 '  if (n < 2){\n'+
@@ -44,8 +48,13 @@ var AppStore = assign({}, EventEmitter.prototype, {
       shareUrl: _shareUrl,
       selectedTab: _selectedTab,
       isLoading: _isLoading,
-      error: _error
+      error: _error,
+      highlight: _highlight
     });
+  },
+
+  getCode: function () {
+    return _code;
   },
 
   updateCode : function(code) {
@@ -57,56 +66,58 @@ var AppStore = assign({}, EventEmitter.prototype, {
     AppStore.emitChange();
   },
 
+  isCompiled: function () {
+    return _compiledStatus;
+  },
+
+  isLoading: function () {
+    return _isLoading;
+  },
+
+  setLoading: function (status) {
+    _isLoading = status;
+  },
+
+  setCompiled: function (status) {
+    _compiledStatus = status;
+  },
+
+  setData: function (data) {
+    _data = data;
+  },
+
+  setError: function (error) {
+    _error = error;
+  },
+
+  setSelectedTab: function (tab) {
+    _selectedTab = tab;
+  },
+
   compileCode : function() {
 
-    if (_compiledStatus) {
-      theatre.clearScene();
-
-      // reset initial values
-      _data = [];
-      _shareUrl = '';
-      _compiledStatus = false;
-    }
-
-    setTimeout(function (){
-      _isLoading = true;
-      AppStore.emitChange();
-    }, 200);
-
-    compile(_code)
-      .then(function (data) {
-        _compiledStatus = true;
-        _data = data;
-        AppStore.emitChange();
-
-        setTimeout(function() {
-          AppStore.renderScene();
-        }, 300);
-      })
-      .error(function (error) {
-        _error = {
-          line: error.lineno,
-          message: error.message
-        }
-        _isLoading = false;
-        AppStore.emitChange();
-      })
   },
 
-  renderScene: function () {
-    theatre.display(_data, this.renderEnd);
-  },
+  reset: function () {
+    theatre.clearScene();
 
-  renderEnd : function() {
-    setTimeout(function() {
-      _isLoading = false;
-      _selectedTab = 2;
-      AppStore.emitChange();
-    }, 300);
+    // reset initial values
+    _data = [];
+    _shareUrl = '';
+    _compiledStatus = false;
   },
 
   updateShareUrl : function(shareUrl) {
     _shareUrl = shareUrl;
+    AppStore.emitChange();
+  },
+
+  updateHighlight: function(component) {
+    console.log(component.codeId);
+    _highlight = {
+      id: component.codeId,
+      component: component
+    }
     AppStore.emitChange();
   },
 
@@ -130,7 +141,6 @@ var AppStore = assign({}, EventEmitter.prototype, {
   removeChangeListener: function(callback) {
     this.removeListener(CHANGE_EVENT, callback);
   },
-  
 
   dispatcherIndex: AppDispatcher.register(function(payload){
 
@@ -155,6 +165,10 @@ var AppStore = assign({}, EventEmitter.prototype, {
 
       case AppConstants.RESET_ERROR:
         AppStore.resetError();
+        break;
+
+      case AppConstants.UPDATE_HIGHLIGHT:
+        AppStore.updateHighlight(action.highlight);
         break;
     }
 

@@ -9,7 +9,7 @@ var Blueprint = function (code) {
 
   return new Promise (function (resolve, reject) {
 
-    var syntaxTree = esprimaParse(code, {loc: true});
+    var syntaxTree = esprimaParse(code, {loc: true, range: true});
 
     var processes = {
       program: registerProgram,
@@ -20,8 +20,6 @@ var Blueprint = function (code) {
     traverse.start(syntaxTree);
 
     Object.defineProperty(syntaxTree, '___blueprint', { enumerable: true, value: blueprint });
-
-    console.log(esprimaParse(code));
 
     resolve(syntaxTree);
   })
@@ -51,7 +49,6 @@ var registerNode = function (node, parent, origin, index, arrayIndex) {
   }
 
   // console.log( node.___id, node.type, node.___parentId, node.___origin ? node.___origin : '');
-
   blueprint.push(node);
 }
 

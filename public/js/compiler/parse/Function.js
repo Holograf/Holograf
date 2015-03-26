@@ -20,7 +20,6 @@ var Parser = function (syntaxTree) {
 }
 
 
-
 var functionExpression = function (node, parent, origin, index) {
   var injectionPoint = node.body.body;
 

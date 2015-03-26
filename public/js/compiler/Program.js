@@ -10,9 +10,27 @@ var Program = function () {
   this._blockStack = [0];
   this._scopeStack = [0];
   this._code = '';
-  this.stepLines = [];
 
   this.initialize();
+}
+
+
+//----------------------------------------------------------------------------------
+// Initialization and getter for the AppStore to access the relevant data properties
+Program.prototype.initialize = function () {
+  this.addComponent('block', 'global');
+}
+
+Program.prototype.getData = function () {
+  return {
+    programSteps: this.programSteps,
+    components: this.components,
+    scopes: this.scopes,
+    code: this._code,
+    wrappedCode: this._wrappedCode,
+    syntaxTree: this._syntaxTree,
+    blueprint: this._blueprint
+  }
 }
 
 Program.prototype.setCode = function (rawCode) {
@@ -77,22 +95,6 @@ Program.prototype.registerObjectProperties = function (object, codeId) {
   object.___parsed = true;
 }
 
-//----------------------------------------------------------------------------------
-// Initialization and getter for the AppStore to access the relevant data properties
-Program.prototype.initialize = function () {
-  this.addComponent('block', 'global');
-}
-
-Program.prototype.getData = function () {
-  return {
-    programSteps: this.programSteps,
-    components: this.components,
-    scopes: this.scopes,
-    lines: this.stepLines,
-    code: this._code,
-    wrappedCode: this._wrappedCode
-  }
-}
 
 //----------------------------------------------------------------------------------
 // Block and Scope get methods
@@ -130,17 +132,8 @@ Program.prototype.addStep = function (name, key, value, codeId) {
   else { var id = this.getId(name); }
 
   var step = this.makeStep(id, key, value);
+  step.codeId = codeId;
   this.programSteps.push(step);
-
-  // console.log(codeId, name, key, value);
-  var line = this._blueprint[codeId].loc.start.line;
-
-  var stepLine = {
-    id: id,
-    line: line
-  }
-
-  this.stepLines.push(stepLine);
 
   return step;
 }

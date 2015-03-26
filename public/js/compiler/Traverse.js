@@ -278,6 +278,7 @@ process.setDefaults = function () {
 
 process.processNames = [
   'node',
+  'program',
   'programBody',
   'blockStatement',
   'conditionalExpression',
