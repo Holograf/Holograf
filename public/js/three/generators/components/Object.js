@@ -1,6 +1,6 @@
-var utils = require('../utils');
-var geometries = require('../Geometries');
-var constants = require('../Constants');
+var utils = require('../../utils');
+var geometries = require('../../Geometries');
+var constants = require('../../Constants');
 
 var ObjectComponent = function (composite, options) {
   options = utils.checkDefaults(options);

@@ -32,12 +32,12 @@ module.exports = React.createClass({
     theatre.controls.reset();
   },
 
-  nextNode: function() {
-    theatre.nextNode();
+  next: function() {
+    theatre.select.next();
   },
 
-  prevNode: function() {
-    theatre.prevNode();
+  previous: function() {
+    theatre.select.prev();
   },
 
   render: function() {
@@ -46,8 +46,8 @@ module.exports = React.createClass({
         <div id="three-scene"></div>
         <Overlay data={this.props.data} highlight={this.props.highlight} />
         <Button className="visualButton" bsStyle="primary" onClick={this.pauseScene} >Pause</Button>
-        <Button className="visualButton" bsStyle="primary" onClick={this.prevNode} >Previous</Button>
-        <Button className="visualButton" bsStyle="primary" onClick={this.nextNode} >Next</Button>
+        <Button className="visualButton" bsStyle="primary" onClick={this.previous} >Previous</Button>
+        <Button className="visualButton" bsStyle="primary" onClick={this.next} >Next</Button>
         <Button className="visualButton" bsStyle="primary" onClick={this.returnCamera} >Return</Button>
         <Col xs={6} md={4}><Input readOnly type="text" value={this.props.shareUrl} buttonBefore={<Button onClick={this.save} >Share</Button>} /></Col>
       </div>

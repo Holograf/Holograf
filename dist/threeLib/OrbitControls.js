@@ -524,12 +524,12 @@ THREE.OrbitControls = function ( object, domElement, target, compiledStatus, the
       switch ( event.keyCode ) {
 
         case scope.keys.LEFT:
-          theatre.prevNode();
+          theatre.select.previous();
           scope.update();
           break;
 
         case scope.keys.RIGHT:
-          theatre.nextNode();
+          theatre.select.next();
           scope.update();
           break;
 

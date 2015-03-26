@@ -1,13 +1,20 @@
 var utils={};
 
+
 utils.checkDefaults = function (options) {
   if (options === undefined){
     var options = {};
   }
-  if (options.x === undefined) { options.x = 0; }
-  if (options.z1 === undefined) { options.z1 = 0; }
-  if (options.z2 === undefined) { options.z2 = 0; }
-  if (options.componentData === undefined) { options.componentData = {}; }
+  if (options.componentData === undefined) {
+    options.componentData = {}; 
+  }
+
+  var defaults = ['x', 'x1', 'x2', 'y', 'y1', 'y2', 'z', 'z1', 'z2']
+  defaults.forEach(function (key) {
+    if (options[key] === undefined) {
+      options[key] = 0;
+    }
+  })
 
   return options;
 }
