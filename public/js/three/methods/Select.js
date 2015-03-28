@@ -21,12 +21,16 @@ var checkTheatre = function () {
 
 var selectNode = function (index) {
   var composite = theatre.composite;
-  theatre.currentNode = composite.children[index];
+  theatre.selectedNode = composite.children[index];
 
   theatre.viewIndex = index;
 
-  highlight.shine(composite, theatre.currentNode);
-  theatre.view(theatre.currentNode.position);
+  highlight.shine(composite, theatre.selectedNode);
+  theatre.view(theatre.selectedNode.position);
+}
+
+select.node = function (node) {
+  selectNode(node.index);
 }
 
 select.node = function (node) {

@@ -9,9 +9,13 @@ module.exports = React.createClass({
 
   render: function() {
 
-    var component = this.props.highlight.component
+    var highlight = this.props.highlight;
+    var headlineText = '';
 
-    headlineText = headline.generate(component) || '';
+    if (highlight.selection !== undefined) {
+      var component = this.props.highlight.selection.component
+      headlineText = headline.generate(component) || '';
+    }
     headlineText += '\n';
 
     return (

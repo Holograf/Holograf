@@ -13,10 +13,7 @@ var CHANGE_EVENT = 'change';
 var COMPILE_EVENT = 'compile';
 
 var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error; 
-var _highlight = {
-  id: null,
-  headline: null
-}
+var _highlight = {}
 var templateCode = "var x = 21;\n"+
 "if (x > 20) {\n"+
 "  var message = 'big';\n"+
@@ -111,10 +108,26 @@ var AppStore = assign({}, EventEmitter.prototype, {
     AppStore.emitChange();
   },
 
-  updateHighlight: function(component) {
-    _highlight = {
-      id: component.codeId,
-      component: component
+  updateSelection: function(selection) {
+    if (selection) {
+      _highlight.selection = {
+        id: selection.codeId,
+        component: selection
+      }
+    } else {
+      _highlight.selection = null;
+    }
+    AppStore.emitChange();
+  },
+
+  updateHover: function(hover) {
+    if (hover) {
+      _highlight.hover = {
+        id: hover.codeId,
+        component: hover
+      }
+    } else {
+      _highlight.hover = null;
     }
     AppStore.emitChange();
   },
@@ -165,8 +178,12 @@ var AppStore = assign({}, EventEmitter.prototype, {
         AppStore.resetError();
         break;
 
-      case AppConstants.UPDATE_HIGHLIGHT:
-        AppStore.updateHighlight(action.highlight);
+      case AppConstants.UPDATE_SELECTION:
+        AppStore.updateSelection(action.selection);
+        break;
+
+      case AppConstants.UPDATE_HOVER:
+        AppStore.updateHover(action.hover);
         break;
     }
 
