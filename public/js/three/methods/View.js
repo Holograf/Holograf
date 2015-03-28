@@ -1,12 +1,14 @@
+var constants = require('../Constants');
+
 var View = function(nodePosition) {
   var theatre = this;
   if (!theatre.expanded) return;
   var camera = theatre.camera;
 
   // final camera position
-  var newX = nodePosition.x - 800;
-  var newY = nodePosition.y + 800;
-  var newZ = nodePosition.z - 300;
+  var newX = nodePosition.x - constants.camera.offsetX;
+  var newY = nodePosition.y + constants.camera.offsetY;
+  var newZ = nodePosition.z + constants.camera.offsetZ;
   theatre.target = new THREE.Vector3(nodePosition.x, nodePosition.y, nodePosition.z);
   var targetPosition = new THREE.Vector3(newX, newY, newZ);
 
@@ -29,7 +31,7 @@ var View = function(nodePosition) {
 
   nextCamera = null;
 
-  theatre.actions.updateHighlight(theatre.currentNode.componentData);
+  theatre.actions.updateHighlight(theatre.currentNode.data);
 
   placeSelection(theatre);
   theatre.nodeView = true;

@@ -328,7 +328,6 @@ THREE.OrbitControls = function ( object, domElement, target, compiledStatus, the
 
 
   this.reset = function () {
-    utils.dull(theatre.composite);
     if ( document.getElementById("modal-canvas") ){
       document.body.removeChild(document.getElementById("modal-canvas"));
 			theatre.modal = null;

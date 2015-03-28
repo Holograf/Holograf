@@ -17,16 +17,15 @@ var _highlight = {
   id: null,
   headline: null
 }
-var templateCode = 
-'var fibonacci = function (n) {\n'+
-'  if (n < 2){\n'+
-'    return 1;\n'+
-'  } else {\n'+
-'    return fibonacci(n-2) + fibonacci(n-1);\n'+
-'  }\n'+
-'}\n'+
-'\n'+
-'fibonacci(5);\n';
+var templateCode = "var x = 21;\n"+
+"if (x > 20) {\n"+
+"  var message = 'big';\n"+
+"} else if (x > 15) {\n"+
+"  var message = 'medium';\n"+
+"} else if (x > 10) {\n"+
+"  var message = 'small';\n"+
+"}\n"+
+"var z = 'you are ' + message;";
 
 
 var AppStore = assign({}, EventEmitter.prototype, {

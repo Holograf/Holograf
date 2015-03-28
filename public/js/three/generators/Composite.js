@@ -4,99 +4,111 @@ var generate = require('./Generators');
 var constants = require('../Constants');
 
 var Composite = function(theatre){
-
 	var timeline = theatre.timeline;
+	var last = timeline[timeline.length - 1];
 	var scopes = theatre.data.scopes;
 	var timelight = theatre.timelight;
 		
 	var composite = new THREE.Object3D();
-	composite.maxSize = constants.size.step * timeline.length;
+	composite.maxSize = constants.size.step * last.position.x;
 
 	var buffer = constants.size.buffer;
-	var leftMargin = (composite.maxSize / 2) - ((timeline.length * buffer) / 2);
-	var interval = composite.maxSize / (timeline.length + 1);
+	var leftMargin = (composite.maxSize / 2) - ((last.position.x * buffer) / 2);
+	var interval = composite.maxSize / (last.position.x + 1);
 	
 	
-	var cycleTime = constants.time.cycle * timeline.length;
-	var cycleStep = cycleTime / timeline.length;
+  var position = {
+  	x1: 0,
+  	x2: 0,
+  	y1: 0,
+  	y2: 0
+  }
+
+  var lastVisitedPosition = {x: 0, y: 0, z:0 };
+
 	var animations = [];
-	
-
-	//all the possible heiroglyphs
-	var position = {
-		x1: 0, 
-		x2: 0,
-		y1: 0,
-		y2: 0
-  };
-
-	animations.push(new TWEEN.Tween(timelight.position).to({x:position.x2}, cycleStep) );
+	animations.push(new TWEEN.Tween( timelight.position ).to( { x:position.x2 }, constants.time.cycle)
+		                    .delay(constants.time.timelightDelay) 
+		              );
 	var dx = 0;
 
 	for (var i = 0; i < timeline.length; i++) {
-		var component = timeline[i];
-		position.componentData = component;
-		
-		if (component.return) {
-			position.x2 -= constants.size.scope;
+		var timelineElement = timeline[i];
+		var position = timelineElement.position;
+
+		var x = timelineElement.position.x;
+		timelineElement.position.x1 = leftMargin + (buffer * x);
+		timelineElement.position.x2 = interval + (interval * x);
+
+		var y = timelineElement.position.y;
+		timelineElement.position.y1 = 0;
+		timelineElement.position.y2 = y * constants.size.conditional;
+
+		var z = timelineElement.position.z
+		timelineElement.position.z1 = 0;
+		timelineElement.position.z2 = z * constants.size.scope;
+
+
+		if (timelineElement.display.visited) {
+
+			var stepTime = Math.pow(
+				Math.pow(lastVisitedPosition.x - position.x2, 2) +
+				Math.pow(lastVisitedPosition.y - position.y2, 2) +
+				Math.pow(lastVisitedPosition.z - position.z2, 2), 1/2
+			) * constants.time.timelightSpeed;
+
+			nextTween = new TWEEN.Tween(timelight.position).to({x:position.x2, y:position.y2, z:position.z2}, stepTime);
+
+			lastVisitedPosition = {
+				x: position.x2,
+				y: position.y2,
+				z: position.z2
+			}
+			animations.push(nextTween);
+			var last = animations.length - 1;
+			animations[last - 1].chain( animations[last] );
 		}
 
-		var radius = 500;
-		if (component.block && component.block > 0){
-			position.radius = 200;
-		}
 		
-		position.z1 = leftMargin + (buffer * i);
-		position.z2 = interval + (interval * i);
-
-
-		
-		nextTween = new TWEEN.Tween(timelight.position).to({x:position.x2, y:position.y2, z:position.z2}, cycleStep);
-		animations.push(nextTween);
-		animations[i].chain( animations[i+1] );
-
-		position.x2 += dx;
-		dx = 0;
-
-		
-		if (component.pointsTo) {
-		  if (component.pointsTo.type === 'array') {
-			  generate.array(composite, position);
-		  } else if (component.pointsTo.type === 'object') {
-			  generate.object(composite, position);
-		  } else if (component.pointsTo.type === 'function'){
-			  generate.functionDeclaration(composite, position);
+		if (timelineElement.pointsTo) {
+		  if (timelineElement.pointsTo.type === 'array') {
+			  generate.array(composite, timelineElement);
+		  } else if (timelineElement.pointsTo.type === 'object') {
+			  generate.object(composite, timelineElement);
+		  } else if (timelineElement.pointsTo.type === 'function'){
+			  generate.functionDeclaration(composite, timelineElement);
 		  } 
 		} 
 
-		else if (component.type === "block") {
-			
-
-			if (component.name === 'if') {
-				generate.conditional(composite, position);				
+		else if (timelineElement.type === "block") {
+			if (timelineElement.name === 'if') {
+				generate.conditional(composite, timelineElement);				
 			}
 
-			else if (component.name === "for" || component.name === 'while' || component.name === 'do') {
-				if (step[component.name] === "cycle") {
-				   generate.loopCycle(composite, position);
+			else if (timelineElement.name === "for" || timelineElement.name === 'while' || timelineElement.name === 'do') {
+				if (timelineElement[timelineElement.name] === "cycle") {
+				   generate.loopCycle(composite, timelineElement);
 				} else {
-					 generate.loop(composite, position);
+					 generate.loop(composite, timelineElement);
 				}
 			}
 		} 
 
-		else if (component.invoke) {
+		else if (timelineElement.invoke) {
 			dx = constants.size.scope;
-			generate.functionInvocation(composite, position);
-		} else if (component.return){
-			generate.functionReturn(composite, position);
+			generate.functionInvocation(composite, timelineElement);
+		} else if (timelineElement.return){
+			generate.functionReturn(composite, timelineElement);
 		} else {
-			generate.value(composite, position);
+			generate.value(composite, timelineElement);
 		}
 		
 	}
 
-	animations.push(new TWEEN.Tween(timelight.position).to({x:0,z:0}, 1) );	
+
+
+
+	animations.push(new TWEEN.Tween( timelight.position ).to( {x:0, y:0, z:0}, 1) );	
 	animations[animations.length - 2].chain(animations[animations.length - 1]);
 	animations[animations.length - 1].chain(animations[0]);
 	timelight.tween = animations[0];

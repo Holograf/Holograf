@@ -1,34 +1,38 @@
 var utils = require('../../utils');
 var geometries = require('../../Geometries');
 var constants = require('../../Constants');
+var addToComposite = require('./AddToComposite');
 
-var Conditional = function (composite, options) {
+var Conditional = function (composite, timelineElement) {
+  if (timelineElement.display.rendered) {
 
-  options = utils.checkDefaults(options);
+    var grayness = constants.color.grayness;
+    var material = new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
+    material.color.setRGB( grayness, grayness, grayness );
+    
+    if (timelineElement.if === 'open') {
+      var geometry = Object.create(geometries.conditionalBranch.open);
+      var object = new THREE.Mesh(geometry, material );
 
-  var x = options.x1;
-  var z1 = options.z1;
-  var z2 = options.z2;
+      object.rotation.x = Math.PI / 2;
+      object.rotation.z = Math.PI; 
+    } 
 
-  var geometry = Object.create(geometries.hexagon);
-  var grayness = constants.color.grayness;
-  if (options.componentData.if && options.componentData.if === 'close'){
-    grayness = 0.1;
+    else if (timelineElement.if === 'close') {
+      var geometry = Object.create(geometries.conditionalBranch.close);
+      var object = new THREE.Mesh(geometry, material );
+
+      object.rotation.x = Math.PI / 2;
+    } 
+
+    else {
+      var geometry = Object.create(geometries.conditionalBranch);
+      var object = new THREE.Mesh(geometry, material );  
+    }
+    
+    object.grayness = grayness;
+    addToComposite(composite, object, timelineElement);
   }
-  var material=new THREE.MeshPhongMaterial({metal:true});
-  material.color.setRGB( grayness, grayness, grayness );
-  var object = new THREE.Mesh(geometry, material );
-
-  object.grayness=grayness;
-  object.componentData=options.componentData;
-  object.componentData.primary=true;
-  object = utils.tweenify(object,{z1: z1, z2:z2, x1:options.x1, x2:options.x2} );
-    
-    
-  object.rotate=new TWEEN.Tween(object.rotation).to({z:2*Math.PI},(options.componentData.hasOwnProperty('enter') ) ? 3000 : -3000).repeat(Infinity).start();
-    
-  object.position.set( x, 0, z1 );
-  composite.add(object);
 };
 
 module.exports = Conditional;
