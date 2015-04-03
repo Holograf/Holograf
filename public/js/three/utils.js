@@ -1,22 +1,17 @@
+var constants = require('./Constants');
+
 var utils={};
 
-
-utils.checkDefaults = function (options) {
-  if (options === undefined){
-    var options = {};
-  }
-  if (options.componentData === undefined) {
-    options.componentData = {}; 
-  }
-
-  var defaults = ['x', 'x1', 'x2', 'y', 'y1', 'y2', 'z', 'z1', 'z2']
-  defaults.forEach(function (key) {
-    if (options[key] === undefined) {
-      options[key] = 0;
+utils.checkDefaults = function (position) {
+  if (!position) {
+    position = {
+      x: 0, x1: 0, x2: 0,
+      y: 0, y1: 0, y2: 0,
+      z: 0, z1: 0, z2: 0
     }
-  })
+  }
 
-  return options;
+  return position;
 }
 
 utils.getPoint = function(x, y, r, theta){
@@ -48,11 +43,11 @@ utils.arcPath=function(x,y,r,theta1,theta2,w){
 };
 
     
-utils.allValues=function(timeline,target){
-  var r=[];
+utils.allValues = function(timeline, target){
+  var r = [];
   
-  for (var i=0;i<timeline.length;i++){
-    if (target===timeline[i].id && timeline[i].value!==undefined){
+  for (var i=0; i < timeline.length; i++){
+    if (target === timeline[i].id && timeline[i].value !== undefined){
       r.push( JSON.stringify(timeline[i].value) );
     }
   }
@@ -60,27 +55,34 @@ utils.allValues=function(timeline,target){
   return r;
 };   
 
-utils.tweenify=function(obj,opts){
-  //tweenify is a decorator
-  if (obj===undefined){var obj={};}
-  if (opts===undefined){var opts={};}
-  if (opts.x1===undefined){opts.x1=0;}
-  if (opts.x2===undefined){opts.x2=0;}
-  if (opts.z1===undefined){opts.z1=0;}
-  if (opts.z2===undefined){opts.z2=0;}
+utils.tweenify=function(object, position){
+  position = utils.checkDefaults(position);
   
-  var easingType="Quintic";
-  var tweenDuration=600;
+  var easingType = "Quintic";
+  var tweenDuration = constants.time.tweenDuration;
 
-  var xExpand   = new TWEEN.Tween(obj.position).to({x:opts.x2},tweenDuration).easing(TWEEN.Easing[easingType].Out);
-  var zCollapse = new TWEEN.Tween(obj.position).to({z:opts.z1},tweenDuration).easing(TWEEN.Easing[easingType].Out);
+  var expand = {};
+  expand.x = new TWEEN.Tween(object.position).to({x: position.x2}, tweenDuration).easing(TWEEN.Easing[easingType].Out);
+  expand.y = new TWEEN.Tween(object.position).to({y: position.y2}, tweenDuration).easing(TWEEN.Easing[easingType].Out);
+  expand.z = new TWEEN.Tween(object.position).to({z: position.z2}, tweenDuration).easing(TWEEN.Easing[easingType].Out);
 
-  obj.collapse  = new TWEEN.Tween(obj.position).to({x:opts.x1},tweenDuration).chain(zCollapse).easing(TWEEN.Easing[easingType].Out);
-  obj.expand    = new TWEEN.Tween(obj.position).to({z:opts.z2},tweenDuration).chain(xExpand).easing(TWEEN.Easing[easingType].Out);
-  return obj;
+  var collapse = {};
+  collapse.x = new TWEEN.Tween(object.position).to({x: position.x1}, tweenDuration).easing(TWEEN.Easing[easingType].Out);
+  collapse.y = new TWEEN.Tween(object.position).to({y: position.y1}, tweenDuration).easing(TWEEN.Easing[easingType].Out);
+  collapse.z = new TWEEN.Tween(object.position).to({z: position.z1}, tweenDuration).easing(TWEEN.Easing[easingType].Out);
+
+  object.collapse = collapse.y;
+  collapse.y.chain(collapse.z);
+  collapse.z.chain(collapse.x);
+
+  object.expand = expand.x;
+  expand.x.chain(expand.z);
+  expand.z.chain(expand.y);
+
+  return object;
 };
 
-utils.dull=function(composite){
+utils.dull = function(composite){
 	composite.children.forEach(function( shape ) {
 		if (shape.grayness){
 			shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
@@ -89,15 +91,23 @@ utils.dull=function(composite){
 	});
 };
 
-utils.shine=function(composite,id){
-	for (var i=0;i<composite.children.length;i++){
-		if (composite.children[i].componentData.id===id && composite.children[i].material.color){
-			composite.children[i].material.color.setRGB(1,1,0);
-			if (composite.children[i].material.transparent){
-			  composite.children[i].material.opacity=1;
-			}
+utils.shine = function(composite, id) {
+	for (var i=0; i < composite.children.length; i++) {
+    var timelineElement = composite.children[i].data;
+		if (timelineElement.id === id) {
+      highlight(composite.children[i]);
 		}
 	}
 };
+
+var highlight = function (node) {
+  if (node.material && node.material.color) {
+    node.material.color.setRGB(1,1,0);
+  }
+
+  if (node.transparent) {
+    node.material.opacity = 1;
+  }
+}
 
 module.exports = utils;

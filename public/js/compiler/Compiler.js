@@ -21,12 +21,10 @@ var Compiler = function (rawCode) {
       .then(function (resolution) {
 
         var data = resolution.data;
-        // console.log(data.wrappedCode);
-        // console.log(JSON.stringify(data.programSteps,null,1));
-        // console.log(JSON.stringify(data.components,null,1));
-
         data.code = rawCode;
+
         console.log(data);
+
         resolve(data);
       })
       .error(function (e) {

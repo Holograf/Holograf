@@ -6,8 +6,6 @@ module.exports = function (self) {
     var wrappedCode = message.data.code;
     var syntaxTree = message.data.syntaxTree;
 
-    console.log(syntaxTree);
-
     var data = WrappedCodeRunner(wrappedCode, syntaxTree);
 
     postMessage(data);

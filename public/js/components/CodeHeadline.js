@@ -9,7 +9,6 @@ module.exports = React.createClass({
   render: function() {
 
     var component = this.props.highlight.component
-    console.log(component);
 
     headline = createHeadline(component) || '';
     headline += '\n';

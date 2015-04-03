@@ -27,7 +27,7 @@ Listeners.onMouseMove = function ( e ) {
     if (!theatre.expanded) {return;}
 
     theatre.highlightNode = intersects[0].object;
-    var selectedId = intersects[0].object.componentData.id;
+    var selectedId = intersects[0].object.data.id;
     utils.shine(theatre.composite, selectedId);
   }
 
@@ -49,12 +49,17 @@ Listeners.onMouseDown = function ( e ) {
 
 
   var over = function (intersects) {
-    var selectedId = intersects[0].object.componentData.id || -1;
+    var selectedId = intersects[0].object.data.id || -1;
 
-    theatre.currentNode = intersects[0].object;
-    theatre.view(theatre.currentNode.position);
+    var node = intersects[0].object;
 
-    theatre.nodeView = true;
+    if (node.data && node.data.primary) {
+      theatre.currentNode = intersects[0].object;
+      theatre.view(theatre.currentNode.position);
+
+      theatre.nodeView = true;
+    }
+
     theatre.controls.update();
   }
 
@@ -77,21 +82,15 @@ function checkMouseOver (e, over, notOver) {
   var y = - ( (e.clientY - $(theatre.container).offset().top ) / (window.innerHeight-105) ) * 2 + 1;
 
   //check the type of camera
-  if ( camera instanceof THREE.OrthographicCamera ) {
-    vector.set( x, y, - 1 ); // z = - 1 important!
-    vector.unproject( camera );
-    dir.set( 0, 0, - 1 ).transformDirection( camera.matrixWorld );
-    raycaster.set( vector, dir );
-  } else if ( camera instanceof THREE.PerspectiveCamera ) {
-    vector.set( x, y, 0.5 ); // z = 0.5 important!
-    vector.unproject( camera );
-    raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
-  }
+  vector.set( x, y, 0.5 ); // z = 0.5 important!
+  vector.unproject( camera );
+  raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+
 
   if (composite){
     var intersects = raycaster.intersectObjects( composite.children, true );  
 
-    if (intersects.length<1){
+    if (intersects.length < 1){
       utils.dull(theatre.composite);
       if (notOver) { 
         notOver(); 

@@ -21,9 +21,10 @@ var checkTheatre = function () {
 var selectNode = function (index) {
   var composite = theatre.composite;
   theatre.currentNode = composite.children[index];
+
   theatre.viewIndex = index;
 
-  utils.shine(composite, theatre.currentNode.componentData.id);
+  utils.shine(composite, theatre.currentNode.data.id);
   theatre.view(theatre.currentNode.position);
 }
 
@@ -32,16 +33,16 @@ select.next = function() {
   checkTheatre();
 
   for (var index = theatre.viewIndex + 1; index < composite.children.length; index++) {
-    var component = composite.children[index].componentData;
-    if (component.primary) {
+    var timelineElement = composite.children[index].data;
+    if (timelineElement.primary && timelineElement.display.visited) {
       break;
     }
   }
 
   if (index >= composite.children.length) {
     for (var index = 0; index < composite.children.length; index++) {
-      var component = composite.children[index].componentData;
-      if (component.primary) {
+      var timelineElement = composite.children[index].data;
+      if (timelineElement.primary && timelineElement.display.visited) {
         break;
       }
     }
@@ -56,16 +57,16 @@ select.previous = function() {
   checkTheatre();
 
   for (var index = theatre.viewIndex - 1; index >= 0; index--) {
-    var component = composite.children[index].componentData;
-    if (component.primary) {
+    var timelineElement = composite.children[index].data;
+    if (timelineElement.primary && timelineElement.display.visited) {
       break;
     }
   }
 
   if (index < 0) {
     for (var index = composite.children.length - 1; index >= 0; index--) {
-      var component = composite.children[index].componentData;
-      if (component.primary) {
+      var timelineElement = composite.children[index].data;
+      if (timelineElement.primary && timelineElement.display.visited) {
         break;
       }
     }

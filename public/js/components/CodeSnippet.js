@@ -29,7 +29,7 @@ var CodeSnippet = React.createClass({
     var highlight = this.props.highlight;
 
     if (code) {
-      var node = tree.getNode();
+      var node = tree.node;
       var start = node.range[0];
       var end = node.range[1];
 
@@ -40,7 +40,7 @@ var CodeSnippet = React.createClass({
       else {
         for (var i = 0; i < tree.children.length; i++) {
           var child = tree.children[i];
-          var childNode = child.getNode();
+          var childNode = child.node;
           var childStart = childNode.range[0];
 
           if (start < childStart) {

@@ -50,10 +50,7 @@ theatre.expand = function() {
 	if (action === 'collapse'){
 		visualTimeline.hide.start();
 		timelight.material.opacity = 0;
-		// gray out all shapes
-		$("#three-modal").hide();
 		utils.dull(composite);
-		
 	} else {
 		visualTimeline.show.start();
 		timelight.material.opacity = 1;

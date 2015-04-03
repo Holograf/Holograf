@@ -1,5 +1,7 @@
+var Tree = require('./utils/TreeHelpers');
+
 var Program = function () {
-  this.programSteps = [];
+  this.timeline = [];
   this.components = [];
   this.scopes = {
     '0': {}
@@ -23,7 +25,7 @@ Program.prototype.initialize = function () {
 
 Program.prototype.getData = function () {
   return {
-    programSteps: this.programSteps,
+    timeline: this.timeline,
     components: this.components,
     scopes: this.scopes,
     code: this._code,
@@ -119,7 +121,10 @@ Program.prototype.setScope = function () {
 //----------------------------------------------------------------------------------
 // Step methods
 Program.prototype.makeStep = function (id, key, value) {
-  var step = {id : id};
+  var step = {
+    id : id,
+    block: this.getCurrentBlock()
+  };
 
   if (value === undefined) { value = '___undefined'; }
   step[key] = value;
@@ -133,7 +138,7 @@ Program.prototype.addStep = function (name, key, value, codeId) {
 
   var step = this.makeStep(id, key, value);
   step.codeId = codeId;
-  this.programSteps.push(step);
+  this.timeline.push(step);
 
   return step;
 }
@@ -148,9 +153,7 @@ Program.prototype.makeComponent = function (type, name) {
     id: id,
     type: type,
     name: name,
-    block: this.getCurrentBlock(),
-    scope: this.getCurrentScope(),
-    createdAt: this.programSteps.length
+    scope: this.getCurrentScope()
   }
  return component;
 }
@@ -208,9 +211,46 @@ Program.prototype.openBlock = function (type, value, codeId) {
     component.paths = value;
   }
   this.components.push(component);
-  this.addStep(id, type, value, codeId);
+  
+  var step = this.addStep(id, type, value, codeId);
+  if (type === 'if') {
+    step.if = 'open';
+  }
+
 
   this._blockStack.push(id);
+}
+
+Program.prototype.createConditionalBranches = function (type, value, codeId) {
+  var paths = value;
+  var path = 0;
+  var branch = Tree.getSubTree (this._blueprint.tree, codeId);
+
+  var traverseConditional = function (branch) {
+    for (var i = 0; i < branch.children.length; i++) {
+      var child = branch.children[i];
+
+      if (child.node.___origin === 'consequent') {
+        consequent = child;
+        var step = this.addStep(this.getCurrentBlock(), 'branch', path++, consequent.id);
+        step.paths = paths;
+
+      } else if (child.node.___origin === 'alternate') {
+        alternate = child;
+
+        if (alternate.node.consequent) {
+          traverseConditional(alternate);
+        } else {
+          var step = this.addStep(this.getCurrentBlock(), 'branch', path++, alternate.id);
+          step.paths = paths;
+        }
+      }
+    }
+  }.bind(this);
+  traverseConditional(branch);
+
+  var step = this.addStep(this.getCurrentBlock(), 'branch', path++, codeId);
+  step.paths = paths;
 }
 
 Program.prototype.cycleBlock = function (codeId) {
@@ -221,10 +261,36 @@ Program.prototype.cycleBlock = function (codeId) {
 
 Program.prototype.closeBlock = function (codeId) {
   var id = this.getCurrentBlock();
+
+  if (this.getComponent(id).name === 'if') {
+    this.closeIf(codeId);
+  }
+
   var type = this.getComponent(id).name;
   this.addStep(id, type, 'close', codeId);
 
   this._blockStack.pop();  
+}
+
+Program.prototype.closeIf = function (codeId) {
+  var id = this.getCurrentBlock();
+
+  // Cycle back to inject an 'enter' step if none is found to indicate bypassing the if
+  var index = this.timeline.length - 1;
+  var entered = false;
+  var opened = false;
+  while (opened === false) {
+    index--;
+    opened = (this.timeline[index].if === 'open' && this.timeline[index].id === id);
+
+    if (this.timeline[index].enter !== undefined && this.timeline[index].id === id) {
+      entered = true;
+      break;
+    }
+  }
+  if (!entered) {
+    this.addStep(id, 'enter', this.getComponent(id).paths, codeId);
+  }
 }
 
 Program.prototype.enterPath = function (value, codeId) {
@@ -295,6 +361,7 @@ Program.prototype.block = function (type, state, codeId) {
       this.closeBlock(codeId);
     } else {
       this.openBlock(type, state, codeId);
+      this.createConditionalBranches(type, state, codeId);
     }
   }
 }
@@ -327,8 +394,8 @@ Program.prototype.method = function(name, codeId) {
 }
 
 Program.prototype.getFunctionName = function (functionId) {
-  for (var i = this.programSteps.length - 1; i >= 0; i--) {
-    var step = this.programSteps[i];
+  for (var i = this.timeline.length - 1; i >= 0; i--) {
+    var step = this.timeline[i];
     if (step.pointer === functionId) {
       return this.components[step.id].name;
     }
@@ -359,8 +426,8 @@ Program.prototype.getFunctionId = function (functionName) {
 }
 
 Program.prototype.lastIdOfObject = function (parentId) {
-  for (var i = this.programSteps.length - 1; i >= 0; i--) {
-    var step = this.programSteps[i];
+  for (var i = this.timeline.length - 1; i >= 0; i--) {
+    var step = this.timeline[i];
     if (step.id === parentId) {
       return step.pointer;
     }

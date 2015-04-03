@@ -43,10 +43,10 @@ function Init () {
   theatre.camera = camera;
 
   var camDistPartial = composite.maxSize >= 1000 ? composite.maxSize / 2 : 1000;
-  camera.position.x = -camDistPartial;
+  camera.position.x = camDistPartial;
   camera.position.y = camDistPartial * 1.5;
   camera.position.z = camDistPartial;
-  theatre.target = new THREE.Vector3(0, 0, composite.maxSize/2);
+  theatre.target = new THREE.Vector3(composite.maxSize / 2, 0, 0);
   theatre.initTarget = new THREE.Vector3().copy(theatre.target);
   // theatre.initTarget.copy( position ).sub( theatre.target );
 

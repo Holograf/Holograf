@@ -6,34 +6,29 @@ var VisualTimeline = function (theatre) {
   var timeline = theatre.timeline;
   var scopes = theatre.data.scopes;
 
-  var maxSize = timeline.length * constants.size.step;
+  var maxSize = theatre.maxSize;
   var interval = maxSize / (timeline.length + 1);
-
-  var x = 0;
-  var y = 0;
-  var z = 0;
 
   var material = new THREE.LineBasicMaterial( { color: constants.color.timeline, transparent:true, opacity:0 } );
   var geometry = new THREE.Geometry();
 
   for (var i = 0; i < timeline.length; i++){
-    var step = timeline[i]
-    z += interval;
-    
-    if (step.return){
-      x -= constants.size.scope;
-    }
+    var timelineElement = timeline[i]
 
-    geometry.vertices.push(
-      new THREE.Vector3( x, 0, z )
-    );
+    if (timelineElement.display.visited) {
+      var x = timelineElement.position.x2;
+      var y = timelineElement.position.y2;
+      var z = timelineElement.position.z2; 
 
-    if (step.invoke){
-      x += constants.size.scope;
+      geometry.vertices.push(
+        new THREE.Vector3( x, y, z )
+      );
     }
   }
   var line = new THREE.Line( geometry, material );
-  line.show = new TWEEN.Tween(line.material).to({opacity:1}, constants.time.timelineFade).easing(TWEEN.Easing.Exponential.In);
+  line.show = new TWEEN.Tween(line.material).to({opacity:1}, constants.time.timelineFade)
+    .easing(TWEEN.Easing.Exponential.In)
+    .delay(constants.time.timelineDelay);
   line.hide = new TWEEN.Tween(line.material).to({opacity:0}, constants.time.timelineFade).easing(TWEEN.Easing.Exponential.Out);
   
   line.name = 'visualTimeline';
