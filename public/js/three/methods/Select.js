@@ -1,4 +1,4 @@
-var utils = require('../utils');
+var highlight = require('../methods/Highlight');
 
 
 var Select = function (input) {
@@ -11,12 +11,13 @@ var theatre;
 
 var checkTheatre = function () {
   if (!theatre.expanded) theatre.expand();
-  utils.dull(theatre.composite);
+  highlight.dull(theatre.composite);
 
   if (theatre.viewIndex === undefined) {
     theatre.viewIndex = -1;
   }
 }
+
 
 var selectNode = function (index) {
   var composite = theatre.composite;
@@ -24,8 +25,12 @@ var selectNode = function (index) {
 
   theatre.viewIndex = index;
 
-  utils.shine(composite, theatre.currentNode.data.id);
+  highlight.shine(composite, theatre.currentNode);
   theatre.view(theatre.currentNode.position);
+}
+
+select.node = function (node) {
+  selectNode(node.index);
 }
 
 select.next = function() {

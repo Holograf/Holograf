@@ -4,10 +4,11 @@ var AppConstants = require('../constants/appConstants.js');
 
 var ThreeActions = {
 
-  updateHighlight: function (highlight) {
+  updateHighlight: function (highlight, hover) {
     AppDispatcher.handleThreeAction({
       actionType: AppConstants.UPDATE_HIGHLIGHT,
-      highlight: highlight
+      highlight: highlight,
+      hover: hover
     })
   }
 

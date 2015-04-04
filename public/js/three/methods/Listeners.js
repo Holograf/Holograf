@@ -1,4 +1,4 @@
-var utils = require('../utils');
+var highlight = require('../methods/Highlight');
 
 var Listeners = {};
 var theatre = {};
@@ -28,7 +28,7 @@ Listeners.onMouseMove = function ( e ) {
 
     theatre.highlightNode = intersects[0].object;
     var selectedId = intersects[0].object.data.id;
-    utils.shine(theatre.composite, selectedId);
+    highlight.shine(theatre.composite, theatre.highlightNode);
   }
 
   checkMouseOver(e, over);
@@ -45,19 +45,16 @@ Listeners.onMouseDown = function ( e ) {
   }
 
   // remove prior component highlighting
-  utils.dull(theatre.composite);
+  highlight.dull(theatre.composite);
 
 
   var over = function (intersects) {
     var selectedId = intersects[0].object.data.id || -1;
 
-    var node = intersects[0].object;
+    var component = intersects[0].object;
 
-    if (node.data && node.data.primary) {
-      theatre.currentNode = intersects[0].object;
-      theatre.view(theatre.currentNode.position);
-
-      theatre.nodeView = true;
+    if (component.data && component.data.primary) {
+      theatre.select.node(intersects[0].object);
     }
 
     theatre.controls.update();
@@ -91,7 +88,7 @@ function checkMouseOver (e, over, notOver) {
     var intersects = raycaster.intersectObjects( composite.children, true );  
 
     if (intersects.length < 1){
-      utils.dull(theatre.composite);
+      highlight.dull(theatre.composite);
       if (notOver) { 
         notOver(); 
       }

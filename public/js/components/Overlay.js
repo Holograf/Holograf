@@ -6,7 +6,9 @@ var React = require('react');
 var Actions = require('../actions/Actions');
 var Traverse = require('../compiler/Traverse');
 var CodeSnippet = require('./CodeSnippet');
+var CodeHighlight = require('./CodeHighlight');
 var CodeHeadline = require('./CodeHeadline');
+var Highlight = require('./utils/Highlight');
 
 module.exports = React.createClass({
 
@@ -16,8 +18,7 @@ module.exports = React.createClass({
 
     // var codeTree = this.generateCodeTree();
     if (this.props.data.blueprint) {
-      var blueprint = this.props.data.blueprint.list;
-      var blueprintTree = this.props.data.blueprint.tree;
+      var blueprint = this.props.data.blueprint;
     } else {
       var blueprintTree = {children : []}
     }
@@ -27,7 +28,7 @@ module.exports = React.createClass({
         <div className="code-highlight">
           <span className="code-lines">
             <CodeHeadline highlight={highlight} />
-            <CodeSnippet tree={blueprintTree} code={code} highlight={highlight}/>
+            <CodeHighlight blueprint={blueprint} code={code} highlight={highlight}/>
           </span>
         </div>
       </div>
