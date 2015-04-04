@@ -38,11 +38,11 @@ var CodeHighlight = React.createClass({
 
 });
 
-var insert = function (string1, string2, index) {
+var insert = function (string, toInsert, index) {
   if (index > 0)
-    return string1.substring(0, index) + string2 + string1.substring(index, string1.length);
+    return string.substring(0, index) + toInsert + string.substring(index, string.length);
   else
-    return string2 + string1;
+    return toInsert + string;
 }
 
 module.exports = CodeHighlight;
