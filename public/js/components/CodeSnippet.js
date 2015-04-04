@@ -12,7 +12,6 @@ var CodeSnippet = React.createClass({
     var code = this.props.code;
 
     var substring = code.substring(start, end);
-    // substring = substring.replace(/\s/g, );
     return substring;
   },
 

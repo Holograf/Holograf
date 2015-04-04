@@ -19,6 +19,7 @@ module.exports = function(composite, component, timelineElement){
   } );
     
   component.position.set( position.x1, position.y1, position.z1 );
+  component.index = composite.children.length;
   composite.add(component);
 };
 

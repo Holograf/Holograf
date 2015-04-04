@@ -82,32 +82,6 @@ utils.tweenify=function(object, position){
   return object;
 };
 
-utils.dull = function(composite){
-	composite.children.forEach(function( shape ) {
-		if (shape.grayness){
-			shape.material.color.setRGB( shape.grayness, shape.grayness, shape.grayness );
-			shape.material.opacity = 0;
-		}
-	});
-};
 
-utils.shine = function(composite, id) {
-	for (var i=0; i < composite.children.length; i++) {
-    var timelineElement = composite.children[i].data;
-		if (timelineElement.id === id) {
-      highlight(composite.children[i]);
-		}
-	}
-};
-
-var highlight = function (node) {
-  if (node.material && node.material.color) {
-    node.material.color.setRGB(1,1,0);
-  }
-
-  if (node.transparent) {
-    node.material.opacity = 1;
-  }
-}
 
 module.exports = utils;
