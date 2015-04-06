@@ -31,14 +31,14 @@ var View = function(nodePosition) {
 
   nextCamera = null;
 
-  theatre.actions.updateHighlight(theatre.currentNode.data);
+  theatre.actions.updateSelection(theatre.selectedNode.data);
 
   placeSelection(theatre);
   theatre.nodeView = true;
 };
 
 var placeSelection = function (theatre) {
-  var nodePosition = theatre.currentNode.position;
+  var nodePosition = theatre.selectedNode.position;
   var selection = theatre.selection;
 
   selection.material.opacity = 0;

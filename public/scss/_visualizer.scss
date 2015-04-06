@@ -23,7 +23,12 @@ span.code-headline {
   line-height: 1.5;
 }
 
-span.codeSnippet.highlighted {
+span.codeSnippet.selected {
   color: $color-primary-1;
+  // background-color: rgba(12,16,75,0.5);
+}
+
+span.codeSnippet.hovered {
+  color: $color-primary-5;
   // background-color: rgba(12,16,75,0.5);
 }

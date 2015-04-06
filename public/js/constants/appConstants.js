@@ -6,5 +6,6 @@ module.exports = keyMirror({
   UPDATE_SHAREURL: null,
   SELECT_TAB: null,
   RESET_ERROR: null,
-  UPDATE_HIGHLIGHT: null,
+  UPDATE_SELECTION: null,
+  UPDATE_HOVER: null
 });

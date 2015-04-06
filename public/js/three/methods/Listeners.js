@@ -26,12 +26,20 @@ Listeners.onMouseMove = function ( e ) {
   var over = function (intersects) {
     if (!theatre.expanded) {return;}
 
-    theatre.highlightNode = intersects[0].object;
+    theatre.hoveredNode = intersects[0].object;
     var selectedId = intersects[0].object.data.id;
-    highlight.shine(theatre.composite, theatre.highlightNode);
+    highlight.shine(theatre.composite, theatre.hoveredNode);
+
+    theatre.actions.updateHover( theatre.hoveredNode.data );
   }
 
-  checkMouseOver(e, over);
+
+  var notOver = function () {
+    theatre.hoveredNode = null;
+    theatre.actions.updateHover ( null );
+  }
+
+  checkMouseOver(e, over, notOver);
 }
 
 
@@ -56,7 +64,6 @@ Listeners.onMouseDown = function ( e ) {
     if (component.data && component.data.primary) {
       theatre.select.node(intersects[0].object);
     }
-
     theatre.controls.update();
   }
 

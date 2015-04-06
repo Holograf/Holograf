@@ -3,9 +3,8 @@ var Highlight = {};
 Highlight.getRange = function (highlight, blueprint) {
   if (blueprint && highlight.id) {
     var codeElement = blueprint.list[highlight.id]
-    var highlightRange = codeElement.range;
+    var highlightRange = [codeElement.range[0], codeElement.range[1]];
     var parent = codeElement.___parent;
-    console.log( codeElement );
 
     if (codeElement.type === 'BlockStatement') {
 
@@ -28,7 +27,7 @@ Highlight.getRange = function (highlight, blueprint) {
 
 
 
-    return codeElement.range;
+    return highlightRange;
   }
 }
 
