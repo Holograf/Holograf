@@ -1,3 +1,6 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var highlight = require('../methods/Highlight');
 
 var Listeners = {};

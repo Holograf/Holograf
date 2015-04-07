@@ -29,7 +29,7 @@ module.exports = React.createClass({
   },
 
   returnCamera: function() {
-    theatre.controls.reset();
+    theatre.resetControls();
   },
 
   next: function() {
@@ -37,7 +37,7 @@ module.exports = React.createClass({
   },
 
   previous: function() {
-    theatre.select.prev();
+    theatre.select.previous();
   },
 
   render: function() {

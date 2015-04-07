@@ -1,3 +1,6 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var utils = require('../../utils');
 var geometries = require('../../Geometries');
 var constants = require('../../Constants');
@@ -43,7 +46,7 @@ var Skybox = function (theatre) {
 
 
   // bottom horizontal
-  z = maxSize - interval;
+  z = maxSize + interval;
   while (z > -2 * maxSize) {
     var geometry = new THREE.Geometry();
     y = -maxSize;   // +yMod

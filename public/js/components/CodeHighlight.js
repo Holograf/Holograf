@@ -59,10 +59,6 @@ var CodeHighlight = React.createClass({
     }
 
 
-    console.log(highlightedCode);
-
-
-
     return (
       <span className='codeHighlight' dangerouslySetInnerHTML={{__html: highlightedCode}}>
       </span>

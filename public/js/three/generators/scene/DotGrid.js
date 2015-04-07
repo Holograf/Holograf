@@ -1,27 +1,30 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var utils = require('../../utils');
 var geometries = require('../../Geometries');
 var constants = require('../../Constants');
   
 var DotGrid = function (theatre) {
-  var scene = theatre.scene;
-  var timeline = theatre.timeline;
-  var scopes = theatre.data.scopes;
+  // var scene = theatre.scene;
+  // var timeline = theatre.timeline;
+  // var scopes = theatre.data.scopes;
   
-  var maxSize = theatre.maxSize;
-  var dotSteps = maxSize / timeline.length;
+  // var maxSize = theatre.maxSize;
+  // var dotSteps = maxSize / timeline.length;
 
-  for (var key in scopes){
-    var dotZ = scopes[key] * constants.size.scope;
+  // for (var key in scopes){
+  //   var dotZ = scopes[key] * constants.size.scope;
 
-    for (var i = 0; i < timeline.length; i++){
-      scene.add( Dot({
-          scale: constants.size.dot,
-          x: dotSteps * i,
-          z: dotZ
-        }) 
-      );
-    }
-  }
+  //   for (var i = 0; i < timeline.length; i++){
+  //     scene.add( Dot({
+  //         scale: constants.size.dot,
+  //         x: dotSteps * i,
+  //         z: dotZ
+  //       }) 
+  //     );
+  //   }
+  // }
 };
 
 var Dot = function (options) {

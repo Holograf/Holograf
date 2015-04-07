@@ -1,3 +1,6 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var utils = require('./utils');
 
 var theatre = {};
@@ -6,11 +9,14 @@ theatre.view = require('./methods/View');
 theatre.select = require('./methods/Select')(theatre);
 theatre.actions = require('../actions/ThreeActions');
 
+
 theatre.display = function(data, renderEnd) {	
 	this.timeline = data.timeline;
 	this.data = data;
 	
 	theatre.init();
+
+	theatre.compiledStatus = true;
 
 	renderEnd();
 	animate();

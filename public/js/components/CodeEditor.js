@@ -43,10 +43,10 @@ module.exports = React.createClass({
 // bsStyle options: ["default","primary","success","info","warning","danger","link","inline","tabs","pills"]. 
   render: function () {
 
-    if (this.props.selectedTab === 2 && !this.props.compiledStatus && theatre.firstRender) {
-      this.compile();
-      theatre.firstRender = false;
-    }
+    // if (this.props.selectedTab === 2 && !this.props.compiledStatus && theatre.firstRender) {
+    //   this.compile();
+    //   theatre.firstRender = false;
+    // }
 
     // dynamic classes for the buttons
     var cx = React.addons.classSet; 
