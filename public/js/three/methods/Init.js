@@ -1,3 +1,6 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var generate = require('../generators/Generators');
 var constants = require('../Constants');
 var utils = require('../utils');
@@ -5,8 +8,14 @@ var listeners = require('./Listeners');
 var generate = require('../generators/Generators');
 generate.composite = require('../generators/Composite');
 
+var initialize = {};
+initialize.controls = require('./Controls');
+
 function Init () {
+
   var theatre = this;
+  theatre.container = document.getElementById('three-scene');
+  
   var scopes = theatre.data.scopes;
   var composite = theatre.composite;
   var timeline = theatre.timeline;
@@ -48,12 +57,9 @@ function Init () {
   camera.position.z = camDistPartial;
   theatre.target = new THREE.Vector3(composite.maxSize / 2, 0, 0);
   theatre.initTarget = new THREE.Vector3().copy(theatre.target);
-  // theatre.initTarget.copy( position ).sub( theatre.target );
 
-  // Fourth argument is just for anything that is defined AFTER the controls.
-  theatre.controls = new THREE.OrbitControls(camera, container, theatre.target, theatre.initCamera, theatre);
 
-  // controls.addEventListener( 'change', render );
+  initialize.controls(theatre);
 
   theatre.initCamera = {
     'position': new THREE.Vector3().copy( camera.position ), 
@@ -73,9 +79,6 @@ function Init () {
   renderer.setSize( window.innerWidth, window.innerHeight - constants.size.topOffset);  // hard-coded top offset
   theatre.renderer = renderer;
 
-
-  container = document.getElementById('three-scene');
-  theatre.container = container;
   container.appendChild(renderer.domElement);
 
   // User interaction

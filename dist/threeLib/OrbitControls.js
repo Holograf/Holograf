@@ -298,9 +298,6 @@ THREE.OrbitControls = function ( object, domElement, target, compiledStatus, the
     // rotate offset back to "camera-up-vector-is-up" space
     offset.applyQuaternion( quatInverse );
 
-    if (theatre.nodeView) {
-      this.target = theatre.target;
-    }
     position.copy( this.target ).add( offset );
 
     this.object.lookAt( this.target );

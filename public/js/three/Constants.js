@@ -1,3 +1,6 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var Constants = {};
 
 Constants.color = {};

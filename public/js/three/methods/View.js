@@ -1,3 +1,6 @@
+var THREE = require('three');
+var TWEEN = require('tween.js');
+
 var constants = require('../Constants');
 
 var View = function(nodePosition) {
@@ -32,6 +35,8 @@ var View = function(nodePosition) {
   nextCamera = null;
 
   theatre.actions.updateSelection(theatre.selectedNode.data);
+
+  theatre.controls.target = theatre.target;
 
   placeSelection(theatre);
   theatre.nodeView = true;

@@ -24,17 +24,19 @@ module.exports = React.createClass({
   mixins: [OverlayMixin],
 
   handleSelect: function (selectedTab) {
-    Actions.selectTab(selectedTab);
+
+    if (selectedTab === 2 && !theatre.compiledStatus) {
+      Actions.selectTab(this.props.selectedTab);
+      Actions.compile();
+    } else {
+      Actions.selectTab(selectedTab);
+    }
+
   },
 
   render: function() {
     if (this.props.selectedTab !== 2) {
-
       theatre.controlsEnabled = false;
-      if (document.getElementById("modal-canvas")){
-        document.body.removeChild(document.getElementById("modal-canvas"));
-      }
-      // console.log('selectedTab:', this.props.selectedTab);
     } else {            //if (this.props.compiledStatus) {
       theatre.controlsEnabled = true;
     }
@@ -55,7 +57,6 @@ module.exports = React.createClass({
           <TabPane className="tab4" eventKey={4} tab="About">
             <About />
           </TabPane>
-
         </TabbedArea>
       </div>
       
