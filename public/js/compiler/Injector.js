@@ -58,15 +58,8 @@ inject.createNode.return = function (name, codeId) {
   return injectedNode;  
 }
 
-inject.createNode.enter = function (type) {
-  var code = inject.createProgramMethod('enter');
-  var injectedNode = inject.codeToNode(code);
-  injectedNode.addArgument(type);
-  return injectedNode;    
-}
-
-inject.createNode.block = function (type) {
-  var code = inject.createProgramMethod('block');
+inject.createNode.if = function (type) {
+  var code = inject.createProgramMethod('if');
   var injectedNode = inject.codeToNode(code);
   injectedNode.addArgument(type);
   return injectedNode;

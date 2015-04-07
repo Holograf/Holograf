@@ -63,6 +63,14 @@ var RenderProperties = function (data) {
         }
       }
 
+      if (element.pointsTo) {
+        if (element.pointsTo.type === 'array' || element.pointsTo.type === 'object') {
+          element.primary = false;
+          element.display.visited = false;
+          element.display.rendered = false;
+        }
+      }
+
       timeline[index] = element; 
     } ); 
 

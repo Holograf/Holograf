@@ -26,6 +26,8 @@ var selectNode = function (index) {
   var composite = theatre.composite;
   theatre.selectedNode = composite.children[index];
 
+  console.log(theatre.selectedNode.data);
+
   theatre.viewIndex = index;
 
   highlight.shine(composite, theatre.selectedNode);

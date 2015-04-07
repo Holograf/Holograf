@@ -25,7 +25,7 @@ var ifStatement = function (node, parent, origin, index) {
     var injectionPoint = node.consequent ? node.consequent : node;
     var codeId = injectionPoint.___id;
 
-    var injectedNode = inject.createNode.enter('if');
+    var injectedNode = inject.createNode.if('enter');
     injectedNode.addArgument(paths++);
     injectedNode.addArgument(codeId);
     injectionPoint.body.unshift(injectedNode);
@@ -45,14 +45,14 @@ var ifStatement = function (node, parent, origin, index) {
 
 var wrapIf = function (node, index, paths) {
   // Create the if block opening statement
-  var injectedNode = inject.createNode.block('if');
+  var injectedNode = inject.createNode.if('open');
   injectedNode.addArgument(paths);
   injectedNode.addArgument(node.___id);
   inject.before(injectedNode, index);
 
   // Create the if block closing statement
-  injectedNode = inject.createNode.block('if');
-  injectedNode.addArgument('close');
+  injectedNode = inject.createNode.if('close');
+  injectedNode.addArgument(paths);
   injectedNode.addArgument(node.___id);
   inject.after(injectedNode, index);
 }

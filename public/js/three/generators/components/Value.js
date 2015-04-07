@@ -23,11 +23,11 @@ var Value = function(composite, timelineElement){
 
   addToComposite(composite, object, timelineElement);
   
-  if (timelineElement.type === 'property'){
-    generate.property(composite, timelineElement);
-  } else if (timelineElement.type === 'element'){
-    generate.element(composite, timelineElement);
-  }
+  // if (timelineElement.type === 'property'){
+  //   generate.property(composite, timelineElement);
+  // } else if (timelineElement.type === 'element'){
+  //   generate.element(composite, timelineElement);
+  // }
   
   // if (component.value !== undefined){
   //   generate.label(composite, component);
