@@ -31,12 +31,18 @@ Constants.time.timelightSpeed = 5;
 Constants.size = {};
 Constants.size.step = 100;
 Constants.size.buffer = 10;
-Constants.size.scope = -500;
+Constants.size.scope = -250;
 Constants.size.conditional = 100;
 Constants.size.block = 500;
 Constants.size.dot = 10;
 Constants.size.topOffset = 105;
 Constants.size.radius = 300;
+Constants.size.arayIndex = 50;
+
+Constants.position = {};
+Constants.position.y = 100;
+Constants.position.x = 100;
+Constants.position.z = 100;
 
 Constants.camera = {};
 Constants.camera.offsetX = 300;

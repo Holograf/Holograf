@@ -5,8 +5,10 @@ var generate = require('../generators/Generators');
 var constants = require('../Constants');
 var utils = require('../utils');
 var listeners = require('./Listeners');
-var generate = require('../generators/Generators');
+
+var generate = require('../generators/scene');
 generate.composite = require('../generators/Composite');
+
 
 var initialize = {};
 initialize.controls = require('./Controls');

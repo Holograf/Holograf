@@ -4,13 +4,51 @@ var TWEEN = require('tween.js');
 var utils = require('../../utils');
 var geometries = require('../../Geometries');
 var constants = require('../../Constants');
+var addToComposite = require('./AddToComposite');
 
 var ArrayComponent = function( composite, timelineElement ) {
+
+  // console.log('ARRAY!', timelineElement);
+
+  // var group = new THREE.Object3D();
+
+  // for (var i = 0; i < timelineElement.length; i++) {
+
+  //   var grayness = constants.color.grayness;
+  //   var geometry = Object.create(geometries.arrayIndex);
+  //   var material = new THREE.MeshBasicMaterial({transparent: true});
+  //   var object = new THREE.Mesh(geometry, material );
+  //   object.material.color.setRGB( grayness, grayness, grayness );
+
+  //   var boxContainer = new THREE.Object3D();
+
+  //   var outline = new THREE.BoxHelper( object );
+  //   outline.grayness = grayness;
+  //   outline.material.color.setRGB( grayness, grayness, grayness );
+
+  //   boxContainer.add( outline );
+  //   // boxContainer.add( object );
+  // // object.grayness = grayness;
+    
+  //   // console.log(boxContainer);
+  //   boxContainer.position.y += i * constants.size.arayIndex;
+  //   group.add( boxContainer );
+  // }
+
+
+  // addToComposite(composite, group, timelineElement);
+
+
 
 
 };
 
 module.exports = ArrayComponent;
+
+
+  // var cube = new THREE.BoxHelper();
+  // cube.material.color.setRGB( grayness, grayness, grayness );
+
 
 
 // options = utils.checkDefaults(options);

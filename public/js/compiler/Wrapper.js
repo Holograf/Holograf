@@ -25,8 +25,11 @@ var Wrapper = function (syntaxTree) {
 
 
 var objectExpression = function (node, parent, origin, index) {
+  console.log('OBJECT!!!!', node, parent, origin, index.position);
   if (parent.body) {
     parent.body.splice(index, 1, wrapObject(node))
+  } else if (node.___arrayIndex !==undefined) {
+    parent[node.___origin][node.___arrayIndex] = wrapObject(node);
   } else {
     parent[origin] = wrapObject(node);
   }
@@ -55,6 +58,10 @@ var functionDeclaration = function (node, parent, origin, index) {
   
   var name = functionVariableDeclaration.declarations[0].id.name;
   var functionSetExpression = inject.createNode.set(name, node.___id);
+
+  if (parent.body.body) {
+    parent = parent.body;
+  }
 
   parent.body.splice(0, 0, functionSetExpression);
   parent.body.splice(0, 0, functionVariableDeclaration);

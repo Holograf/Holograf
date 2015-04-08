@@ -7,8 +7,6 @@ var constants = require('../../Constants');
 var addToComposite = require('./AddToComposite');
 
 var generate = {};
-generate.property = require('./Property');
-generate.element = require('./Element');
 generate.label = require('./Label');
 
 

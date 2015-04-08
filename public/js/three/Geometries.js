@@ -27,6 +27,9 @@ geometries.functionInvocation = new THREE.CylinderGeometry(70, 35, 60, 6, 1, tru
 //--DodecahedronGeometry(radius, detail)
 geometries.variable = new THREE.DodecahedronGeometry(25);
 
+//--BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments)
+geometries.arrayIndex =  new THREE.BoxGeometry( constants.size.arayIndex, constants.size.arayIndex, constants.size.arayIndex );
+
 //--CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength)
 // geometries.conditionalBranch = new THREE.CylinderGeometry(40, 0, 20, 4, 1, true);
 geometries.conditionalBranch = new THREE.CylinderGeometry(40, 40, 30, 2, 1, true, 0, PI);

@@ -9,7 +9,10 @@ var constants = require('../../Constants');
 module.exports = function(composite, component, timelineElement){
   var position = utils.checkDefaults(timelineElement.position);
 
-  component.data = timelineElement;
+  traverse(component, function (component) {
+    component.data = timelineElement;
+  });
+
   component = utils.tweenify(component, {
     x1: position.x1, 
     x2: position.x2, 
@@ -25,4 +28,12 @@ module.exports = function(composite, component, timelineElement){
   component.index = composite.children.length;
   composite.add(component);
 };
+
+
+function traverse (component, callback) {
+  callback(component);
+  for (var i = 0; i < component.children.length; i++) {
+    traverse(component.children[i], callback);
+  }
+}
 
