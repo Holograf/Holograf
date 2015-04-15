@@ -14,7 +14,16 @@ var COMPILE_EVENT = 'compile';
 
 var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error; 
 var _highlight = {}
-var templateCode = "var x = [1,2,3];\nx.push(4);";
+var templateCode = 'var fibonacci = function (n) {\n'+
+'  if (n < 2){\n'+
+'    return 1;\n'+
+'  } else {\n'+
+'    return fibonacci(n-2) + fibonacci(n-1);\n'+
+'  }\n'+
+'}\n'+
+'\n'+
+'fibonacci(5);';
+
 
 
 var AppStore = assign({}, EventEmitter.prototype, {
