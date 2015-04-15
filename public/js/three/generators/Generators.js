@@ -10,7 +10,7 @@ Generators.loopCycle = require('./components/LoopCycle');
 Generators.value = require('./components/Value');
 Generators.label = require('./components/Label');
 Generators.property = require('./components/Property');
-Generators.element = require('./components/Element');
+Generators.arrayElement = require('./components/ArrayElement');
 Generators.conditional = require('./components/Conditional');
 
 Generators.selection = require('./scene/Selection');

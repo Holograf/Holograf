@@ -13,7 +13,7 @@ var Conditional = function (composite, timelineElement) {
     var material = new THREE.MeshBasicMaterial({wireframe:true, side: THREE.DoubleSide});
     material.color.setRGB( grayness, grayness, grayness );
     
-    if (timelineElement.if === 'open') {
+    if (timelineElement.state === 'open') {
       var geometry = Object.create(geometries.conditionalBranch.open);
       var object = new THREE.Mesh(geometry, material );
 
@@ -21,7 +21,7 @@ var Conditional = function (composite, timelineElement) {
       object.rotation.z = Math.PI; 
     } 
 
-    else if (timelineElement.if === 'close') {
+    else if (timelineElement.state === 'close') {
       var geometry = Object.create(geometries.conditionalBranch.close);
       var object = new THREE.Mesh(geometry, material );
 

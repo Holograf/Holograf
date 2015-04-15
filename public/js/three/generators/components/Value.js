@@ -7,8 +7,6 @@ var constants = require('../../Constants');
 var addToComposite = require('./AddToComposite');
 
 var generate = {};
-generate.property = require('./Property');
-generate.element = require('./Element');
 generate.label = require('./Label');
 
 
@@ -23,11 +21,11 @@ var Value = function(composite, timelineElement){
 
   addToComposite(composite, object, timelineElement);
   
-  if (timelineElement.type === 'property'){
-    generate.property(composite, timelineElement);
-  } else if (timelineElement.type === 'element'){
-    generate.element(composite, timelineElement);
-  }
+  // if (timelineElement.type === 'property'){
+  //   generate.property(composite, timelineElement);
+  // } else if (timelineElement.type === 'element'){
+  //   generate.element(composite, timelineElement);
+  // }
   
   // if (component.value !== undefined){
   //   generate.label(composite, component);

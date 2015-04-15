@@ -3,8 +3,8 @@ var TWEEN = require('tween.js');
 
 var utils = require('../utils');
 var geometries = require('../Geometries');
-var generate = require('./Generators');
-var constants = require('../Constants');
+var generate = require('../Generators/components');
+var constants = require('../Constants'	);
 
 var Composite = function(theatre){
 	var timeline = theatre.timeline;
@@ -34,6 +34,8 @@ var Composite = function(theatre){
 		                    .delay(constants.time.timelightDelay) 
 		              );
 	var dx = 0;
+
+	console.log(timeline);
 
 	for (var i = 0; i < timeline.length; i++) {
 		var timelineElement = timeline[i];
@@ -74,35 +76,41 @@ var Composite = function(theatre){
 
 		
 		if (timelineElement.pointsTo) {
-		  if (timelineElement.pointsTo.type === 'array') {
-			  generate.array(composite, timelineElement);
-		  } else if (timelineElement.pointsTo.type === 'object') {
-			  generate.object(composite, timelineElement);
-		  } else if (timelineElement.pointsTo.type === 'function'){
+      if (timelineElement.pointsTo.type === 'function'){
 			  generate.functionDeclaration(composite, timelineElement);
 		  } 
 		} 
 
-		else if (timelineElement.type === "block") {
-			if (timelineElement.name === 'if') {
-				generate.conditional(composite, timelineElement);				
-			}
+		else if (timelineElement.type === "if") {
+			generate.conditional(composite, timelineElement);				
+		}
 
-			else if (timelineElement.name === "for" || timelineElement.name === 'while' || timelineElement.name === 'do') {
-				if (timelineElement[timelineElement.name] === "cycle") {
-				   generate.loopCycle(composite, timelineElement);
-				} else {
-					 generate.loop(composite, timelineElement);
-				}
+		else if (timelineElement.type === 'loop') {
+			if (timelineElement.state === "cycle") {
+			   generate.loopCycle(composite, timelineElement);
+			} else {
+				 generate.loop(composite, timelineElement);
+			}
+		} 
+	  
+	  else if (timelineElement.type === 'array') {
+		  generate.array(composite, timelineElement);
+	  } 
+
+	  else if (timelineElement.type === 'element') {
+	  	generate.arrayElement(composite, timelineElement);
+	  }
+
+		else if (timelineElement.type === 'invoke') {
+			if (timelineElement.return) {
+				generate.functionReturn(composite, timelineElement);
+			} else {
+				dx = constants.size.scope;
+				generate.functionInvocation(composite, timelineElement);
 			}
 		} 
 
-		else if (timelineElement.invoke) {
-			dx = constants.size.scope;
-			generate.functionInvocation(composite, timelineElement);
-		} else if (timelineElement.return){
-			generate.functionReturn(composite, timelineElement);
-		} else {
+		else {
 			generate.value(composite, timelineElement);
 		}
 		

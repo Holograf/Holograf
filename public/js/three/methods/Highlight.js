@@ -16,6 +16,8 @@ Highlight.dull = function (composite){
 Highlight.shine = function (composite, node) {
   var id = node.data.id;
 
+  console.log(id);
+
   showHighlight(node);
 
   for (var i=0; i < composite.children.length; i++) {
@@ -28,8 +30,14 @@ Highlight.shine = function (composite, node) {
 
 
 Highlight.siblings = function (node, sibling) {
-  if (node.data.if === 'open' || node.data.if === 'close') {
+  if (node.data.type === 'if'){
+    if (node.data.state === 'open' || node.data.state === 'close') {
       showHighlight(sibling);
+    }
+  } 
+
+  if (node.data.type === 'element') {
+    showHighlight(sibling);
   }
 }
 

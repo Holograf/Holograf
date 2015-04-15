@@ -6,6 +6,8 @@ blockStack.last = function () {
   return blockStack[blockStack.length - 1];
 }
 
+var parentObjectPosition = {};
+
 var dx = dy = dz = 0;
 
 var SetPositions = function (data) {
@@ -19,6 +21,7 @@ var SetPositions = function (data) {
   return new Promise (function (resolve, reject) {
 
     data.timeline.forEach(function (timelineElement, index, timeline) {
+      var nextElement = timeline[index + 1];
       update(position);
       dx = 1;
       
@@ -42,7 +45,7 @@ var SetPositions = function (data) {
       }
 
       //------------------------------conditionals
-      if (timelineElement.name === 'if') {
+      if (timelineElement.type === 'if') {
         var paths = timelineElement.paths;
         var block = timelineElement.id;
 
@@ -50,7 +53,7 @@ var SetPositions = function (data) {
         var top = height / 2;
 
 
-        //-----------------------------Handle conditional branches
+        //--Handle conditional branches
         if (timelineElement.branch !== undefined) {
           if (timelineElement.branch === 0) {
             position.y += top;
@@ -60,7 +63,7 @@ var SetPositions = function (data) {
           dx = 0;
         }
 
-        //-----------------------------Handle entering a conditional branch
+        //--Handle entering a conditional branch
         else if (timelineElement.enter !== undefined) {
           position.y += height + 1;
           position.y -= timelineElement.enter;
@@ -68,17 +71,33 @@ var SetPositions = function (data) {
             position.x += 1;
           }
         }
-        //-----------------------------Handle close of conditional branches
-        else if (timelineElement.if === 'close') {
+        //--Handle close of conditional branches
+        else if (timelineElement.state === 'close') {
           var block = blockStack.pop();
           position.y = block.position.y;
         } 
-        //-----------------------------Handle open of conditional branches
+        //--Handle open of conditional branches
         else {
           blockStack.push(timelineElement);
           dx = 0.75;
         }
       }
+
+      if (timelineElement.type === 'array') {
+        parentObjectPosition = {
+          x: position.x,
+          y: position.y,
+          z: position.z
+        }
+      }
+
+      if (timelineElement.type === 'element') {
+        if (nextElement && nextElement.type === 'element') {
+          dx = 0.70;
+        }
+      }
+
+
 
 
       timelineElement.position = {

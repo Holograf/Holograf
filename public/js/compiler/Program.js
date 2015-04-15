@@ -20,7 +20,8 @@ var Program = function () {
 //----------------------------------------------------------------------------------
 // Initialization and getter for the AppStore to access the relevant data properties
 Program.prototype.initialize = function () {
-  this.addComponent('block', 'global');
+  this.addComponent({'type': 'block', 
+                     'name': 'global' });
 }
 
 Program.prototype.getData = function () {
@@ -52,9 +53,9 @@ Program.prototype.registerObject = function (object) {
   Object.defineProperty(object, '___parsed', { enumerable: false, value: false, writable: true });
 
   if (Array.isArray(object)) {
-    var component = this.addComponent('array');
+    var component = this.addComponent({ 'type': 'array' });
   } else  {
-    var component = this.addComponent('object');
+    var component = this.addComponent({ 'type': 'object' });
   }
   this._objects[id] = {};
 }
@@ -68,32 +69,48 @@ Program.prototype.registerFunction = function (fn) {
 
   Object.defineProperty(fn, '___id', { enumerable: false, value: id, writable: true });
 
-  this.addComponent('function');
+  this.addComponent({ 'type': 'function' });
   return id;
 }
 
 Program.prototype.registerObjectProperties = function (object, codeId) {
   var type = Array.isArray(object) ? 'element' : 'property';
+  this.objectSnapshot(object, codeId);
+
   for (var key in object) {
     var value = object[key];
+    var accessor = type === 'element' ? 'index' : 'key';
+    if (type === 'element') {
+      key = key * 1;
+    }
 
-    var component = this.addComponent(type, key);
+
+    var component = this.addComponent({'type' : type });
+    component[accessor] = key;
     component.parent = object.___id;
 
     if (typeof value === 'object') {
-      this.addStep(component.id, 'pointer', value.___id, codeId);
+      var step = this.addStep({'id': component.id, 
+                               'pointer': value.___id, 
+                               'codeId': codeId });
       this._objects[component.parent][key] = {};
       this.registerObjectProperties(value, codeId);
-    } else if (typeof value === 'function') {
-      this.addStep(component.id, 'pointer', value.___id, codeId);
+    } 
+    else if (typeof value === 'function') {
+      var step = this.addStep({'id': component.id, 
+                               'pointer': value.___id, 
+                               'codeId': codeId });
       this._objects[component.parent][key] = component.id;
-    } else {
-      this.addStep(component.id, 'value', value, codeId);
+    } 
+    else {
+      var step = this.addStep({'id': component.id, 
+                              'value': value, 
+                              'codeId': codeId });
       this._objects[component.parent][key] = component.id;
     }
+
   }
 
-  this.objectSnapshot(object, codeId);
   object.___parsed = true;
 }
 
@@ -120,24 +137,26 @@ Program.prototype.setScope = function () {
 
 //----------------------------------------------------------------------------------
 // Step methods
-Program.prototype.makeStep = function (id, key, value) {
+// Program.prototype.makeStep = function (id, key, value) {
+Program.prototype.makeStep = function (options) {
   var step = {
-    id : id,
     block: this.getCurrentBlock()
   };
 
-  if (value === undefined) { value = '___undefined'; }
-  step[key] = value;
+  for (var key in options) {
+    if (key  === 'value' && options[key] === undefined) {
+      step[key] = '___undefined';
+    } else {
+      step[key] = options[key]   
+    }
+  }
+
   return step;
 }
+// Program.prototype.addStep = function (name, key, value, codeId) {
 
-Program.prototype.addStep = function (name, key, value, codeId) {
-
-  if (typeof name === 'number') { var id = name; } 
-  else { var id = this.getId(name); }
-
-  var step = this.makeStep(id, key, value);
-  step.codeId = codeId;
+Program.prototype.addStep = function (options) {
+  var step = this.makeStep(options);
   this.timeline.push(step);
 
   return step;
@@ -147,30 +166,34 @@ Program.prototype.addStep = function (name, key, value, codeId) {
 
 //----------------------------------------------------------------------------------
 // Component methods
-Program.prototype.makeComponent = function (type, name) {
+Program.prototype.makeComponent = function (options) {
   var id = this.components.length;
   var component = {
     id: id,
-    type: type,
-    name: name,
     scope: this.getCurrentScope()
   }
+
+  for (var key in options) {
+    component[key] = options[key];
+  }
+
  return component;
 }
 
-Program.prototype.addComponent = function (type, name) {
-  var component = this.makeComponent(type, name);
+Program.prototype.addComponent = function (options) {
+  var component = this.makeComponent(options);
   this.components.push(component);
   return component;
 }
 
-Program.prototype.instantiate = function (name, key, value, codeId) {
+Program.prototype.instantiate = function (options) {
   
-  var component = this.addComponent('var', name);
-  var id = component.id;
-  this.addStep(id, key, value, codeId);
+  var component = this.addComponent({'type': 'var', 
+                                     'name': options.name });
+  options.id = component.id
+  this.addStep(options);
 
-  this.scopes[this.getCurrentScope()][name] = component.id;
+  this.scopes[this.getCurrentScope()][options.name] = component.id;
   return component;
 }
 
@@ -202,26 +225,94 @@ Program.prototype.getComponent = function (id) {
 
 //----------------------------------------------------------------------------------
 // Loop / if block operators
-Program.prototype.openBlock = function (type, value, codeId) {
+Program.prototype.openLoop = function (type, codeId) {
   var id = this.components.length;
-  var component = this.makeComponent('block', type);
-
-  // Add number of branches for if statement
-  if (type === 'if') {
-    component.paths = value;
-  }
-  this.components.push(component);
+  var component = this.addComponent({'type': 'loop',
+                                     'loopType': type });
   
-  var step = this.addStep(id, type, value, codeId);
-  if (type === 'if') {
-    step.if = 'open';
-  }
-
+  var step = this.addStep({'id': id, 
+                           'state': 'open', 
+                           'loop': type,
+                           'codeId': codeId });
 
   this._blockStack.push(id);
 }
 
-Program.prototype.createConditionalBranches = function (type, value, codeId) {
+Program.prototype.closeLoop = function (type, codeId) {
+  var id = this.getCurrentBlock();
+
+  var step = this.addStep({'id': id, 
+                           'state': 'close',
+                           'loop': type,
+                           'codeId': codeId });
+
+  this._blockStack.pop();  
+}
+
+Program.prototype.cycleLoop = function (type, codeId) {
+  var id = this.getCurrentBlock();
+
+  var step = this.addStep({'id': id, 
+                           'state': 'cycle',
+                           'loop': type, 
+                           'codeId': codeId });
+}
+
+
+Program.prototype.openIf = function (value, codeId) {
+  var id = this.components.length;
+  var component = this.addComponent({'type': 'if',
+                                     'paths': value });
+
+  
+  var step = this.addStep({'id': id, 
+                           'state': 'open',
+                           'paths': value, 
+                           'codeId': codeId });
+
+  this._blockStack.push(id);
+}
+
+
+Program.prototype.closeIf = function (value, codeId) {
+  var id = this.getCurrentBlock();
+
+  // Cycle back to inject an 'enter' step if none is found to indicate bypassing the if
+  var index = this.timeline.length - 1;
+  var entered = false;
+  var opened = false;
+  while (opened === false) {
+    index--;
+    opened = (this.timeline[index].state === 'open' && this.timeline[index].id === id);
+
+    if (this.timeline[index].enter !== undefined && this.timeline[index].id === id) {
+      entered = true;
+      break;
+    }
+  }
+  if (!entered) {
+    var step = this.addStep({'id': id, 
+                             'enter': this.getComponent(id).paths, 
+                             'codeId': codeId });
+  }
+
+  var step = this.addStep({'id': id, 
+                           'state': 'close', 
+                           'codeId': codeId });
+
+  this._blockStack.pop(); 
+}
+
+
+Program.prototype.enterIf = function (value, codeId) {
+  var id = this.getCurrentBlock();
+  var step = this.addStep({'id': id, 
+                           'enter': value, 
+                           'codeId': codeId });
+}
+
+
+Program.prototype.createConditionalBranches = function (value, codeId) {
   var paths = value;
   var path = 0;
   var branch = Tree.getSubTree (this._blueprint.tree, codeId);
@@ -232,7 +323,9 @@ Program.prototype.createConditionalBranches = function (type, value, codeId) {
 
       if (child.node.___origin === 'consequent') {
         consequent = child;
-        var step = this.addStep(this.getCurrentBlock(), 'branch', path++, consequent.id);
+        var step = this.addStep({'id': this.getCurrentBlock(), 
+                                 'branch': path++, 
+                                 'codeId': consequent.id });
         step.paths = paths;
 
       } else if (child.node.___origin === 'alternate') {
@@ -241,7 +334,9 @@ Program.prototype.createConditionalBranches = function (type, value, codeId) {
         if (alternate.node.consequent) {
           traverseConditional(alternate);
         } else {
-          var step = this.addStep(this.getCurrentBlock(), 'branch', path++, alternate.id);
+          var step = this.addStep({'id': this.getCurrentBlock(), 
+                                   'branch': path++,
+                                   'codeId': alternate.id });
           step.paths = paths;
         }
       }
@@ -249,55 +344,12 @@ Program.prototype.createConditionalBranches = function (type, value, codeId) {
   }.bind(this);
   traverseConditional(branch);
 
-  var step = this.addStep(this.getCurrentBlock(), 'branch', path++, codeId);
+  var step = this.addStep({'id': this.getCurrentBlock(), 
+                           'branch': path++, 
+                           'codeId': codeId });
   step.paths = paths;
 }
 
-Program.prototype.cycleBlock = function (codeId) {
-  var id = this.getCurrentBlock();
-  var type = this.getComponent(id).name;
-  this.addStep(id, type, 'cycle', codeId);
-}
-
-Program.prototype.closeBlock = function (codeId) {
-  var id = this.getCurrentBlock();
-
-  if (this.getComponent(id).name === 'if') {
-    this.closeIf(codeId);
-  }
-
-  var type = this.getComponent(id).name;
-  this.addStep(id, type, 'close', codeId);
-
-  this._blockStack.pop();  
-}
-
-Program.prototype.closeIf = function (codeId) {
-  var id = this.getCurrentBlock();
-
-  // Cycle back to inject an 'enter' step if none is found to indicate bypassing the if
-  var index = this.timeline.length - 1;
-  var entered = false;
-  var opened = false;
-  while (opened === false) {
-    index--;
-    opened = (this.timeline[index].if === 'open' && this.timeline[index].id === id);
-
-    if (this.timeline[index].enter !== undefined && this.timeline[index].id === id) {
-      entered = true;
-      break;
-    }
-  }
-  if (!entered) {
-    this.addStep(id, 'enter', this.getComponent(id).paths, codeId);
-  }
-}
-
-Program.prototype.enterPath = function (value, codeId) {
-  var id = this.getCurrentBlock();
-  var type = this.getComponent(id).name;
-  this.addStep(id, 'enter', value, codeId);
-}
 
 
 
@@ -309,10 +361,14 @@ Program.prototype.set = function (name, value, codeId, param) {
   if (value && typeof value === 'object') {
     var objectId = value.___id;
     if ( !this.getId(name) ) {
-      var component = this.instantiate(name, 'pointer', objectId, codeId);
+      var component = this.instantiate({'name': name, 
+                                        'pointer': objectId, 
+                                        'codeId': codeId });
       component.type = param || 'var';
     } else {
-      this.addStep(name, 'pointer', objectId, codeId);
+      var step = this.addStep({'name': name, 
+                               'pointer': objectId, 
+                               'codeId': codeId });
     }
     if (!value.___parsed) {
       this.registerObjectProperties(value, codeId);
@@ -321,19 +377,29 @@ Program.prototype.set = function (name, value, codeId, param) {
   } else if (typeof value === 'function') {
     var functionId = value.___id;
     if ( !this.getId(name) ) {
-      var component = this.instantiate(name, 'pointer', functionId, codeId);
+      var component = this.instantiate({'name': name, 
+                                        'pointer': functionId, 
+                                        'codeId': codeId });
       component.type = param || 'var';
     } else {
-      this.addStep(name, 'pointer', functionId, codeId);
+      var step = this.addStep({'name': name, 
+                               'pointer': functionId, 
+                               'codeId': codeId });
     }
   } else {
     if (param) {
-      var component = this.instantiate(name, 'value', value, codeId);
+      var component = this.instantiate({'name': name, 
+                                        'value': value, 
+                                        'codeId': codeId });
       component.type = 'param';
     } else if ( !this.getId(name) ) {
-      this.instantiate(name, 'value', value, codeId);
+      var component = this.instantiate({'name': name, 
+                                        'value': value, 
+                                        'codeId': codeId });
     } else {
-      this.addStep(name, 'value', value, codeId);
+      var step = this.addStep({'name': name, 
+                               'value': value, 
+                               'codeId': codeId });
     }
   }
 
@@ -346,39 +412,35 @@ Program.prototype.param = function (name, value, codeId) {
 Program.prototype.loop = function (type, state, codeId) {
   this.setScope();
   if (state === 'open') {
-    this.openBlock(type, state, codeId);
+    this.openLoop(type, codeId);
   } else if (state === 'cycle') {
-    this.cycleBlock(codeId);
+    this.cycleLoop(type, codeId);
   } else if (state === 'close') {
-    this.closeBlock(codeId);
+    this.closeLoop(type, codeId);
   }
 }
 
-Program.prototype.block = function (type, state, codeId) {
+Program.prototype.if = function (state, value, codeId) {
   this.setScope();
-  if (type === 'if') {
-    if (state === 'close') {
-      this.closeBlock(codeId);
-    } else {
-      this.openBlock(type, state, codeId);
-      this.createConditionalBranches(type, state, codeId);
-    }
-  }
-}
-
-Program.prototype.enter = function (type, value, codeId) {
-  if (type === 'if') {
-    this.enterPath(value, codeId);
+  if (state === 'close') {
+    this.closeIf(value, codeId);
+  } else if (state === 'open') {
+    this.openIf(value, codeId);
+    this.createConditionalBranches(value, codeId);
+  } else if (state === 'enter') {
+    this.enterIf(value, codeId); 
   }
 }
 
 Program.prototype.invoke = function (functionId) {
   var codeId = this._invocationPoints.pop();
-  var component = this.makeComponent('invoke', this.getFunctionName(functionId));
-  component.function = functionId;
-  this.components.push(component);
+  var component = this.addComponent({'type': 'invoke', 
+                                     'name': this.getFunctionName(functionId),
+                                     'function': functionId });
 
-  this.addStep(component.id, 'invoke', functionId, codeId);
+  var step = this.addStep({'id': component.id, 
+                           'invoke': functionId, 
+                           'codeId': codeId });
 
   this._scopeStack.push(component.id);
   this._currentScope = component.id;;
@@ -452,32 +514,41 @@ Program.prototype.setObjectProperty = function (parent, key, codeId) {
       this.components[id].name = key;
       this.components[id].parent = parentId;
     } else if (typeof value === 'object' || typeof value === 'function') {
-      this.addStep(this.components.length + 1, 'pointer', pointerId, codeId);
+      var step = this.addStep({'id': this.components.length + 1, 
+                               'pointer': pointerId, 
+                               'codeId': codeId });
     } else {
-      this.addStep(id, 'value', value, codeId);
+      var step = this.addStep({'id': id, 
+                               'value': value, 
+                               'codeId': codeId });
     }
   } 
   else { // Object/property was not found, therefor a new property is being defined.
     var memberName = this.components[parentId].type === 'array' ? 'element' : 'property';
 
     if (value && typeof value === 'object') {
-      var component = this.addComponent(key, 'pointer', pointerId, codeId);
-      this.addStep(component.id, 'pointer', pointerId, codeId);
-      component.name = key;
-      component.type = memberName;
-      component.parent = parentId;
-    } else if (typeof value === 'function') {
-      var component = this.addComponent(key, 'pointer', pointerId, codeId);
-      this.addStep(component.id, 'pointer', pointerId, codeId);
-      component.name = key;
-      component.type = memberName === 'property' ? 'method': 'function'
-      component.parent = parentId;
-    } else {
-      var component = this.addComponent(key, 'value', value, codeId);
-      this.addStep(component.id, 'value', value, codeId);
-      component.name = key;
-      component.type = memberName;
-      component.parent = parentId;
+      var component = this.addComponent({'name': key,
+                                         'type': memberName,
+                                         'parent': parentId });
+      var step = this.addStep({'id': component.id, 
+                               'pointer': pointerId, 
+                               'codeId': codeId });
+    } 
+    else if (typeof value === 'function') {
+      var component = this.addComponent({'name': key, 
+                                         'type': memberName === 'property' ? 'method': 'function',
+                                         'parent': parentId });
+      var step = this.addStep({'id': component.id, 
+                               'pointer': pointerId, 
+                               'codeId': codeId });
+    } 
+    else {
+      var component = this.addComponent({'name': key,
+                                         'type': memberName,
+                                         'parent': parentId });
+      var step = this.addStep({'id': component.id, 
+                               'value': value, 
+                               'codeId': codeId });
     }
   }
 
@@ -489,10 +560,14 @@ Program.prototype.objectSnapshot = function (object, codeId) {
   // console.log('object snapshot!', codeId);
 
   if (Array.isArray(object)) {
-    var step  = this.addStep(object.___id, 'length', object.length, codeId);
-    step.snapshot = JSON.stringify(object);
+    var step  = this.addStep({'id': object.___id, 
+                              'length': object.length, 
+                              'snapshot': JSON.stringify(object), 
+                              'codeId': codeId });
   } else if (object && typeof object === 'object') {
-    var step  = this.addStep(object.___id, 'snapshot', JSON.stringify(object), codeId);
+    var step  = this.addStep({'id': object.___id, 
+                              'snapshot': JSON.stringify(object), 
+                              'codeId': codeId });
   }
 }
 
@@ -503,7 +578,9 @@ Program.prototype.objectSnapshot = function (object, codeId) {
 Program.prototype.return = function (name, codeId) {
   var id = this.getCurrentScope();
 
-  var step = this.addStep(id, 'return', this.returnState, codeId);
+  var step = this.addStep({'id': id,
+                           'return': this.returnState, 
+                           'codeId': codeId });
   if (this.returnState && typeof this.returnState === 'object') {
     step.return = { 
       pointer: this.returnState.___id,
@@ -545,11 +622,11 @@ Program.prototype.resetBlock = function () {
 // Special Built-In method handling
 Program.prototype.nativeArrayPush = function (array) {
   if (array.___id) {
-    var element = this.addArrayElementComponent(array, array.length - 1);
-    var value = array[array.length - 1];
-    this.addArrayElementStep(element, value);
-
+    // var element = this.addArrayElementComponent(array, array.length - 1);
+    // var value = array[array.length - 1];
+    // this.addArrayElementStep(element, value);
     this.objectSnapshot(array);
+    this.updateArrayValues(array);
   }
 }
 
@@ -588,10 +665,10 @@ Program.prototype.updateArrayValues = function (array) {
   
   for (var i = 0; i < this.components.length; i++) {
     var element = this.components[i];
-    if (element.parent === array.___id && element.name < array.length) {
-      var value = array[element.name];
+    if (element.parent === array.___id && element.index < array.length) {
+      var value = array[element.index];
       this.addArrayElementStep(element, value);
-      if ((element.name * 1) > lastIndex) { lastIndex = (element.name * 1); }
+      if ((element.index * 1) > lastIndex) { lastIndex = (element.index * 1); }
     }
   }
 
@@ -602,11 +679,12 @@ Program.prototype.updateArrayValues = function (array) {
   }
 }
 
-Program.prototype.addArrayElementComponent = function (array, elementNumber) {
-  var element = this.addComponent('element', elementNumber);
+Program.prototype.addArrayElementComponent = function (array, index) {
+  var element = this.addComponent({'type': 'element', 
+                                   'index': index });
   element.parent = array.___id;
   var accessorName = this.getComponent( array.___accessor ).name;
-  var elementName = accessorName + '[' + (elementNumber) + ']';
+  var elementName = accessorName + '[' + (index) + ']';
   this.scopes[this.getCurrentScope()][elementName] = element.id;
 
   return element;
@@ -614,9 +692,13 @@ Program.prototype.addArrayElementComponent = function (array, elementNumber) {
 
 Program.prototype.addArrayElementStep = function (element, value, codeId) {
   if (value && (typeof value === 'object' || typeof value === 'function')) {
-    this.addStep(element.id, 'pointer', value.___id, codeId);
+    var step = this.addStep({'id': element.id, 
+                             'pointer': value.___id, 
+                             'codeId': codeId });
   } else {
-    this.addStep(element.id, 'value', value, codeId);
+    var step = this.addStep({'id': element.id, 
+                             'value': value, 
+                             'codeId': codeId });
   } 
 }
 

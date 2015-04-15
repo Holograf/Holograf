@@ -14,15 +14,7 @@ var COMPILE_EVENT = 'compile';
 
 var _code, _data, _shareUrl, _compiledStatus, _selectedTab, _isLoading, _error; 
 var _highlight = {}
-var templateCode = "var x = 21;\n"+
-"if (x > 20) {\n"+
-"  var message = 'big';\n"+
-"} else if (x > 15) {\n"+
-"  var message = 'medium';\n"+
-"} else if (x > 10) {\n"+
-"  var message = 'small';\n"+
-"}\n"+
-"var z = 'you are ' + message;";
+var templateCode = "var x = [1,2,3];\nx.push(4);";
 
 
 var AppStore = assign({}, EventEmitter.prototype, {
