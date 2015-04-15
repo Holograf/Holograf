@@ -89,17 +89,11 @@ var SetPositions = function (data) {
           y: position.y,
           z: position.z
         }
-        dx = 0;
       }
 
       if (timelineElement.type === 'element') {
-        console.log(timelineElement, parentObjectPosition);
-        position.y = parentObjectPosition.y + timelineElement.index * 0.5;
-        
         if (nextElement && nextElement.type === 'element') {
-          dx = 0;
-        } else {
-          dy = parentObjectPosition.y - position.y;
+          dx = 0.70;
         }
       }
 

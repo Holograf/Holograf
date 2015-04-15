@@ -46,7 +46,7 @@ var RenderProperties = function (data) {
               if (previousElement.branch === element.enter) {
                 setElementProperties(previousElement, {visited: true})
               } else {
-                setElementProperties(previousElement, {visited: true})
+                setElementProperties(previousElement, {visited: false})
               }
             }
           }
@@ -54,7 +54,7 @@ var RenderProperties = function (data) {
       }
 
       if (element.type === 'element') {
-        setElementProperties(element, {visited: false, primary: false})
+        setElementProperties(element, {visited: true, primary: false})
       }
 
       if (element.type === 'loop' && element.state === 'cycle') {

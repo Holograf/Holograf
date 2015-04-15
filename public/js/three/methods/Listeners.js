@@ -30,7 +30,8 @@ Listeners.onMouseMove = function ( e ) {
     if (!theatre.expanded) {return;}
 
     theatre.hoveredNode = intersects[0].object;
-    var selectedId = intersects[0].object.data.id;
+    console.log(theatre.hoveredNode);
+
     highlight.shine(theatre.composite, theatre.hoveredNode);
 
     theatre.actions.updateHover( theatre.hoveredNode.data );
