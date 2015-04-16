@@ -38,7 +38,6 @@ var RenderProperties = function (data) {
           var previousElement;
 
           while (pathsVisited >= 0) {
-            console.log(j);
             j--;
             previousElement = timeline[j];
             if (previousElement.id === element.id && previousElement.branch !== undefined) {

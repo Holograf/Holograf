@@ -17,8 +17,8 @@ module.exports = function (input) {
 
     worker.addEventListener('message', function(message) {
       clearTimeout(executionTimeCheck);
-      console.log(JSON.stringify(message.data.timeline, null, 2));
-      console.log(JSON.stringify(message.data.components, null, 2));
+      // console.log(JSON.stringify(message.data.timeline, null, 2));
+      // console.log(JSON.stringify(message.data.components, null, 2));
 
       resolve({
         data: message.data,

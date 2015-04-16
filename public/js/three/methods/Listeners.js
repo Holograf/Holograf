@@ -30,7 +30,7 @@ Listeners.onMouseMove = function ( e ) {
     if (!theatre.expanded) {return;}
 
     theatre.hoveredNode = intersects[0].object;
-    console.log(theatre.hoveredNode);
+    // console.log(theatre.hoveredNode);
 
     highlight.shine(theatre.composite, theatre.hoveredNode);
 

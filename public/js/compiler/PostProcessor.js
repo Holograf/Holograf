@@ -18,7 +18,7 @@ var PostProcessor = function (resolution) {
     resolution.data.scopes = scopes;
 
 
-    console.log(resolution.data.timeline);
+    // console.log(resolution.data.timeline);
     resolve(resolution);
   })
 
