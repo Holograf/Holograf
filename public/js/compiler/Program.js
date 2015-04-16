@@ -397,7 +397,8 @@ Program.prototype.set = function (name, value, codeId, param) {
                                         'value': value, 
                                         'codeId': codeId });
     } else {
-      var step = this.addStep({'name': name, 
+      var step = this.addStep({'name': name,
+                               'id': this.getId(name), 
                                'value': value, 
                                'codeId': codeId });
     }

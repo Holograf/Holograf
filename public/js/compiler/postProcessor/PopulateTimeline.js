@@ -8,6 +8,7 @@ var PopulateTimeline = function (data) {
 
     data.timeline.forEach(function (step, index, timeline) {
 
+
       var timelineElement = {};
 
       for (var key in step) {
@@ -15,6 +16,7 @@ var PopulateTimeline = function (data) {
       }
 
       var component = components[step.id]
+      console.log(index, step)
       for (var key in component) {
         timelineElement[key] = component[key];
       }

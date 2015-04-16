@@ -8,7 +8,7 @@ var Generator = function (wrappedSyntaxTree) {
 
       var generatedCode = generateCode(wrappedSyntaxTree);
 
-      // console.log(generatedCode);
+      console.log(generatedCode);
 
       resolve({
         code: generatedCode,
