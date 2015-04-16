@@ -10,7 +10,6 @@ var CodeEditor = require('./CodeEditor');
 var Visual3D = require('./Visual3D.js');
 var Instructions = require('./Instructions.js');
 var About = require('./About.js');
-var addons = require('react-addons');
 var OverlayMixin = require('react-bootstrap/OverlayMixin');
 var Button = require('react-bootstrap/Button');
 var Actions = require('../actions/Actions');
