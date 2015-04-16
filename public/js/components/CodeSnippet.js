@@ -3,7 +3,6 @@
  */
 
 var React = require('react');
-var unicode = require('unicode-escape');
 
 
 var CodeSnippet = React.createClass({
