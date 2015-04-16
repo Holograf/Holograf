@@ -23,8 +23,8 @@ var Parser = function (syntaxTree) {
     parse.invocationPoints(syntaxTree)
       .then(parse.functions)
       .then(parse.conditionals)
-      .then(parse.loops)
       .then(parse.expressions)
+      .then(parse.loops)
       .then(parse.memberExpressions)
       .then(function(syntaxTree) {
         resolve(syntaxTree);

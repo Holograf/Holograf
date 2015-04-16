@@ -21,7 +21,7 @@ var LoopCycle = function (composite, timelineElement) {
 
 
     plane.position.x = timelineElement.position.x;
-    plane.position.z = timelineElement.position.z2;
+    plane.position.z = timelineElement.position.z;
     plane.rotation.z -= radianInterval * j;
 
     var coords = utils.getPoint(plane.position.x, plane.position.y, constants.size.radius, planeInterval * j);
@@ -32,7 +32,9 @@ var LoopCycle = function (composite, timelineElement) {
   }
 
   group.rotate = new TWEEN.Tween(group.rotation).to({x:2*Math.PI}, constants.time.loopCycle).repeat(Infinity).start();
-  group.rotation.y = (Math.PI / 2);
+  group.rotation.y = -1 * (Math.PI / 2);
+  // group.rotate = new TWEEN.Tween(group.rotation).to({y:2*Math.PI}, constants.time.loopCycle).repeat(Infinity).start();
+
 
   addToComposite(composite, group, timelineElement);
 };
