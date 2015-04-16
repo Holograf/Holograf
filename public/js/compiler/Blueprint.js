@@ -54,7 +54,6 @@ var registerNode = function (node, parent, origin, index, arrayIndex) {
     Object.defineProperty(node, '___arrayIndex', { enumerable: true, value: arrayIndex })
   }
 
-  // console.log( node.___id, node.type, node.___parentId, node.___origin ? node.___origin : '');
   blueprint.list.push(node);
 }
 

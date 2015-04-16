@@ -5,8 +5,9 @@ Highlight.getRange = function (highlight, blueprint) {
     var codeElement = blueprint.list[highlight.id]
     var highlightRange = [codeElement.range[0], codeElement.range[1]];
     var parent = codeElement.___parent;
-
+    
     if (codeElement.type === 'BlockStatement') {
+
 
       if (parent.type === 'IfStatement') {
         highlightRange[0] = parent.range[0];

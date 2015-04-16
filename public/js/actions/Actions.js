@@ -47,7 +47,6 @@ var Actions = {
   },
 
   updateHighlight: function (highlight) {
-    console.log('UPDATE HIGHLIGHT!!!');
     AppDispatcher.handleThreeAction({
       actionType: AppConstants.UPDATE_HIGHLIGHT,
       highlight: highlight
