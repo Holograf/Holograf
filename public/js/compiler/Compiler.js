@@ -23,7 +23,7 @@ var Compiler = function (rawCode) {
         var data = resolution.data;
         data.code = rawCode;
 
-        console.log(data);
+        // console.log(data);
 
         resolve(data);
       })

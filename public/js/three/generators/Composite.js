@@ -35,7 +35,7 @@ var Composite = function(theatre){
 		              );
 	var dx = 0;
 
-	console.log(timeline);
+	// console.log(timeline);
 
 	for (var i = 0; i < timeline.length; i++) {
 		var timelineElement = timeline[i];

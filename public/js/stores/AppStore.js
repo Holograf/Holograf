@@ -26,6 +26,7 @@ var templateCode = 'var fibonacci = function (n) {\n'+
 
 
 
+
 var AppStore = assign({}, EventEmitter.prototype, {
 
   initialize: function() {

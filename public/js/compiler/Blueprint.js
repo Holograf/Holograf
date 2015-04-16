@@ -13,6 +13,7 @@ var Blueprint = function (code) {
   return new Promise (function (resolve, reject) {
 
     var syntaxTree = esprimaParse(code, {range: true});
+    // console.log(JSON.stringify(esprimaParse(code), null, 2));
 
     var processes = {
       program: registerProgram,
